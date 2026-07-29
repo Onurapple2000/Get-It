@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World3_Level14
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 3
+  levelIndex: 13
+  levelTime: 152.5
+  spawns:
+  - prefab: {fileID: 1751113389729974247, guid: 457da9891459b458a873bac24b0106dd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5615462873312767317, guid: fa01288bc99364004a04318583eb9648, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3491835202065562715, guid: 5c2ccf9c7468145d1a410d03a5dc50fd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2389416088487799823, guid: 38be105d287a24fc6a516a7207258039, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8445464574374775782, guid: 1e369bdee588e466eb1b4fd61201c3ee, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6804420852042847969, guid: 6987159d7a66e4e71a86dcbc0a461395, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5273481399099880921, guid: 99b0ee14cbd5d4b68bf7d71ffd512bfa, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3154705882619836583, guid: 7163ab0baec8040a78396bca0c718527, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5567780868716880307, guid: 4de5e166bb2c2492494ad4aa6f12fa3b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4153138201919716041, guid: fdd875757df554d74b498adcff2c59a1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3863560286356696097, guid: 226319925426c48159314a8032df0220, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5607563602153612587, guid: 523ebd8cad39e47f988ff486e0bdbfb0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7189172726468900568, guid: 2b859e02e4a8c4081a64253a4a4ea3e1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: MiniJaponai
+    required: 21
+    icon: {fileID: 0}
+  - objectType: Modern
+    required: 15
+    icon: {fileID: 0}
+  - objectType: ModernOfficeBuildin
+    required: 12
+    icon: {fileID: 0}
+  - objectType: Museum
+    required: 9
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 8

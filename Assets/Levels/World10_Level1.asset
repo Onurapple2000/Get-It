@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World10_Level1
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 10
+  levelIndex: 0
+  levelTime: 185
+  spawns:
+  - prefab: {fileID: 1273880879802800133, guid: 9198f0e31f2234ba5b463cf51f669aa4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2767061919198428900, guid: 8e61859231f05419d8af93787170c8dd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9091721747118736397, guid: c566ca10c1701457d9ba0bdb3857428b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4908568555282881372, guid: 3712ec8ba4d6a44d786ad7e74d71bc5f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4967484788138683940, guid: aae3d7eb66c764106948eab12f49ae56, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8599450477512551011, guid: 5afd926777d8b4602923d5482bc0ac52, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7814248656890052158, guid: 6cacb79540192434c8b7a0a8a9f99486, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5345898838278174137, guid: a782da109b0984e349894a375718c9f6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 957069089781255162, guid: 3e8962999e4024bd8857262156120541, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 924260337553197200, guid: b0ae5446e875d4cf1af6ce8b5d9b7454, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2465038715392818595, guid: bc62d7eaf6e49416a8499f5a07076666, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 614612733135701314, guid: b1cb1223436884f6495a99b1664f09f0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1730248773521570512, guid: d48bb951a507749f6b4cf9ea4e827e17, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1481100255594633290, guid: a429a7290b16f47e5be7039db6f1836e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1055275756543657815, guid: c7fd2a6f20fc34a14969ae1a56b1fc3d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4888623298835345655, guid: 1b7469ee20efe42948a45e99e33bfbb5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3429493682707878907, guid: 68078eb12b5a94f9b80393ac9c29aff0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: AdultTibetanMastiff
+    required: 12
+    icon: {fileID: 0}
+  - objectType: AkitaInuDog
+    required: 8
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

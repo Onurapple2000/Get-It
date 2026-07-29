@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World9_Level7
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 9
+  levelIndex: 6
+  levelTime: 170
+  spawns:
+  - prefab: {fileID: 7331033803986086336, guid: b6e3bee58251d4c679f1db3fd3e9f3db, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5109322218786186719, guid: 43fef0ecc95524f3bb69562609a5cc5f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2059220969753023827, guid: 845f98004efde4ab2a5991a9eaa65e69, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1324607806440137344, guid: e09dfe1006c584fb3b1c30538b685ed8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 433930343257258559, guid: 2753636e51a524e0d833691c312f8298, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6898458638973780526, guid: 0767859cf33b34abc8996dc4fa6fbf0c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4647357674245645380, guid: a391eefe634ac4458a4d774e0e220a0c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 826660026433939581, guid: 42769152db7e847b8a252e23e5298677, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4170243769974156922, guid: 502584d2ad7a1454ab088dc872d3458a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1564379926546553916, guid: 53fcb384ab9004a25bceb8725a2129f0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 329132588298497592, guid: 4f016f7e28a5146b5a4be4e51fd5a836, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8060969501003747032, guid: 7956a45a49b614650906aab21759b23b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6347129829504496088, guid: 33a7920b66fb047d284e886c2873d6c8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: FatCat
+    required: 18
+    icon: {fileID: 0}
+  - objectType: GingerStroll
+    required: 13
+    icon: {fileID: 0}
+  - objectType: HimalayanCat
+    required: 10
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 5

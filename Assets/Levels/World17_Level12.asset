@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World17_Level12
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 17
+  levelIndex: 11
+  levelTime: 157.5
+  spawns:
+  - prefab: {fileID: 6804420852042847969, guid: 6987159d7a66e4e71a86dcbc0a461395, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1177438704497366769, guid: 4620824ccfa9e4c60955e5d4dafccdbf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6949571350278566881, guid: c27dff2e76b124f5eab416d7e704625e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1583808224405527395, guid: 4c48235a3bc9b40d8b4c003aad685743, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7370565624461481123, guid: 56a3bdd19d5fb47ed96c15b078264ac1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4170243769974156922, guid: 502584d2ad7a1454ab088dc872d3458a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3749307257107416963, guid: 9ba97c2c9bd07402fa7f7f10144ee329, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9114500012135966710, guid: 45bafb19e59d14d24910f59b8aad254c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6590474309752084308, guid: 7f77e87ff85ff43029fe6e0394f40125, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1480924642721815067, guid: 37953d2fcadae430087e48c36c5bc831, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6644680959873592458, guid: 7e9b0e795a58747d882b038db16aa9bb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3174748519807902251, guid: 08b3428e2dd14453384efed2326a64a2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3931337017691435911, guid: a2ade4766bec449929e8a9c94595da2e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3398662178714808059, guid: 84b0330f295e84d1981bd67dca1cc62f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3863560286356696097, guid: 226319925426c48159314a8032df0220, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5220422326596125019, guid: 6e1ae4597c6f241ccb3b3083a616f6f0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: NeonCityCorner
+    required: 23
+    icon: {fileID: 0}
+  - objectType: PralineSchokoM
+    required: 16
+    icon: {fileID: 0}
+  - objectType: PastelEggCup
+    required: 13
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 7

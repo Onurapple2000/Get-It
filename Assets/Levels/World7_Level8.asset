@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World7_Level8
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 7
+  levelIndex: 7
+  levelTime: 167.5
+  spawns:
+  - prefab: {fileID: 4628878900055299266, guid: d847032f2f51b4b49b0e2d262e1cdd29, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2729399156551223326, guid: 47f366816e2f94d54ae7fb357108865f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3820094329190482852, guid: 2c86faeed1b0843ba8afa07e040a6e94, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2173717287040381838, guid: 4a38199e869c749e797939711d22d986, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7360001054481692500, guid: b98bb92515b01476183f748d04ab6e54, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3374122319301664495, guid: 8e59a6abd63a04e39af2f83d44e9005f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 743427452224419054, guid: 707d41753de4b4592ae3bd7457bc2199, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2544560554177041448, guid: e2b77d579a2a345598e5d78106bdbd8a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1761222845822026563, guid: 758e01251fe754a939510e0da62ecb39, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6977435579396185173, guid: 208e07597646f4b03b4c81dde3651257, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3255570785529936885, guid: 6ee617b9884e54dbe848eff940d309d2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5218833369029021603, guid: f66461bebc3db4eea89e5add709db426, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5397362749103294962, guid: accf29cd302be49e8a303330f631dcf2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: EnchantedTome
+    required: 19
+    icon: {fileID: 0}
+  - objectType: EternalArcanaBook
+    required: 13
+    icon: {fileID: 0}
+  - objectType: GiveMeHollow
+    required: 10
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 5

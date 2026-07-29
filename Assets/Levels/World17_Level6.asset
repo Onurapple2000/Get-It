@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World17_Level6
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 17
+  levelIndex: 5
+  levelTime: 172.5
+  spawns:
+  - prefab: {fileID: 760506028465533920, guid: c70b13fffb8244e81909b23e126dbcd3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7006665854167484471, guid: 260e0cecdb33a4b0e995c60eebfb6288, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5037308868463385270, guid: 8682090453116499a90fe4605e7187f6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4240894940842274647, guid: d6be69c809f7c4525bd7ae996c58f758, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5909530899919855532, guid: ba8504bb1983f4097bf6580d8ed55a7e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4155584699902921973, guid: 255bffe0abd014b44b6b06c88aacd025, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 879105398263938281, guid: c187263f2e43043f7a93b11ed8caf817, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3512854395108918256, guid: f12f2061801bc436f9d51a2387251f11, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3511463791572701483, guid: 468a6bbea28b04d6992592687c60b1b6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7657173127371473611, guid: 6ccb267d80bdd4ef68e9ec8575e2c249, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6565496123534402068, guid: 62284dbe483c849c0b784f9a5b636e61, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2215942280491739692, guid: 8cf19154d64f44f85993e870d50be188, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7605824002008777507, guid: 1ccc0ec9166494e3db8386e65324619a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6446270312312730436, guid: a197ef07b1b354763bda39daf630b807, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3454544116537355298, guid: 9dda802dfaac3422585ee37022e07107, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1582207852937984402, guid: 416b1d5e8abab4fa184586628a5b9805, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: CharcoalSpellbook3
+    required: 18
+    icon: {fileID: 0}
+  - objectType: CatDark
+    required: 13
+    icon: {fileID: 0}
+  - objectType: Dog37
+    required: 10
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 4

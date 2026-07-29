@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World12_Level2
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 12
+  levelIndex: 1
+  levelTime: 182.5
+  spawns:
+  - prefab: {fileID: 5369896086375760086, guid: df8a1390580db48ffaf4b5283b84c2ca, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7458548474968675307, guid: 66e1369a351c84d99bd1bb6d8146fabf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 903225119812454939, guid: 91a45ed20c21e448c8bcb70a352b5123, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 402151034293528508, guid: 583424046ed884d11a35c33c570c8c47, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8159310942183740297, guid: 1d6e7514657b449c5878e53162f6340a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5034258537520755968, guid: d60e7502a0c67482ea838f57bd660029, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5394050897262294550, guid: 9b93fccdf65db458b924d2685b1966d9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5325437550223684453, guid: c5e9245e002054d55baa4477cd5ed397, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6128873757790559292, guid: f6fc35c5b3c05410dbfe662520845a66, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5909530899919855532, guid: ba8504bb1983f4097bf6580d8ed55a7e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7592013566693811705, guid: 3f0ba439090e049bf97851b045084004, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4511758803426925206, guid: 2edf7a72f6e1845d6b904fc94dc026c1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3424609055076327630, guid: 6f787ade3cc88411789cde100b539034, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: AirfieldRestingAirc
+    required: 13
+    icon: {fileID: 0}
+  - objectType: Airplane
+    required: 9
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Core
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Core
+  m_GUID: af3df7320375f454595d167807e8d4d4
+  m_SerializeEntries:
+  - m_GUID: 0965dcdfc9721469dab701aa1a17ec68
+    m_Address: Assets/Prefabs/Bomb.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - install-time
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61ce90378be8f4db097c88c1120610a5
+    m_Address: Assets/Prefabs/PowerUps
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - install-time
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: a53077aa0581741eea53869957ce142a, type: 2}
+    - {fileID: 11400000, guid: 213ed070e0a8c4859a816220f1c126c6, type: 2}

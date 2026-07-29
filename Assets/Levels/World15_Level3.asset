@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World15_Level3
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 15
+  levelIndex: 2
+  levelTime: 180
+  spawns:
+  - prefab: {fileID: 5746629249100092890, guid: 1a9c750cf9d1b43e4979b9ac601ae7ad, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6004556845452987106, guid: abf5a7c19731e4210a9e6042983fdb14, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 265655826808644017, guid: 84eb64b2b324b48b3bca614a34bb93f6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 189314302184281226, guid: 8b64d8dde24204fa9b3892476fd46234, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3875624660030004539, guid: f70b87b9e210f49f4bffb7a542b96957, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 458253965407566341, guid: ce56bb8dad3f240fdb4cce47e31db61a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3373853589327253879, guid: facae395c50354069af5f7592ac63cda, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1585766723670520555, guid: 8021c04c4da414bde8a3340e44c6435a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4531703374692277568, guid: 79c584ca876e74d0780d345852cfa8ea, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2078467885659845860, guid: 0f89409d6712c45a5a0aa528bf21979d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3526951066501663691, guid: ce6d0a31d8cfe46d0abf83cc2dba1bb7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8145948135056401270, guid: a039da4261fd54fc8a61b399d302892b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2117645178205379073, guid: fae03ac903ad14113894c362af61085e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 123608934383965046, guid: c7b6a5a56b3a54e6f87900ca7813136c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 430976911484627499, guid: bcaecf5712526442ca67d8d22cf77718, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8163626446789284331, guid: 53d434f0053384283b2939d3c88896d8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: CrimsonCascadeNeckl
+    required: 14
+    icon: {fileID: 0}
+  - objectType: CrispFidelit
+    required: 10
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 3

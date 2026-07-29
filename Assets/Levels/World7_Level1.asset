@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World7_Level1
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 7
+  levelIndex: 0
+  levelTime: 185
+  spawns:
+  - prefab: {fileID: 751721314018158518, guid: 64136de69338f4f42a2293c085d33136, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9113068464125235909, guid: 3fd6c094b5cb64dcb84dd9bc8b09d276, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2903185073825284501, guid: f2f0d1805665f408c8d72ad1f76c0b71, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7280989824684471324, guid: cdbd5b59d4ccf4d70a9d438edfa2a2f4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2448986705982923828, guid: 5fd46c701ae0940c1a46d98a26527514, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5810302418089949689, guid: 2003a94b6bb4e46f99d06e6f77aaa5e0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3674203892335514361, guid: 38bc0f2513f2b40efbc79e814eace17f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 117174878230075904, guid: 1f43dd558c3494bb8a2d16041bf44e4d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3048535587549299154, guid: 999f96ba0f490474ab616a505a309061, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6459193196082429824, guid: 224d32e76d7db43cebc8552cfc0b48f0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1300206140667611357, guid: 11690be60c1e54d7f8fa0fd782797195, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2890549869556195193, guid: 5b1ae04cebb1d447097cd2ff6276d0fe, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3556642775603345480, guid: f4b29835576b2489bbcc9ce5d91133b4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: 17thCenturyBooks
+    required: 12
+    icon: {fileID: 0}
+  - objectType: AncientGrimoire
+    required: 8
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

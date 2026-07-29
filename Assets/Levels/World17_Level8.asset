@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World17_Level8
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 17
+  levelIndex: 7
+  levelTime: 167.5
+  spawns:
+  - prefab: {fileID: 426822812352358956, guid: 6efee3ec3d6c3422c9f0df6c4ae1dba2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9065962124027174333, guid: e4e1d0c48006b4dd59daffc35f4604a6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 517345782144784833, guid: 12d586407ceef4828812a7816b7ee685, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 624077352286994481, guid: 344f72fa6c9224288a4e56a76807aa0b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9164094355713562666, guid: 5b4a03561443e4cd0bcedaef339b4218, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8970252657575019807, guid: eaa2b0d9631bf493d85320e6cb187267, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 400260474757601948, guid: 9d1f99d88935c4f8ea55ddfb468b9e34, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3637019832262796074, guid: 410b8b56c6ad94826a3a258d3dc20d95, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 237101060271972261, guid: b1304c63ad5b74074be3186c6ad50c5a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1290860914942534960, guid: 825a1763e21b740b2882599f94209a96, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1976264882270921874, guid: 39796b16598244ecf8fd205cb162e9f3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4315096987383831300, guid: 92b136d274add4c9b8c7e934b8d01778, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 39787296794678065, guid: 9ac56e6fcb03a433f9819a080243bdf6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8780361313986981261, guid: d18efabbfa45e4ad0a0c609199730970, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1840535705801382756, guid: 9cfe77ca03c854ed0a79284f2dec8ee5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5086431303970235073, guid: f7cab2fcdb5484eadb218ff22f367d7e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: MacaronGreen
+    required: 20
+    icon: {fileID: 0}
+  - objectType: GildedVelocity
+    required: 14
+    icon: {fileID: 0}
+  - objectType: FantacticLivingBuil
+    required: 11
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 5

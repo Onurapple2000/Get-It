@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World3_Level1
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 3
+  levelIndex: 0
+  levelTime: 185
+  spawns:
+  - prefab: {fileID: 1271588062139586328, guid: 7ed2b8e71817448dfa543726126d2b8e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8269130614021354550, guid: d243e154cc1454dacb85fd052d7f544c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2735303436576713975, guid: 7020e7c2dec6f4cb29037f141e41a884, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6477166450362307565, guid: 89725fff648fc4c1198a13144bd79f0b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5321865218594253863, guid: 6913e3f6315b94fa7ab99678ab0af3b6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5614116000741596420, guid: 083718f27678143f29ae3d1e84c406c6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8868729477729006219, guid: 83c8d5b7464bf455999d263d78f01a25, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2016089232936697365, guid: f28db8c84e0774b6a8fbb9e3a29619b3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3532418543703720773, guid: 27bfc419a974343db88db13d527776f6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4518537737967004385, guid: f8f044e4de0d245f1ae8fda8cdbf401e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7661344549274226305, guid: 4ec5b617c265a4c76a424f7ad33a9b8a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7516837856981800166, guid: 4aaf3dbdcafb241aaa5cfd8f65d2c9f2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1645271990299867719, guid: e7168185a2a234b4b8b26fcf8471b437, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: AncientEpheusLibrar
+    required: 10
+    icon: {fileID: 0}
+  - objectType: AnimeCommoner
+    required: 7
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

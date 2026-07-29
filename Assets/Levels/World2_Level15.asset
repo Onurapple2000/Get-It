@@ -1,0 +1,214 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World2_Level15
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 2
+  levelIndex: 14
+  levelTime: 70
+  spawns:
+  - prefab: {fileID: 5684888799506397568, guid: 98bcf5cd7cf42453f8aae2fc0f00aa98, type: 3}
+    count: 1
+    stack: 6
+    scale: 1
+  - prefab: {fileID: 7708561739789671955, guid: 25b6a0c52263441abae7d3988b7a547c, type: 3}
+    count: 1
+    stack: 5
+    scale: 1
+  - prefab: {fileID: 5502717110997417761, guid: dc4cdb7219187456594fc119bcf4ac2b, type: 3}
+    count: 1
+    stack: 5
+    scale: 1
+  - prefab: {fileID: 1144189871092040266, guid: 3c3a6abaa14ba42b08c1c092a64385c3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2602239578968287119, guid: f4095c0158e434000b10f6cb31f7ad70, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5118914364451592, guid: ce43b9a9238274cfda3955dda596cfc6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4046603376394158994, guid: 81547cdaf840041769893de0d815e33f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 856293560491793551, guid: 7fa5a5a4fa09c49a9b76f8a9fde1aebf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6935143223766079710, guid: fb58649c404e04314bc99628e5d2d708, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6645556136955672521, guid: f5db15d4bcaf546a8a8a2bb48c21962f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8599174086278872700, guid: 51eb6d85c179944daabec182fbbf0dcb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1463191666801119665, guid: 3e2b55efe069c4a658c482feea142df0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4400220917114473382, guid: 18b4a2f5b7e6e48aab7718a51bb465ad, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3509279307019037640, guid: 0d06f2ecf66134f4c9ed563a0bdd7bd1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2082533588113402457, guid: d01b3b6b1c2c545ada69515c0654643c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4729316167678320606, guid: 7dda1a0d7331a475d9c1107ba9775674, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3450930507437818907, guid: 4c2a855e2a54348539b44337a964c7f3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6316154739309762069, guid: 98ac254eba92c4eeaba2ad144bbe87b4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6473751237846733361, guid: d867eba3617224cb7a25d98c4308ccdc, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1717413331439031858, guid: ff373857230e14db6b02a921355afd4c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8710818747144963624, guid: c5aa437b386204bfb9fd951ddb637851, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1912901060405423171, guid: 131dafe3671d44605b6769c37c1a9b6b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1438892498272579085, guid: 2622cb8d8e4fb4c8eb499798c51f3804, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1748214623094694663, guid: e91eb7f5f0ed14341ac7a64c541468f3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4849047248843481298, guid: 4208ea5909d984f50a436bf62ccfc208, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1382485107645363529, guid: 551b574223566407687760ad71bd27fa, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5845237016634630651, guid: e8f7251dd99904af7bec1bf9e9e887fd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 156604762144974192, guid: 1ef4ee98594c6473a8e447a05e0e93df, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6705469648116651316, guid: f1d0e9c45b9794516b44bf7ecd6d9a4c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6152449324766929547, guid: d1e34881c4cfb4ce69f596612b313b3e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1209940765514205460, guid: 833736310786e4abbb921487a7969b0a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6966844912958651095, guid: 1c1c1eab10f9a4648afdfd298226bc77, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8434588937383348383, guid: 591037cc19e26415eb69c7162472d570, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8783805505394240540, guid: aa79ba717de6747c895d77d8ba22ad55, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4958413122324861880, guid: 052ce2875ec0944ba978e7744a6dceef, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6936143634777575326, guid: bf34260bb031a47fdb79997d2cdc86c6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7914442805502260125, guid: ac4dc691463be4e52a3952babe08bbfe, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4035523385392826954, guid: 9dde4c98e26f547be8f53ff6b177187a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5013636247914517340, guid: f88b9c222a0e7400fa92a67fd3ebbbdb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1227733799441027010, guid: d754989b8432947328314e4044a6e368, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9128753440405199523, guid: 45665aa44793b46b58a823fd722ae766, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4342154696259281481, guid: fac0661f7212b475d9300ea492bc556e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: CyberpunkPoliceCar
+    required: 28
+    icon: {fileID: 0}
+  - objectType: RustyYellowTaxi
+    required: 24
+    icon: {fileID: 0}
+  - objectType: BatmobileRCCar
+    required: 20
+    icon: {fileID: 0}
+  - objectType: PhantomGT
+    required: 16
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 6

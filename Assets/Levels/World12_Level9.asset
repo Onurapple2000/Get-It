@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World12_Level9
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 12
+  levelIndex: 8
+  levelTime: 165
+  spawns:
+  - prefab: {fileID: 4155417819068940166, guid: 00974e0cb14264e86b75f201e590b960, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 254805835848735904, guid: fa1e63b99772549819c13405e7f10faa, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9098924997784947175, guid: 14838fe6674484e099e5e26b6a7c078b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6177298166043948631, guid: dfd0ace7bb20a4893bd40984e3839362, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4253852555646802443, guid: d735b8f1775fb46ff9a8d589db95af62, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 304333189999777760, guid: 52a76ce959a8745a1b15d229334dbc03, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8211950471920376702, guid: 3e5f9903a265d42868ee84613679216b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3155841463024284729, guid: 9e39b298e93c543f6be8352a408bf4a6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2463000800717309024, guid: 9eb8021bab18b47f993603c89c6ebe34, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2390371705965100762, guid: 2375e091db46042c581c86921206f7ad, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6869355573927337155, guid: d781d68e5339548d58532d16854efa47, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5369896086375760086, guid: df8a1390580db48ffaf4b5283b84c2ca, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7458548474968675307, guid: 66e1369a351c84d99bd1bb6d8146fabf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: SmallAircraft
+    required: 20
+    icon: {fileID: 0}
+  - objectType: SriLankan
+    required: 14
+    icon: {fileID: 0}
+  - objectType: StukaAircraftIllust
+    required: 11
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 6

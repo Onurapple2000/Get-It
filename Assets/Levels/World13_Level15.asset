@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World13_Level15
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 13
+  levelIndex: 14
+  levelTime: 70
+  spawns:
+  - prefab: {fileID: 1976918559184401153, guid: 443370a23df33498683c05e0a65c28e6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6442564537503892895, guid: c42aa45018b364b5291b19c67dcd98ba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7324957725881312184, guid: cc0914843bf5145d094409cd47a1c7e2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7461746963860526918, guid: 55d63f4969d554f7abccb893fe51a8cf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7941961233104864089, guid: c81afaf3ecd1642e280554fdec2e231b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9023261691243845335, guid: 589d08421df7e45d48e967565807df8b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5431417727017960092, guid: 5b9f00a2728eb472087e247046a91f72, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4692987928839702667, guid: 690cb9806d4c045f1a753de1aff34407, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2617150535229388540, guid: b5ab0f9b0800948b9adee4fe1e72003e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1480924642721815067, guid: 37953d2fcadae430087e48c36c5bc831, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3559525313042313744, guid: 294181f4668654e2ca4482ef6cefc83f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2192580582051111224, guid: cfd7b9000eb6545b79f9748ed2d33377, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1469591636000123654, guid: cf81b9ed2c2af4c6f8a798e29347cdbe, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6524336758244931257, guid: bf0c50851726a48e186a7d084bbfe27e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: PirateTreasure
+    required: 26
+    icon: {fileID: 0}
+  - objectType: PirateTreasure2
+    required: 18
+    icon: {fileID: 0}
+  - objectType: PirateTreasure3
+    required: 14
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 9

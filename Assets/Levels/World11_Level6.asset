@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World11_Level6
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 11
+  levelIndex: 5
+  levelTime: 172.5
+  spawns:
+  - prefab: {fileID: 1171737169769944141, guid: 6752718b057fd4b58a4bbc8d4d510da9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6971576602315623323, guid: 3722a236bd57d4f6ea36ac018f882339, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1657826682161673391, guid: 639904070cea041abb71fd2d57a3bc71, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8730698538244551507, guid: 4786f9c3b77d9401588079a3a7b6e9d1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 487319072533397072, guid: 352699cdc729c47518ff513606cef7ad, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8352993421365362180, guid: f346c4fbca1cf4c6cb32a9843939970f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4748636593910322660, guid: e13e29fcb509b4738bd538cec958db91, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2800822526830874901, guid: 0713ade1c88e944a789e15fd4d7b7d1b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7333414729566691725, guid: 5b83b7041724e48aca3e61d3081c6d02, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1290860914942534960, guid: 825a1763e21b740b2882599f94209a96, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7595520997921672086, guid: dbf3c3ec2e14646f18427b720621d398, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7283612128495637864, guid: 852ec3bc04d7647e68b5cf9cd69c8469, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2765527753820901455, guid: 33e9c7e2b70a748a09fe4734e710fba7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: LongShip
+    required: 17
+    icon: {fileID: 0}
+  - objectType: LuxuryCruiseShip
+    required: 12
+    icon: {fileID: 0}
+  - objectType: ModernFishingBoat
+    required: 9
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 4

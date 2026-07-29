@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World17_Level13
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 17
+  levelIndex: 12
+  levelTime: 155
+  spawns:
+  - prefab: {fileID: 201748791432439521, guid: dc01177cb440d4af290a26076c4b42a4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8060969501003747032, guid: 7956a45a49b614650906aab21759b23b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2942492015095894059, guid: 21ec8c2034d8c46cda2533f31f06a2ba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6271549868975426136, guid: fa0ce6b27356544989eeb000ca35e8d5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 248898488011579825, guid: 05dc7826d1345419894c22c4b15b703e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8785254410243315893, guid: 5bdb13c836d1047078c28fa4e7a548fe, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5905467225801654829, guid: 6bb13571d9d7f4aab85a1588310c5eb7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8949470815876265109, guid: 45b9371a4f2c746e08d95b71f84a168c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2996477392462785509, guid: b691fc24ce8fa49ceb75207fa0599f9b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8669026250405464477, guid: 99c6ee6fb5dfc4b7f85124b46bac3190, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6151950966683823700, guid: f7463486bba1841e5bb370805468797e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8939287829342863737, guid: bebb3e3a096f941c5865176805edcf74, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3791762182307805218, guid: ea03e9f8748a6497e9df715298a77bc2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4826682122843678148, guid: 5eb1ba276f2d64f229f02b5209b2e3ff, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3514651799925942641, guid: 1232ce77cebac44cbaed84ad30f08c07, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1634478223151331453, guid: 3e077db747c934606aa34b23c9e10250, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: PileBooks
+    required: 24
+    icon: {fileID: 0}
+  - objectType: StormyGrayCat
+    required: 17
+    icon: {fileID: 0}
+  - objectType: GermanShepherdDog
+    required: 13
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 8

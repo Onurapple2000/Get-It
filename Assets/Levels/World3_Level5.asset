@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World3_Level5
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 3
+  levelIndex: 4
+  levelTime: 40
+  spawns:
+  - prefab: {fileID: 914787746315856494, guid: bfd408eb351b446a1aa0667be55c0909, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2902251395709144079, guid: 31e85ab39f2064d799b0082e752feaba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9195376559792891765, guid: 769e341da030844f6a115f074c63dc38, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2926066974856472194, guid: 4969381d6eff14212811a93e37284fbe, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8920043228930820040, guid: fe4e63513ed8a4cffa3490c061f84c70, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7117400421463814296, guid: 18038c3ef2c784c2b9941789bc500b24, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6110411831801324876, guid: 391074707f9c448fc9ebaffb92cd3c7c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4588886862321048261, guid: a5d1f6a73386d446b820899e10f9c1be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1892561702460408276, guid: 1f631fa52f03447caa5bb584376034f6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6481720707960784298, guid: 111abab34b1024aac9207e8069ab9649, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3665050390610608095, guid: a01b89e161dfb4d6d87a8f520ac75d3a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8047512794925897907, guid: cac15acca07c04240ac4fbe5bc68e7f2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6297497971889716907, guid: 96a810b2e381449669f5189f1c846040, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: CartoonHotelBuildin
+    required: 13
+    icon: {fileID: 0}
+  - objectType: CaesarsPalaceBuildi
+    required: 9
+    icon: {fileID: 0}
+  - objectType: California
+    required: 7
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 4

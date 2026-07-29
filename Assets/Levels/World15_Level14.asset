@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World15_Level14
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 15
+  levelIndex: 13
+  levelTime: 152.5
+  spawns:
+  - prefab: {fileID: 4129069921534587668, guid: c974b9828d5d14ca296feb4fa04503ba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7038482382277119527, guid: 00314caa9542e4019ad40a0020311b54, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4287437530182905087, guid: a77623d79ffca41ce829c58013815d0d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6218661340958384103, guid: 46464c5efd0ec4efbb2d95f8fc5f5183, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8734221249520296491, guid: ca9c35da59c794708b6dab0b97ab8c48, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6528255474793127211, guid: 876e3a89876eb4276984c5198f7beb82, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2887523604140929342, guid: 2f4b0fbbb6434490f9c50df8c89c18e1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 565737481486123493, guid: 9a184bd6664ff4250a8a90e279f1a322, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2468212582307412829, guid: ea191857d18834500a53757a4677ac78, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8193320480280322261, guid: 52b0146d7f06540d49649bf1e88aff7e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2202210848566317802, guid: f0fa761ca4c3a4029b1b5da63c6f8749, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2690248073028544690, guid: f061bf253a58d45a1983cf7e6e56b205, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1723741404955037785, guid: 7c2a306d1b73c4176bf3f32252d183b2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 514901107861834038, guid: a3de903207b79425fa74b2d7344c5a8c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7032194811943761480, guid: c32a65b778b3648d797f9d1a1b0007b5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: LavenderLaceJewel
+    required: 25
+    icon: {fileID: 0}
+  - objectType: LetHaveThere
+    required: 18
+    icon: {fileID: 0}
+  - objectType: M
+    required: 14
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 8

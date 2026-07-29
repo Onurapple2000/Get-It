@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World15_Level5
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 15
+  levelIndex: 4
+  levelTime: 40
+  spawns:
+  - prefab: {fileID: 3526951066501663691, guid: ce6d0a31d8cfe46d0abf83cc2dba1bb7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8145948135056401270, guid: a039da4261fd54fc8a61b399d302892b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2117645178205379073, guid: fae03ac903ad14113894c362af61085e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5854725377713950130, guid: b000846b910b64ba2a17e4f57bcf1f1a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6314868246370292072, guid: 691ddf14786504768abc90b337dde580, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5124921785386770914, guid: 6cd8d6bd8271249f7befcfd82cd62783, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7163147301266671365, guid: 0ee72a19d075b46fea30a750fcd64059, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5020711050121500272, guid: b3622d8c66bf34576a863350b72322c1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5712254639808982901, guid: 4366cc3f57ac54cceb3d8211b2d5248b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 149706722601701110, guid: 7959d17341e17488f82aa7d4703d200a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6141128563547099579, guid: 3e142b4dc13a64bebbfb8d066b4b96ed, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3468581094560081300, guid: e69fe29ddbec641ba95061df0acb573f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 684941140500957959, guid: fbd979b2af90942c2bef98fcea723d6e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6644680959873592458, guid: 7e9b0e795a58747d882b038db16aa9bb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9166551357418322949, guid: 2aa6b4299f9064a45843c6cd5b8a9c26, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519469461559458889, guid: 383d91353984c4bc6bbab707e44a5758, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: FabergeEggMa2
+    required: 16
+    icon: {fileID: 0}
+  - objectType: FancyFeatherBr
+    required: 11
+    icon: {fileID: 0}
+  - objectType: FloralHarmonyBracel
+    required: 9
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 4

@@ -1,0 +1,108 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World10_Level2
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 10
+  levelIndex: 1
+  levelTime: 182.5
+  spawns:
+  - prefab: {fileID: 8599450477512551011, guid: 5afd926777d8b4602923d5482bc0ac52, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7814248656890052158, guid: 6cacb79540192434c8b7a0a8a9f99486, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5345898838278174137, guid: a782da109b0984e349894a375718c9f6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 957069089781255162, guid: 3e8962999e4024bd8857262156120541, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 924260337553197200, guid: b0ae5446e875d4cf1af6ce8b5d9b7454, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2465038715392818595, guid: bc62d7eaf6e49416a8499f5a07076666, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 614612733135701314, guid: b1cb1223436884f6495a99b1664f09f0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1730248773521570512, guid: d48bb951a507749f6b4cf9ea4e827e17, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1344369019913734619, guid: b984f91abc3574560a112d7bde2ddffc, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1922286867511772346, guid: 17ef263463f95473ea67eea3f86a0a18, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8795208237473643614, guid: 74c69e31563c3447eaf8029d7974630d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4031347748496735883, guid: c29992ad17ea841788e5ce7b65f4baeb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 497372848169044887, guid: 7eee83de97c7e4f4ab99e5b5964e1a5d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8991826631216097470, guid: 6f0fe4018ba1341d39415e9d34568288, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6480977177797157223, guid: 5ab6f0151e0e44c12a98c5600aab18e1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1367149314838770075, guid: 35b9918fe4c1c477c8efaae87f353168, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8457748898114555418, guid: 085af4bdd043340af980764d45943baf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: BeagleDogRealist
+    required: 13
+    icon: {fileID: 0}
+  - objectType: BigDog
+    required: 9
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

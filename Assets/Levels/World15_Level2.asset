@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World15_Level2
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 15
+  levelIndex: 1
+  levelTime: 182.5
+  spawns:
+  - prefab: {fileID: 8590225358574868730, guid: 86477a6eb51844208a11d156d0990069, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3394287461084717787, guid: 641d185ac26584da284690c5befd5eca, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5387862956160620803, guid: 56a6bfb1dcfa34467b2f1d3c199a9285, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6195100029303595710, guid: ed099d780199349a4a2f46ee214f3cf3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3789683779396930320, guid: b3a9e7b10336747248e8f88303001ff9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5746629249100092890, guid: 1a9c750cf9d1b43e4979b9ac601ae7ad, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6004556845452987106, guid: abf5a7c19731e4210a9e6042983fdb14, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 265655826808644017, guid: 84eb64b2b324b48b3bca614a34bb93f6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 189314302184281226, guid: 8b64d8dde24204fa9b3892476fd46234, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3875624660030004539, guid: f70b87b9e210f49f4bffb7a542b96957, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 458253965407566341, guid: ce56bb8dad3f240fdb4cce47e31db61a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3373853589327253879, guid: facae395c50354069af5f7592ac63cda, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1585766723670520555, guid: 8021c04c4da414bde8a3340e44c6435a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3830721031605193319, guid: aff11c449f39c405b9ddbdbe01109723, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4434631020131738969, guid: efd76a00785dc4dc6bf535049a26a7ba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8793317701718676759, guid: ee3f1c2f656914dcd9fd83d5d33cc18c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: BejeweledEasterEgg
+    required: 13
+    icon: {fileID: 0}
+  - objectType: ButterflyBadgeMade
+    required: 9
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

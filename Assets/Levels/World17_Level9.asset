@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World17_Level9
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 17
+  levelIndex: 8
+  levelTime: 165
+  spawns:
+  - prefab: {fileID: 1476993383481111611, guid: 4c76c8b526a884ff88d13abeedf082bd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7538370523382760626, guid: b246cfcdf44ff48f1a5f175adbc0f9b4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6800375950254421030, guid: af0d1ad8b0f6a4d7d8264d0ae6a94021, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7907701539026810170, guid: 4b7ed814e84154e2ba4d03218d96138e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8477152390349848763, guid: e194beec0003d4157b6f156947652be9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4466084778547738431, guid: 8ea4c0f3891f3426cb0a6653745d89fd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2875355551043306786, guid: 0a29e30226293404d84dcc1c0a9a4b91, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4866381546084443621, guid: f29b8294b5f7149bcac1c90bb5feb24c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8988224522728993285, guid: 8ec9185566975427a8c3ac8cfb217ab0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6471281029032185253, guid: c8a32d8181661425f9c17652297ba2c3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 356938984260002079, guid: bbcb8f6f581894b4c884a744a44dc595, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3450930507437818907, guid: 4c2a855e2a54348539b44337a964c7f3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3276664576086849807, guid: 7fa0b8404e87e426f8cd14fe0e300653, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7989368355913912545, guid: 71fff2ff749ca40fc82dd56a7de89feb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8435596190746335609, guid: d83378b39f8974bec85896077250cdd9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8149580915900203118, guid: 948a4162cfb634821b3cd7f0207d8c24, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: Japanes
+    required: 21
+    icon: {fileID: 0}
+  - objectType: GiftBoxPattern
+    required: 15
+    icon: {fileID: 0}
+  - objectType: EnchantedPumpkinJou
+    required: 12
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 6

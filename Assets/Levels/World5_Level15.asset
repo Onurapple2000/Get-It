@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World5_Level15
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 5
+  levelIndex: 14
+  levelTime: 70
+  spawns:
+  - prefab: {fileID: 1565794736502575381, guid: 34be79238bda64ae28985165456c13de, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8026054843750689410, guid: 786378624a8164252ab347ad55995e89, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3090691781349195869, guid: 558faeab3842842d092e0618b8dbf5e0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2352405225091841989, guid: 363597622e978431c83c5086c7cec1f9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5638682305004856557, guid: 8480ab58a37b149e08125ceeea6cdd05, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4504599472273826962, guid: ee111612e5ee8452eaedd9e863f2f675, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5803211296944940577, guid: 30ee5e29b78c54b9eb94c30fa611afe6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1093055065843976497, guid: ad544c1c2ff1c4f4bbf54580e1be2593, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6555560382817870866, guid: 64bfe74537b6c4c34af9b1b97a99995e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6014752419465114890, guid: 9e43c910a1a994d1bbc3efe65683d9d3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6128979643298493329, guid: 4b1aee15391274898a9c444551686130, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 993600318418400844, guid: b25b1d7cdf0ec4a7abb11bdfdfda4d87, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2273072724788317161, guid: 2738f3d246a1a4bb79ed9d3087bc8f9d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: RetroScifiCoffee5
+    required: 26
+    icon: {fileID: 0}
+  - objectType: SomersbyBlueberry
+    required: 18
+    icon: {fileID: 0}
+  - objectType: StrawberryBobaTea
+    required: 14
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 9

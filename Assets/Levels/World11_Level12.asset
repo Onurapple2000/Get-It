@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World11_Level12
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 11
+  levelIndex: 11
+  levelTime: 157.5
+  spawns:
+  - prefab: {fileID: 15814115358993645, guid: 8f60a3c97d8d54ecbbd09ad6bf6021f5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1455249817235870948, guid: 98d164edfcbfd4b52ba15a4300c7e194, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6271549868975426136, guid: fa0ce6b27356544989eeb000ca35e8d5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6967666020493113699, guid: 60a5f2a85bc1b45958d018989900861f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8114467474730795960, guid: 22495b92a0c6f438eb1d75cefdc8a4b1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1973236676296308958, guid: a2163775b18ac4f08bb3ddb173f6d813, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7781705600189083198, guid: 517ce376027c344baaa56c8b790bacdc, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6009887413491131979, guid: e52ed06d374ae463fa75a7af4f1a1ab3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1154994420330691974, guid: 7ab623bbdbb0e4590a2f8a80dc656e45, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6159684666957274888, guid: 951b1bec422c84fbfa3f8ce12baccd6c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 82581431953249446, guid: 6901d23d022ba430e97d0d45d2339797, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9145906086073596819, guid: 432d3ac8000f5455baca5d3267c74426, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2010824006349703626, guid: f41718fb748ea4b2482a4fa230916557, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: SailingShipGalleon
+    required: 23
+    icon: {fileID: 0}
+  - objectType: SailingShipGalleon2
+    required: 16
+    icon: {fileID: 0}
+  - objectType: Ship
+    required: 13
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 7

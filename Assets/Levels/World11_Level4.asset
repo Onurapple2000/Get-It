@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World11_Level4
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 11
+  levelIndex: 3
+  levelTime: 177.5
+  spawns:
+  - prefab: {fileID: 4038348190033389746, guid: be9451de7dd3e491c836af8923410f81, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4627059659210204106, guid: 8b600acb774c64cfeb36b5efbfea61b3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4887734778871848231, guid: dad6ebc7a56a54132afe8a309602a12e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3587032702282916213, guid: 5a84852473c3544308f0cb3dbd9e74e0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5351634084502504955, guid: a6a349c17faea44398ef67ff0dd33467, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7390300184720945757, guid: e3fd9603f5c9a44afb08b28d8cce2766, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5910899679605477511, guid: 7eca71a1543614d2b9bec216203a1a83, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2900695691047402573, guid: 1c5e1178b397c454b82b363f8f93e275, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4240894940842274647, guid: d6be69c809f7c4525bd7ae996c58f758, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7035700378529186521, guid: b379dea5dfc3948e3b41301d3285e809, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1171737169769944141, guid: 6752718b057fd4b58a4bbc8d4d510da9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6971576602315623323, guid: 3722a236bd57d4f6ea36ac018f882339, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1657826682161673391, guid: 639904070cea041abb71fd2d57a3bc71, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: FactorioModShip
+    required: 15
+    icon: {fileID: 0}
+  - objectType: FerryWater
+    required: 10
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 3

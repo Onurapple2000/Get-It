@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World5_Level3
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 5
+  levelIndex: 2
+  levelTime: 180
+  spawns:
+  - prefab: {fileID: 5970177507015180317, guid: 582ad483a2c604489832bb535af0d9c1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4444771027557045396, guid: fc8b71c6c1353480f9df45c2de87ab17, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7029406641849736617, guid: a790f2d41c6074fc2a8e7c9f33c1db83, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3647529576679450608, guid: 879713a7ebfc645999a3dafa4235cf20, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1481986678496623230, guid: e97bac89a0d9a4f50bb97efbec5edf4c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 26947231937669701, guid: f75f9d93f5a484d36b36dcab75d8667e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3899038183370607313, guid: 730343ba9317e4eb28723f9d0ecbceae, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3466599075526777613, guid: 4b286d128fcbe42be9aedb35f0dfb143, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8091591588566315751, guid: a332098b2c41746b0b72fd5672db1442, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5293450016747029361, guid: f5d2f8b00559e46ba810938c8c5db15f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2977998270280010507, guid: 10b750a75067a4e1fa0f43334b11c96a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1025269691709918903, guid: e94d121a4629248fdaec2c9f6f7d66b8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1277745485746277178, guid: 0f04e2400c2864054b14482e5622ce51, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: CoffeeBreak
+    required: 14
+    icon: {fileID: 0}
+  - objectType: CoffeeCompanion
+    required: 10
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 3

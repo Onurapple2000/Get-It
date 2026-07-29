@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World1_Level6
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 1
+  levelIndex: 5
+  levelTime: 100
+  spawns:
+  - prefab: {fileID: 346872814459262526, guid: 0518b4ee4f1924b5092dc0d5ffbadcfc, type: 3}
+    count: 1
+    stack: 14
+    scale: 1
+  - prefab: {fileID: 2996477392462785509, guid: b691fc24ce8fa49ceb75207fa0599f9b, type: 3}
+    count: 1
+    stack: 12
+    scale: 1
+  - prefab: {fileID: 4813895012748287798, guid: a4326aaa160514ce2ad179cbd13ad5e5, type: 3}
+    count: 1
+    stack: 10
+    scale: 1
+  - prefab: {fileID: 9139929962509278802, guid: 2e141eb10521a4fd0954c4c223d11808, type: 3}
+    count: 1
+    stack: 8
+    scale: 1
+  - prefab: {fileID: 1394054998235855699, guid: c1cbc2a99f51d4d5a9c45c9ff56550d2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1760887742819813075, guid: 4af994e6f89e043d3ba88f297ac23cfc, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7812434625079977029, guid: d3151be1e53864c79a35f71b775b82e5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4077137131728606525, guid: 02d8fe6c94e8c4b74a42c8472aa802b9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5777099776052011038, guid: 57945854f3e2b463c90ac90f459226ca, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4169129911851539161, guid: f4eacab935a56413893710b80a4b3be4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5915193456261245221, guid: bb2dd417f46fb488ea8c0f2bd8447a80, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1754976942764311848, guid: f62fad907fa16403c86e7e249474aca6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 426822812352358956, guid: 6efee3ec3d6c3422c9f0df6c4ae1dba2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8078526133462074216, guid: d7f3a554d9db7434c884925a46149df3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4587661610730501241, guid: d3db35c252a7745fb91393170be3ef62, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 448123047076539937, guid: f10d44aebd34a4cd382bc9232e4646e9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: Apple
+    required: 80
+    icon: {fileID: 0}
+  - objectType: Strawberry
+    required: 85
+    icon: {fileID: 0}
+  - objectType: Tomato
+    required: 60
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

@@ -1,0 +1,96 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World3_Level4
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 3
+  levelIndex: 3
+  levelTime: 177.5
+  spawns:
+  - prefab: {fileID: 1825510946634887997, guid: 55b448e7ad7f64115a2aae156d56a4bb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2208628567755930859, guid: ec06c88126ced42949aa8b582856e369, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4508746683527159220, guid: 2f7994e21ff1c4d41b0e3337d852e4e0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 967063056691409286, guid: 8ae319b6806c54385a2e31b1fbad7eb5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4459746502562282020, guid: a2e67ffa51cb74ea5a0db75eb2e241f5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 950237319401765801, guid: 037f7457a17da412db58e5666cfd847c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 914787746315856494, guid: bfd408eb351b446a1aa0667be55c0909, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2902251395709144079, guid: 31e85ab39f2064d799b0082e752feaba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9195376559792891765, guid: 769e341da030844f6a115f074c63dc38, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2926066974856472194, guid: 4969381d6eff14212811a93e37284fbe, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8920043228930820040, guid: fe4e63513ed8a4cffa3490c061f84c70, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7117400421463814296, guid: 18038c3ef2c784c2b9941789bc500b24, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6110411831801324876, guid: 391074707f9c448fc9ebaffb92cd3c7c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7739943105402066976, guid: 57c3eb44e91ae4b3fa47be18b9793544, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: Brewery
+    required: 13
+    icon: {fileID: 0}
+  - objectType: BuddhistTemplesWith
+    required: 9
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 3

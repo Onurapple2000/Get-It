@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World7_Level10
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 7
+  levelIndex: 9
+  levelTime: 55.5
+  spawns:
+  - prefab: {fileID: 3255570785529936885, guid: 6ee617b9884e54dbe848eff940d309d2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5218833369029021603, guid: f66461bebc3db4eea89e5add709db426, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5397362749103294962, guid: accf29cd302be49e8a303330f631dcf2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7370565624461481123, guid: 56a3bdd19d5fb47ed96c15b078264ac1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6886385352024807803, guid: 8177f081605954b0397f95f7075efa99, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6785691030906506176, guid: 89172604c961f42898b9417860819d67, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 201748791432439521, guid: dc01177cb440d4af290a26076c4b42a4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5526676444993208338, guid: 31da6aaefedfd499dbda8f92fafa9e39, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 474021140320796847, guid: d59700980fd174c0e968c2c1120d76ce, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2635165102876274616, guid: 703a52e4dcb5e4d5c800fd81fa210292, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3514651799925942641, guid: 1232ce77cebac44cbaed84ad30f08c07, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1377309976359358354, guid: 76cfcd9a6813c46c6b1c7ac073fc063b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3455317909811396371, guid: 6388e5ac75b6e4b909f658fe02552dbd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: MagicBook2
+    required: 21
+    icon: {fileID: 0}
+  - objectType: MajesticSt
+    required: 15
+    icon: {fileID: 0}
+  - objectType: MeanGirlsPink
+    required: 12
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 6

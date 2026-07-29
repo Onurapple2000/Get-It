@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "/Users/onur/Documents/GET_IT_Unity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/CMakeLists.txt",
+    "/Users/onur/Documents/GET_IT_Unity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/onur/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/onur/Documents/GET_IT_Unity/.utmp/Debug/5pw5r3n6/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/onur/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/onur/Documents/GET_IT_Unity/.utmp/Debug/5pw5r3n6/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "game::@d02bb112ea9f9c2ed29f": {
+      "artifactName": "game",
+      "abi": "arm64-v8a",
+      "output": "/Users/onur/Documents/GET_IT_Unity/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/5pw5r3n6/obj/arm64-v8a/libgame.so",
+      "runtimeFiles": []
+    }
+  }
+}

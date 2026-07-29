@@ -1,0 +1,104 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World15_Level4
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 15
+  levelIndex: 3
+  levelTime: 177.5
+  spawns:
+  - prefab: {fileID: 458253965407566341, guid: ce56bb8dad3f240fdb4cce47e31db61a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3373853589327253879, guid: facae395c50354069af5f7592ac63cda, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1585766723670520555, guid: 8021c04c4da414bde8a3340e44c6435a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4531703374692277568, guid: 79c584ca876e74d0780d345852cfa8ea, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2078467885659845860, guid: 0f89409d6712c45a5a0aa528bf21979d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3526951066501663691, guid: ce6d0a31d8cfe46d0abf83cc2dba1bb7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8145948135056401270, guid: a039da4261fd54fc8a61b399d302892b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2117645178205379073, guid: fae03ac903ad14113894c362af61085e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5854725377713950130, guid: b000846b910b64ba2a17e4f57bcf1f1a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6314868246370292072, guid: 691ddf14786504768abc90b337dde580, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5124921785386770914, guid: 6cd8d6bd8271249f7befcfd82cd62783, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7163147301266671365, guid: 0ee72a19d075b46fea30a750fcd64059, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5020711050121500272, guid: b3622d8c66bf34576a863350b72322c1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1276558990077048149, guid: c09c37733aa8a4befbabea77125453df, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5553813514289538797, guid: a345050d48e5b4feb87a19645ffafccd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7094026595143364066, guid: f27690615df9b4be8bee63185a6c0b6f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: ElegantValentines
+    required: 15
+    icon: {fileID: 0}
+  - objectType: EmblemRegalEmble
+    required: 10
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 3

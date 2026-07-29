@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World17_Level2
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 17
+  levelIndex: 1
+  levelTime: 182.5
+  spawns:
+  - prefab: {fileID: 6111210914143037508, guid: 5dcd91dffd96946099ffd1e69c1fd5e2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8299477077067717595, guid: 4b8a6a70a2bc84d959fc5589ed078a78, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7280989824684471324, guid: cdbd5b59d4ccf4d70a9d438edfa2a2f4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 659193939073120536, guid: face538d4824b4e72936a34951f96aea, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5345898838278174137, guid: a782da109b0984e349894a375718c9f6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8998104280951958304, guid: 5ca4d66a5830441b5854a4722f0b008d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2463000800717309024, guid: 9eb8021bab18b47f993603c89c6ebe34, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 267504681744264071, guid: 8c8c72ddf4d954ea0a1e86f5d0ca0c99, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3394287461084717787, guid: 641d185ac26584da284690c5befd5eca, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2670254798013205686, guid: 5888d34ce85324f89b50afdba1b7d135, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9139929962509278802, guid: 2e141eb10521a4fd0954c4c223d11808, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8599174086278872700, guid: 51eb6d85c179944daabec182fbbf0dcb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1965995143817036115, guid: 641c7405277b1429aa39f17d944925a5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3788150802609608253, guid: 0a4c1158f660d42ff9731aa9685e6797, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2228514301261056255, guid: 6749af63f7f4e4bfeb5a7f2af53780a8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: BubbleDrink
+    required: 15
+    icon: {fileID: 0}
+  - objectType: AmazingChristmasGif2
+    required: 10
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

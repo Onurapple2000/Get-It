@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World3_Level3
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 3
+  levelIndex: 2
+  levelTime: 180
+  spawns:
+  - prefab: {fileID: 7661344549274226305, guid: 4ec5b617c265a4c76a424f7ad33a9b8a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7516837856981800166, guid: 4aaf3dbdcafb241aaa5cfd8f65d2c9f2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8372221034507873254, guid: 7c9870f348c1a4ad7bf279a5a8ed2af2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4699123226949000565, guid: ad2c3c0db33c847d59abfb98549f6785, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1825510946634887997, guid: 55b448e7ad7f64115a2aae156d56a4bb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2208628567755930859, guid: ec06c88126ced42949aa8b582856e369, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4508746683527159220, guid: 2f7994e21ff1c4d41b0e3337d852e4e0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 967063056691409286, guid: 8ae319b6806c54385a2e31b1fbad7eb5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4459746502562282020, guid: a2e67ffa51cb74ea5a0db75eb2e241f5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 950237319401765801, guid: 037f7457a17da412db58e5666cfd847c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 914787746315856494, guid: bfd408eb351b446a1aa0667be55c0909, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2902251395709144079, guid: 31e85ab39f2064d799b0082e752feaba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3800354727289867527, guid: 81939459dc4b8427ea114e0e9b7ac2e2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: BeautifulColorfulHo
+    required: 12
+    icon: {fileID: 0}
+  - objectType: Barracks
+    required: 8
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 3

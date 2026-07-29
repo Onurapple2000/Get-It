@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World17_Level15
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 17
+  levelIndex: 14
+  levelTime: 70
+  spawns:
+  - prefab: {fileID: 3335105072656847630, guid: e357d41508ca04cbb89009e6c93d9719, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3881925700698822319, guid: f417c93c5ba7947598bec9c26ebd33be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1093055065843976497, guid: ad544c1c2ff1c4f4bbf54580e1be2593, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2618056203936957240, guid: f7ad093c1f17348ff99f8d2e6d3a719d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3654266419863782739, guid: dbfe36510da3d4f3bba0e7c048904345, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7230530714415130565, guid: f4739def00e714e4ba970f301b5e3cd1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1578922152169668474, guid: 6408c514d7af8495eba384384658a48c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3515282029169071022, guid: 5149250d47da64741ad94ef2d4aa6d1e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6177298166043948631, guid: dfd0ace7bb20a4893bd40984e3839362, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7046703531289027890, guid: 71acf8468c7b847a4acf8e9881ad1044, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2944482671253414399, guid: 844cf083722f4453fa241e9f71587489, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3913699032761115401, guid: a586550d109c547b2a436ab810f5279b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4342154696259281481, guid: fac0661f7212b475d9300ea492bc556e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8328741441494939664, guid: 107446068502f4ab58165b986fa0883c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3482284124324633341, guid: 97eb9be3a653f41508f061d3b15aef5c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 993600318418400844, guid: b25b1d7cdf0ec4a7abb11bdfdfda4d87, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: TallStoneWatchtow3
+    required: 26
+    icon: {fileID: 0}
+  - objectType: Strawberry2
+    required: 18
+    icon: {fileID: 0}
+  - objectType: TeaTimeElegance
+    required: 14
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 9

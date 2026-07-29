@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World11_Level2
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 11
+  levelIndex: 1
+  levelTime: 182.5
+  spawns:
+  - prefab: {fileID: 4769500893079830202, guid: 63e149aa49a82446f899ea4aab8ed2f9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5543093269819335160, guid: 45361b1ff4a8c418e9c7aeb9ab96702f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8799869523218621086, guid: 009e54c5b24d04aaaa01a2d173e279be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4940532452279661389, guid: 178c4b14192b14078a6b1afbe0a6513d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6251840557409282669, guid: 1d8fa9c7c06f24220aedbc11786ecab5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6088226742433051917, guid: 2de9a45e150f14d269129b89369ac71f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4724519924559631259, guid: fd11e281ab7c7471497889521fb86956, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2560521293321652492, guid: 4caa1ad2ea19249a8ba5c80c2fa2197a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3530763619560344115, guid: d027cd3d9510e4c1d83dc987ece171c3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3038949201664332275, guid: c3efe67cf00924d63a3b610b24639388, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4038348190033389746, guid: be9451de7dd3e491c836af8923410f81, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4627059659210204106, guid: 8b600acb774c64cfeb36b5efbfea61b3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4887734778871848231, guid: dad6ebc7a56a54132afe8a309602a12e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: ChristopherColumbus
+    required: 13
+    icon: {fileID: 0}
+  - objectType: ClassicFerryBoat
+    required: 9
+    icon: {fileID: 0}
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

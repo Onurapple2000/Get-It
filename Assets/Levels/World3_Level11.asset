@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World3_Level11
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 3
+  levelIndex: 10
+  levelTime: 160
+  spawns:
+  - prefab: {fileID: 3696924183850969256, guid: 9b3775f78aa074af182c47db1a360596, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4810101443558205709, guid: 2ac87fcae90224ce28da5ad60109d39f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7496330855939771101, guid: 2a694d6f181174a4f911c08c049f879d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5710864901993346827, guid: f145b02b6051648949330961163d7de1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3276664576086849807, guid: 7fa0b8404e87e426f8cd14fe0e300653, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3968795267944015703, guid: ebb0cb7392c604e328e009aee33df357, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6733296667903360578, guid: e95f937e69d96426fbf28f443d1c6471, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3296914403179555475, guid: 2ad0e23a4d3f84890a57bbe1a4396c35, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6216461603269859790, guid: 83d7e89cc8f124ff784dbb89f5e26544, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2912918078317541857, guid: 650586120ab0e471184cba40eae9fcba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4056058494739369230, guid: 6937dfb2139e94b1280781277d844471, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2704150650619701247, guid: 6acd62de568204e7aa6b41a64040b3fb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2317540853731066302, guid: b19511f2ef8224fd5a5a5fcacf755512, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: HARDEDGEFantasy
+    required: 19
+    icon: {fileID: 0}
+  - objectType: IsometricMausoleumB
+    required: 13
+    icon: {fileID: 0}
+  - objectType: HighDetailAnime
+    required: 10
+    icon: {fileID: 0}
+  - objectType: Ideal
+    required: 8
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 7

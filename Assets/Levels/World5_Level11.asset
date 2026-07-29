@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49c3b10874e1c442693231a503067c1a, type: 3}
+  m_Name: World5_Level11
+  m_EditorClassIdentifier: Assembly-CSharp::LevelData
+  worldId: 5
+  levelIndex: 10
+  levelTime: 160
+  spawns:
+  - prefab: {fileID: 947369620337998916, guid: f0edf972a2356405f84128e441981830, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5857023396498648830, guid: 94bbc07a9c02e469e8aa85c77bdb9ec7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6607647603383463619, guid: 8f1f5aedc08284d2cbfa8e328b7a5ec0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4909489828675582509, guid: 7c5963673c7b44de0bd16b8af301e364, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1875021932520071548, guid: 066298050bb3843e7b95651cd008a023, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7150951393214897824, guid: b63df43a6d7a54627a823b9f550cafe8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4475439293211769828, guid: 382d88761d4284e528f81b825270b35e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8641991301100690653, guid: 103d6a49ab04d435facd2fb4c880a628, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026545907509376280, guid: 1f11368633fe2435082cad111ceb622b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8540826143499816782, guid: 75f54bdc8370d4dbe8952f99fd10f59a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6949571350278566881, guid: c27dff2e76b124f5eab416d7e704625e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6010274300592180139, guid: 7ef6eb0e1c65a4769886bbe0c79fcef1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5716684963392796571, guid: 6a455dd3968004aaf86234b03badeea5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+    count: 2
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  objectives:
+  - objectType: LycheeDrinkBottle
+    required: 22
+    icon: {fileID: 0}
+  - objectType: MedevialTeaService
+    required: 15
+    icon: {fileID: 0}
+  - objectType: MojoMintLime
+    required: 12
+    icon: {fileID: 0}
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 7
