@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 0
   levelIndex: 0
-  levelTime: 185
+  levelTime: 100
   spawns:
   - prefab: {fileID: 9185496303461315585, guid: 16c0ee1c7b0114507bfde07f6f4b571e, type: 3}
     count: 1
@@ -68,6 +68,18 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 2073950525914499943, guid: 6ea25a729c29f46a59b52064ed6ca617, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3174748519807902251, guid: 08b3428e2dd14453384efed2326a64a2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8949470815876265109, guid: 45b9371a4f2c746e08d95b71f84a168c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,11 +93,11 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Bench
-    required: 14
+  - objectType: SmallCrate
+    required: 18
     icon: {fileID: 0}
-  - objectType: Bush
-    required: 10
+  - objectType: StreetLamp
+    required: 13
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

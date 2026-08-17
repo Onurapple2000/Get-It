@@ -14,8 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 12
   levelIndex: 11
-  levelTime: 157.5
+  levelTime: 100
   spawns:
+  - prefab: {fileID: 903225119812454939, guid: 91a45ed20c21e448c8bcb70a352b5123, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 402151034293528508, guid: 583424046ed884d11a35c33c570c8c47, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 8159310942183740297, guid: 1d6e7514657b449c5878e53162f6340a, type: 3}
     count: 1
     stack: 1
@@ -68,6 +76,90 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 7936019131625073786, guid: 6a7cd4ae16fd840688b2dc04db0b4270, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9197502477530404091, guid: cd2adc8c66cd8427d86256309a7f547e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2875355551043306786, guid: 0a29e30226293404d84dcc1c0a9a4b91, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5557585507925553399, guid: ce8028b2349fe478db20225f263a1349, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3505652961147040425, guid: 97ea9152a24b447a6b5d3d72dc80bc60, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7880110782824478628, guid: 3d5b4f2c707084a7088bf6dd0bf51a18, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6370447938475064143, guid: 87110b77433914aff826699f022525e1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4720068426342733414, guid: 1168660a97b2d46d5aa0340f9822e0e9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8093378087471369501, guid: 4717be6bb9f054b29b6d7b461b70f739, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3403047867255040919, guid: 6893c34cb9da24788bd97623c95c5a1d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8995039321211217919, guid: 5dd3fdf2a90dc42d7a0c517e981af545, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6590474309752084308, guid: 7f77e87ff85ff43029fe6e0394f40125, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4106087515001393883, guid: 7c6fc6c982bbf4ed2954398bc9761f0a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8182373191392631945, guid: 7ce54ea4ab8d5406ea82509b32ffcca8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 248898488011579825, guid: 05dc7826d1345419894c22c4b15b703e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1091193758199905079, guid: 829501942154442d1b7cfe8e1c31110c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1834578133260790784, guid: 3849bd74b5cfa4c8aa0fc452bed1a6d1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6022079497900344336, guid: f6c17b57be7034075860b1cb631e94dc, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4155417819068940166, guid: 00974e0cb14264e86b75f201e590b960, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 254805835848735904, guid: fa1e63b99772549819c13405e7f10faa, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9098924997784947175, guid: 14838fe6674484e099e5e26b6a7c078b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +173,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Boein
-    required: 23
+  - objectType: StukaAircraftIllust
+    required: 35
     icon: {fileID: 0}
-  - objectType: Boeing
-    required: 16
+  - objectType: GiantOneEngined
+    required: 25
     icon: {fileID: 0}
-  - objectType: Boeing2
-    required: 13
+  - objectType: HighlyComme
+    required: 19
+    icon: {fileID: 0}
+  - objectType: MediumHa
+    required: 6
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

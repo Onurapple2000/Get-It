@@ -1,11 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
-/// Ekranın alt-ortasında sabit, yarı-saydam sanal joystick. Oto-başlar (sahne düzenlemeye gerek yok),
-/// sadece oynanışta (GameManager aktifken) görünür. HoleController `VirtualJoystick.Direction` okur.
+/// FLOATING (dokunulan yerde beliren) yarı-saydam sanal joystick. Oto-başlar; sadece oynanışta (GameManager aktifken)
+/// görünür. HoleController `VirtualJoystick.Direction` okur.
 ///
-/// Kullanım: alt-ortadaki halka içine/civarına başparmakla bas + sürükle → knob takip eder, Direction (-1..1)
-/// üretir (x=sağ, y=ileri/+Z). Bırakınca sıfırlanır.
+/// Davranış (2026-08-17 kullanıcı): oyun açılışında ekranın alt-ortasında (dinlenme konumu) durur. Oyuncu BOŞ bir yere
+/// (buton/etkileşimli UI olmayan) dokunup sürüklerse joystick merkezi ORASI olur ve oradan kumanda edilir. Parmağını
+/// kaldırıp başka boş bir yere basınca joystick oraya taşınır. Dokunulan yer bir buton/etkileşimli eleman ise ÖNCELİK
+/// UI'dadır (joystick devreye girmez).
 /// </summary>
 public class VirtualJoystick : MonoBehaviour
 {
@@ -13,9 +19,17 @@ public class VirtualJoystick : MonoBehaviour
 
     static Texture2D ringTex, discTex;
     Vector2 baseC, knobC;   // ekran koordinatı (y YUKARI)
+    Vector2 defaultBase;    // dokunulmuyorken (dinlenme) konum — alt-orta
     float baseR, knobR;
     int finger = -1;        // aktif dokunuş id; -2 = mouse
     bool active;
+    bool everTouched;       // bu levelda oyuncu ilk kez dokundu mu? (dokunana kadar DEFAULT konumda görünür)
+
+    void OnEnable() { SceneManager.sceneLoaded += OnSceneLoaded; }
+    void OnDisable() { SceneManager.sceneLoaded -= OnSceneLoaded; }
+
+    // Her level (sahne) başında: joystick yine DEFAULT konumda görünür; ilk dokunuşa kadar öyle kalır.
+    void OnSceneLoaded(Scene s, LoadSceneMode m) { everTouched = false; active = false; finger = -1; Direction = Vector2.zero; }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     static void Boot()
@@ -44,22 +58,22 @@ public class VirtualJoystick : MonoBehaviour
     {
         baseR = Mathf.Clamp(Screen.height * 0.12f, 60f, 220f);
         knobR = baseR * 0.46f;
-        // alt-orta, en alta yapışık değil (yukarıda ~%17); safe-area alt payını (gesture/home barı) da geç.
+        // dinlenme konumu: alt-orta, en alta yapışık değil (~%17); safe-area alt payını (gesture/home barı) da geç.
         float by = Mathf.Max(Screen.height * 0.17f, Screen.safeArea.yMin + baseR + 24f);
-        baseC = new Vector2(Screen.width * 0.5f, by);
+        defaultBase = new Vector2(Screen.width * 0.5f, by);
     }
 
     void Update()
     {
         if (!Playable) { active = false; finger = -1; Direction = Vector2.zero; return; }
         Layout();
-        if (!active) knobC = baseC;
+        if (!active) { baseC = defaultBase; knobC = defaultBase; }   // dokunulmuyor → dinlenme konumunda dur
 
         GetPointer(out Vector2 p, out bool down, out bool held, out bool up, out int id);
 
-        float actR = baseR * 2.4f;   // cömert etkinleşme alanı (tam halkaya basmaya gerek yok)
-        if (!active && down && (p - baseC).sqrMagnitude <= actR * actR)
-        { active = true; finger = id; }
+        // FLOATING: BOŞ bir yere dokununca joystick merkezi ORASI olur (buton/etkileşimli UI ise devreye girme → öncelik UI'da).
+        if (!active && down && !OverInteractiveUI(p))
+        { baseC = p; knobC = p; active = true; finger = id; everTouched = true; Direction = Vector2.zero; }
 
         if (active && id == finger && (held || down))
         {
@@ -69,7 +83,26 @@ public class VirtualJoystick : MonoBehaviour
             Direction = off / baseR;   // -1..1
         }
         if (active && id == finger && up)
-        { active = false; finger = -1; knobC = baseC; Direction = Vector2.zero; }
+        { active = false; finger = -1; Direction = Vector2.zero; }   // bırak → sonraki kare dinlenme konumuna döner
+    }
+
+    // Dokunulan ekran noktası ETKİLEŞİMLİ bir UI elemanı (buton vb.) üstünde mi? → öyleyse joystick devreye girmez.
+    static readonly List<RaycastResult> _hits = new();
+    static bool OverInteractiveUI(Vector2 screenPos)
+    {
+        var es = EventSystem.current;
+        if (es == null) return false;
+        var ped = new PointerEventData(es) { position = screenPos };
+        _hits.Clear();
+        es.RaycastAll(ped, _hits);
+        for (int i = 0; i < _hits.Count; i++)
+        {
+            var go = _hits[i].gameObject;
+            if (go == null) continue;
+            var sel = go.GetComponentInParent<Selectable>();
+            if (sel != null && sel.IsInteractable()) return true;   // buton/toggle/... → öncelik onda
+        }
+        return false;
     }
 
     // Aktif finger'ı takip et; yoksa ilk dokunuşu/mouse'u döndür.
@@ -110,7 +143,8 @@ public class VirtualJoystick : MonoBehaviour
 
     void OnGUI()
     {
-        if (!Playable) return;
+        // Level başında DEFAULT konumda görünür (dokunana kadar); ilk dokunuştan sonra yalnız DOKUNULURKEN çizilir (kullanıcı 2026-08-17).
+        if (!Playable || (everTouched && !active)) return;
         Layout();
         if (ringTex == null) ringTex = MakeRing(128, 0.80f);
         if (discTex == null) discTex = MakeDisc(96);

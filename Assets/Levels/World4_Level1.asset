@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 4
   levelIndex: 0
-  levelTime: 185
+  levelTime: 100
   spawns:
   - prefab: {fileID: 5941113284878926302, guid: 0a992eca2dee744ba91b9a6a0b37bfe1, type: 3}
     count: 1
@@ -82,10 +82,10 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: AntwerpenBelgische
-    required: 14
+    required: 32
     icon: {fileID: 0}
   - objectType: Berried
-    required: 10
+    required: 23
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

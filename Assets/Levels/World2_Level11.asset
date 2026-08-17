@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 10
-  levelTime: 190
+  levelTime: 100
   spawns:
   - prefab: {fileID: 6935143223766079710, guid: fb58649c404e04314bc99628e5d2d708, type: 3}
     count: 1
@@ -198,16 +198,16 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: NeonNightDrifter
-    required: 28
+    required: 35
     icon: {fileID: 0}
   - objectType: NeonNightHypercar
-    required: 24
+    required: 30
     icon: {fileID: 0}
   - objectType: CrimsonNeonRain
-    required: 20
+    required: 25
     icon: {fileID: 0}
   - objectType: NeonPinkSpeed
-    required: 16
+    required: 20
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

@@ -63,7 +63,7 @@ public class FoodsL1Tutorial : MonoBehaviour
         // ADIM 1 — HEDEF TABELALARI
         var barRt = bar != null ? (RectTransform)bar.transform : null;
         yield return Step(
-            "Bu nesneleri topla!",
+            Loc.T("tutCollect"),
             () => barRt != null ? RectTransformUtility.WorldToScreenPoint(null, barRt.position) : new Vector2(Screen.width * 0.5f, Screen.height * 0.9f),
             new Vector2(70f, -150f), pointAnim: true, waitDrag: false);
 
@@ -71,7 +71,7 @@ public class FoodsL1Tutorial : MonoBehaviour
         // olacak şekilde el yukarı (2026-07-25 kullanıcı). Yatay ofset küçük (merkezde), Y pozitif (yukarı).
         VirtualJoystick.TutorialActive = true;
         yield return Step(
-            "Sürükleyerek yönlendir",
+            Loc.T("tutDrag"),
             () => VirtualJoystick.BaseScreenPos(),
             new Vector2(30f, 95f), pointAnim: false, waitDrag: true);
         VirtualJoystick.TutorialActive = false;
@@ -148,7 +148,7 @@ public class FoodsL1Tutorial : MonoBehaviour
     {
         text.text = msg;
         tapHint.gameObject.SetActive(!waitDrag);
-        tapHint.text = waitDrag ? "" : "Devam için dokun";
+        tapHint.text = waitDrag ? "" : Loc.T("tutTap");
         hand.sprite = pointAnim ? point1 : thumb;
         // İşaret eli 180° çevrili (kullanıcı: resimler ters yönü gösteriyordu → başaşağı); başparmak düz.
         hand.rectTransform.localRotation = Quaternion.Euler(0f, 0f, pointAnim ? 180f : 0f);

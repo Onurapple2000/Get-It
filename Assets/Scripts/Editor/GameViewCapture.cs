@@ -9,10 +9,10 @@ using UnityEngine;
 /// </summary>
 public static class GameViewCapture
 {
-    const string OUT = "/private/tmp/claude-501/-Users-onur-Documents-GET-IT-Unity/58da8b83-13e6-421e-99c1-df73ead9823f/scratchpad/game_view.png";
+    const string OUT = "/private/tmp/claude-501/-Users-onur-Documents-GET-IT-Unity/f81521c7-d251-47cb-b63c-1d2453146ba6/scratchpad/game_view.png";
 
     // EDIT-MODE yakalama: Play gerekmez — sahnedeki ana kameradan render (landmark önizlemesi vb. incelemek için).
-    const string OUT2 = "/private/tmp/claude-501/-Users-onur-Documents-GET-IT-Unity/ba5ac354-2434-4661-ae2f-83a1ef1213ea/scratchpad/edit_view.png";
+    const string OUT2 = "/private/tmp/claude-501/-Users-onur-Documents-GET-IT-Unity/f81521c7-d251-47cb-b63c-1d2453146ba6/scratchpad/edit_view.png";
     [MenuItem("Tools/GET_IT/Capture Camera (edit mode)")]
     public static void RunEdit() => Capture(OUT2);
 

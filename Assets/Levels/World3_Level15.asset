@@ -14,57 +14,69 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 3
   levelIndex: 14
-  levelTime: 70
+  levelTime: 100
   spawns:
-  - prefab: {fileID: 6804420852042847969, guid: 6987159d7a66e4e71a86dcbc0a461395, type: 3}
+  - prefab: {fileID: 6587417937720483730, guid: 7020e7c2dec6f4cb29037f141e41a884, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 5273481399099880921, guid: 99b0ee14cbd5d4b68bf7d71ffd512bfa, type: 3}
+  - prefab: {fileID: 7551393821978323131, guid: 89725fff648fc4c1198a13144bd79f0b, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3154705882619836583, guid: 7163ab0baec8040a78396bca0c718527, type: 3}
+  - prefab: {fileID: 1149533948890947538, guid: 6913e3f6315b94fa7ab99678ab0af3b6, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 5567780868716880307, guid: 4de5e166bb2c2492494ad4aa6f12fa3b, type: 3}
+  - prefab: {fileID: 789139422102564979, guid: 083718f27678143f29ae3d1e84c406c6, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4153138201919716041, guid: fdd875757df554d74b498adcff2c59a1, type: 3}
+  - prefab: {fileID: 4614746129052270203, guid: 83c8d5b7464bf455999d263d78f01a25, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3863560286356696097, guid: 226319925426c48159314a8032df0220, type: 3}
+  - prefab: {fileID: 3447350045795678986, guid: f28db8c84e0774b6a8fbb9e3a29619b3, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 5607563602153612587, guid: 523ebd8cad39e47f988ff486e0bdbfb0, type: 3}
+  - prefab: {fileID: 1535272064887436250, guid: 27bfc419a974343db88db13d527776f6, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7189172726468900568, guid: 2b859e02e4a8c4081a64253a4a4ea3e1, type: 3}
+  - prefab: {fileID: 7548406480796303689, guid: f8f044e4de0d245f1ae8fda8cdbf401e, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6009613757797806202, guid: f91e229812d7d490eb64974aa6241c3d, type: 3}
+  - prefab: {fileID: 5141121223646874668, guid: 5c2ccf9c7468145d1a410d03a5dc50fd, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4404294226740115496, guid: 13cf31172c87141178ee62ffc439db7d, type: 3}
+  - prefab: {fileID: 5757783121218323512, guid: 4ec5b617c265a4c76a424f7ad33a9b8a, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6151950966683823700, guid: f7463486bba1841e5bb370805468797e, type: 3}
+  - prefab: {fileID: 7039979412593115602, guid: 4aaf3dbdcafb241aaa5cfd8f65d2c9f2, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3770808929211973944, guid: e61c1cbfde89f461a9818ea1bba94bfd, type: 3}
+  - prefab: {fileID: 6528052046215268771, guid: 7c9870f348c1a4ad7bf279a5a8ed2af2, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2942379174049513749, guid: 971325939911d4e4d9487647f27d8370, type: 3}
+  - prefab: {fileID: 7297774108299110286, guid: ad2c3c0db33c847d59abfb98549f6785, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2042527266374990383, guid: 55b448e7ad7f64115a2aae156d56a4bb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4150996264457555814, guid: ec06c88126ced42949aa8b582856e369, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 930164851123006893, guid: 2f7994e21ff1c4d41b0e3337d852e4e0, type: 3}
     count: 1
     stack: 1
     scale: 1
@@ -81,18 +93,18 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: NeonCityCorner
-    required: 22
+  - objectType: AnimeCommoner2
+    required: 66
     icon: {fileID: 0}
-  - objectType: Parisian
-    required: 15
+  - objectType: AnimeCommoner3
+    required: 53
     icon: {fileID: 0}
-  - objectType: PleaseSimil
-    required: 12
+  - objectType: AnimeNobleBui
+    required: 43
     icon: {fileID: 0}
-  - objectType: SciFiArt
-    required: 9
+  - objectType: AnimeNobleBui2
+    required: 36
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
-  bombCount: 9
+  bombCount: 8

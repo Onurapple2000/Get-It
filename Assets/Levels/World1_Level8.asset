@@ -86,13 +86,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Nigiri
-    required: 90
+    required: 112
     icon: {fileID: 0}
   - objectType: Sushi
-    required: 42
+    required: 52
     icon: {fileID: 0}
   - objectType: SalmonNigiri
-    required: 65
+    required: 81
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

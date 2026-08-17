@@ -45,7 +45,7 @@ public static class SuccessScreenBuilder
         // dağıtıldı (büyük buton+maskot için gevşek aralık): title(-320) → maskot(+160,460) → skor(-175) →
         // [yıldızlar -310, GameManager] → buton(-640,375) → [hediye -880, GameManager].
         var title = CreateText("Title", panelRT, "TEBRİKLER!", 84, font);
-        AnchorTop(title.rectTransform, new Vector2(0, -320), new Vector2(900, 140));   // biraz aşağı (kullanıcı)
+        AnchorTop(title.rectTransform, new Vector2(0, -430), new Vector2(900, 140));   // biraz daha aşağı (kullanıcı 2026-08-17)
 
         var moleImg = CreateImage("MoleMascot", panelRT, LoadSprite(MolePath));
         moleImg.preserveAspect = true;

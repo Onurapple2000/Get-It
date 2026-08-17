@@ -66,7 +66,7 @@ public class HardLevelIntro : MonoBehaviour
         var go = new GameObject("Title", typeof(RectTransform));
         go.transform.SetParent(parent, false);
         var txt = go.AddComponent<TextMeshProUGUI>();
-        txt.text = "HARD LEVEL";
+        txt.text = Loc.T("hardLevel");
         txt.fontSize = 158; txt.fontStyle = FontStyles.Bold; txt.alignment = TextAlignmentOptions.Center;
         txt.raycastTarget = false;
         txt.enableVertexGradient = true;

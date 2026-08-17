@@ -14,57 +14,149 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 15
   levelIndex: 8
-  levelTime: 165
+  levelTime: 100
   spawns:
-  - prefab: {fileID: 7579210102712223459, guid: b877263209959447eae0eb6d70dbcf57, type: 3}
+  - prefab: {fileID: 565737481486123493, guid: 9a184bd6664ff4250a8a90e279f1a322, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4472148511113952205, guid: e96e929600317495889cffd45d1e1f6e, type: 3}
+  - prefab: {fileID: 2468212582307412829, guid: ea191857d18834500a53757a4677ac78, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2236874903402550510, guid: 74978bfea55734b55b6c56897c978dc4, type: 3}
+  - prefab: {fileID: 8193320480280322261, guid: 52b0146d7f06540d49649bf1e88aff7e, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6191051446162401238, guid: 237c5cacc4d9f4c249443d10b0075bc4, type: 3}
+  - prefab: {fileID: 2202210848566317802, guid: f0fa761ca4c3a4029b1b5da63c6f8749, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 8467497923965301548, guid: 57b89f3342bc541bc902a824667a01e3, type: 3}
+  - prefab: {fileID: 2690248073028544690, guid: f061bf253a58d45a1983cf7e6e56b205, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6732881623941881341, guid: d85117265442946a599837f26d79ac2d, type: 3}
+  - prefab: {fileID: 1723741404955037785, guid: 7c2a306d1b73c4176bf3f32252d183b2, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7661586059532436176, guid: 87a1f0bbc8a7344cd9d155d266e335cf, type: 3}
+  - prefab: {fileID: 1530143862320629328, guid: 7a552bff6701440adaf03f1d3536e7d4, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3004008852359541906, guid: 7a98bbe7dba4b4f398d61e3a50117210, type: 3}
+  - prefab: {fileID: 6953301672512303417, guid: 2e25f38cce58a4116b5266834d82cf88, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6241868866196176616, guid: 4c8fa28158aa743649d16b7e37826bf4, type: 3}
+  - prefab: {fileID: 3464882632487239457, guid: c36da2556ed8f4239b5b2f35cec9d9d5, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7360370722412477682, guid: 7e3a26e0f97fb4ddf803ac1e9748e76e, type: 3}
+  - prefab: {fileID: 3952945170812812966, guid: 7d7eda287f55f4711bc42544c6f598cc, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3414718457698299751, guid: f80b1f8f33c5e4bc0b50cbae53c607d0, type: 3}
+  - prefab: {fileID: 929162419817552437, guid: d7bea17d4fe2d47caab1c4bfe8536ede, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6222204342426961790, guid: b04c42b638fa24529ac2d9d802bdfafa, type: 3}
+  - prefab: {fileID: 694494644896172356, guid: 359dcff1f496b412cb3656022b095c0b, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 5502561477743447977, guid: 3d5a15be830014c4e9e9773cad7f5bb4, type: 3}
+  - prefab: {fileID: 3830721031605193319, guid: aff11c449f39c405b9ddbdbe01109723, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 123608934383965046, guid: c7b6a5a56b3a54e6f87900ca7813136c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1276558990077048149, guid: c09c37733aa8a4befbabea77125453df, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6644680959873592458, guid: 7e9b0e795a58747d882b038db16aa9bb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2391504231536904719, guid: 35f8ef2d5fc7c4b46847343b13c51b2e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7876234262019818736, guid: 14a68cde73e554bb69f756494b5c35ef, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 907208372723187648, guid: 0b44e3b6d44b648079944ae3047f20a0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9151617045156308484, guid: bbdae8e44f79f4788814cbbdf745348d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2551563156162413329, guid: df3957c0b2f104edcb4001947069dfe9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5905467225801654829, guid: 6bb13571d9d7f4aab85a1588310c5eb7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5902692394386042525, guid: bb283ce6a764d411c8ea77ab6275de00, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8625067585463942921, guid: ec3f6ad788cee4c39936468cae8916bf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 514901107861834038, guid: a3de903207b79425fa74b2d7344c5a8c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6825185744648586330, guid: 05b0c1a71647041c1b1aa75f1a947b86, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3114332898036237742, guid: feadd8bf3d9304309b1623a5a02ce6d1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4434631020131738969, guid: efd76a00785dc4dc6bf535049a26a7ba, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 430976911484627499, guid: bcaecf5712526442ca67d8d22cf77718, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5553813514289538797, guid: a345050d48e5b4feb87a19645ffafccd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9166551357418322949, guid: 2aa6b4299f9064a45843c6cd5b8a9c26, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3660369297961483471, guid: d5357e25ae82c4fbbbcaee36c9517bb9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2691222043342603924, guid: a66eff758e891401084cabfe8b853746, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 847440214329357075, guid: fabfbe83e20b54467adcaf9224718f9a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7921592767614243096, guid: 4aa14e9a69f504f858e1a31830b24a63, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 265032927140515258, guid: 1a7bdd41dbcbe433a868529d9f5fd154, type: 3}
     count: 1
     stack: 1
     scale: 1
@@ -80,23 +172,15 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 9151617045156308484, guid: bbdae8e44f79f4788814cbbdf745348d, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 7921592767614243096, guid: 4aa14e9a69f504f858e1a31830b24a63, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   objectives:
-  - objectType: GoldTechAzte
-    required: 20
+  - objectType: RichDecoratedJewe2
+    required: 31
     icon: {fileID: 0}
-  - objectType: HighlyDeta
-    required: 14
+  - objectType: SingleHighlyDetai
+    required: 22
     icon: {fileID: 0}
-  - objectType: HighlyPhot
-    required: 11
+  - objectType: OrnateFiligreeJewel
+    required: 17
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

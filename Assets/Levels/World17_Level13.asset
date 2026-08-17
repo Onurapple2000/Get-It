@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 12
-  levelTime: 155
+  levelTime: 100
   spawns:
   - prefab: {fileID: 201748791432439521, guid: dc01177cb440d4af290a26076c4b42a4, type: 3}
     count: 1
@@ -56,10 +56,6 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6151950966683823700, guid: f7463486bba1841e5bb370805468797e, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   - prefab: {fileID: 8939287829342863737, guid: bebb3e3a096f941c5865176805edcf74, type: 3}
     count: 1
     stack: 1
@@ -93,14 +89,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
+  - objectType: Strawberry
+    required: 37
+    icon: {fileID: 0}
+  - objectType: PlaneRunway
+    required: 27
+    icon: {fileID: 0}
   - objectType: PileBooks
-    required: 24
+    required: 15
     icon: {fileID: 0}
-  - objectType: StormyGrayCat
-    required: 17
-    icon: {fileID: 0}
-  - objectType: GermanShepherdDog
-    required: 13
+  - objectType: Tree
+    required: 6
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

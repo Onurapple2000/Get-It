@@ -14,8 +14,80 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 12
   levelIndex: 7
-  levelTime: 167.5
+  levelTime: 100
   spawns:
+  - prefab: {fileID: 3424609055076327630, guid: 6f787ade3cc88411789cde100b539034, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5609792150351358850, guid: f2c2c0444177a49829d52fababc41d8f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1508946049183663702, guid: 62439d257edf641fb89fbedc1fab33d4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1375630222541543085, guid: 76ef9aa391b284109a683356effe6cd2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1976264882270921874, guid: 39796b16598244ecf8fd205cb162e9f3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7936019131625073786, guid: 6a7cd4ae16fd840688b2dc04db0b4270, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9197502477530404091, guid: cd2adc8c66cd8427d86256309a7f547e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2875355551043306786, guid: 0a29e30226293404d84dcc1c0a9a4b91, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5557585507925553399, guid: ce8028b2349fe478db20225f263a1349, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3505652961147040425, guid: 97ea9152a24b447a6b5d3d72dc80bc60, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7880110782824478628, guid: 3d5b4f2c707084a7088bf6dd0bf51a18, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6370447938475064143, guid: 87110b77433914aff826699f022525e1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4720068426342733414, guid: 1168660a97b2d46d5aa0340f9822e0e9, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8093378087471369501, guid: 4717be6bb9f054b29b6d7b461b70f739, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3403047867255040919, guid: 6893c34cb9da24788bd97623c95c5a1d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8995039321211217919, guid: 5dd3fdf2a90dc42d7a0c517e981af545, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6590474309752084308, guid: 7f77e87ff85ff43029fe6e0394f40125, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4106087515001393883, guid: 7c6fc6c982bbf4ed2954398bc9761f0a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 8182373191392631945, guid: 7ce54ea4ab8d5406ea82509b32ffcca8, type: 3}
     count: 1
     stack: 1
@@ -68,6 +140,26 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 2463000800717309024, guid: 9eb8021bab18b47f993603c89c6ebe34, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2390371705965100762, guid: 2375e091db46042c581c86921206f7ad, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6869355573927337155, guid: d781d68e5339548d58532d16854efa47, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5369896086375760086, guid: df8a1390580db48ffaf4b5283b84c2ca, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7458548474968675307, guid: 66e1369a351c84d99bd1bb6d8146fabf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +173,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Plane
-    required: 19
+  - objectType: StukaAircraftIllust
+    required: 29
     icon: {fileID: 0}
-  - objectType: PlaneRunway
-    required: 13
+  - objectType: HighlyUltr2
+    required: 21
     icon: {fileID: 0}
-  - objectType: PMustangFighter
-    required: 10
+  - objectType: RCWa
+    required: 15
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

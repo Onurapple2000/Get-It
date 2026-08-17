@@ -24,11 +24,13 @@ public static class BuildingObjectCreator
 
     // Boyut kademeleri: en BÜYÜK boyut (x/y/z) bu birime ölçeklenir. Delik 1.5 çapında başlar → Tiny(1.2)/Small(1.8)
     // erken yutulur, gökdelen büyük delik ister. Binalar arabalardan büyük hissettirir ama hole maxSize (4.5) içinde.
+    // 2026-07-31 SIFIRDAN KURULUM: binalar KÜÇÜLDÜ (kullanıcı). Delik 1.5 çapında başlar → Tiny/Small ≤1.5
+    // hemen yutulur (takılıp "kesik" durmaz); Medium/Large çeşit için biraz büyük (hole maxSize 3.6 içinde).
     struct Tier { public float dim; public int score; public float grow; public Tier(float d, int s, float g){dim=d;score=s;grow=g;} }
-    static readonly Tier Tiny   = new Tier(1.2f, 10, 0.12f);
-    static readonly Tier Small  = new Tier(1.8f, 18, 0.17f);
-    static readonly Tier Medium = new Tier(2.6f, 30, 0.24f);
-    static readonly Tier Large  = new Tier(3.6f, 48, 0.32f);
+    static readonly Tier Tiny   = new Tier(0.85f, 8,  0.10f);
+    static readonly Tier Small  = new Tier(1.25f, 15, 0.14f);
+    static readonly Tier Medium = new Tier(1.70f, 26, 0.20f);
+    static readonly Tier Large  = new Tier(2.30f, 40, 0.28f);
 
     static readonly string[] TinyKeys  = { "hut", "cabin", "shack", "kiosk", "booth", "cottage", "shed", "tent", "outhouse", "small", "cart", "stall", "birdhouse", "doghouse", "toilet", "phone", "mailbox" };
     static readonly string[] LargeKeys = { "skyscraper", "sky_scraper", "tower", "highrise", "high_rise", "mall", "stadium", "cathedral", "castle", "factory", "warehouse", "hotel", "office", "apartment", "temple", "palace", "arena", "airport", "station", "hospital", "mosque", "church_big" };
@@ -114,8 +116,8 @@ public static class BuildingObjectCreator
         b = CombinedBounds(mesh);
         mesh.transform.localPosition = new Vector3(-b.center.x, -b.min.y, -b.center.z);  // ortala + taban y=0
 
-        MeshDecimate.DecimateInstance(mesh, 8000, "Assets/Prefabs/Buildings/Meshes", name);
-        MeshyImport.DownscaleTextures(mesh, "Assets/Prefabs/Buildings/Tex", name, 512);   // binalar: 512 (kullanıcı isteği, daha küçük)
+        MeshDecimate.DecimateInstance(mesh, 5000, "Assets/Prefabs/Buildings/Meshes", name);   // 2026-07-31: 8000→5000 (daha küçük mesh)
+        MeshyImport.DownscaleTextures(mesh, "Assets/Prefabs/Buildings/Tex", name, 256);        // 2026-07-31: 512→256 (kullanıcı: texture küçült)
 
         var rb = root.AddComponent<Rigidbody>();
         rb.mass = Mathf.Max(1f, t.dim * 5f);
@@ -175,10 +177,10 @@ public static class BuildingObjectCreator
         // Anahtar yoksa isimden DETERMİNİSTİK hash → SMALL ağırlıklı dağılım.
         int h = 0; foreach (char c in low) h = h * 31 + c;
         int bkt = (h & 0x7fffffff) % 100;
-        if (bkt < 12) return Tiny;     // %12
-        if (bkt < 66) return Small;    // %54 — EN FAZLA
-        if (bkt < 95) return Medium;   // %29
-        return Large;                  // %5 — çok az big
+        if (bkt < 15) return Tiny;     // %15
+        if (bkt < 70) return Small;    // %55 — EN FAZLA (≤1.5, hemen yutulur)
+        if (bkt < 97) return Medium;   // %27
+        return Large;                  // %3 — çok az big
     }
 
     static string CleanName(string raw)

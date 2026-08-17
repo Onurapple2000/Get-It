@@ -90,13 +90,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Apple
-    required: 80
+    required: 100
     icon: {fileID: 0}
   - objectType: Strawberry
-    required: 85
+    required: 106
     icon: {fileID: 0}
   - objectType: Tomato
-    required: 60
+    required: 75
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

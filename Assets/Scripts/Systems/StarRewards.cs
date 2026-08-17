@@ -2,75 +2,69 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Yıldız kilometre taşı hediyeleri. Oyuncunun TOPLAM yıldızı belirli eşiklere ulaştıkça ödül verir:
-///  - "10 dk sınırsız can" (LivesManager.GrantUnlimited)
-///  - güç-up kazanımı (PowerUpInventory'ye eklenir)
-/// Her hediye BİR kez verilir (claimed sayacı PlayerPrefs'te). Success sonrası ve menü açılışında çağrılır
-/// (idempotent). Yeni verilen hediyelerin açıklama listesini döndürür (UI/toast için).
+/// Yıldız → güç-up ödülleri (2026-08-06 kullanıcı, PERİYODİK): oyuncunun TOPLAM yıldızına göre her N yıldızda 1 adet:
+///   • her 5 yıldız  → +1 Hız
+///   • her 7 yıldız  → +1 Mıknatıs
+///   • her 10 yıldız → +1 Büyütme
+///   • her 20 yıldız → +1 SÜPER
+/// Her tür için kaç adet verildiği PlayerPrefs'te sayılır (idempotent). Kazanılanlar PowerUpInventory'ye eklenir.
+/// CheckAndGrant, success sonrası ve menü açılışında çağrılır; yeni verilenlerin ("2x Hız" vb.) listesini döndürür.
 /// </summary>
 public static class StarRewards
 {
-    public enum Kind { UnlimitedLives, PowerUp }
-
-    public struct Gift
+    static readonly (PowerUpType type, int per, string label)[] Rules =
     {
-        public int stars;          // gereken toplam yıldız
-        public Kind kind;
-        public int minutes;        // UnlimitedLives için süre
-        public PowerUpType power;  // PowerUp için tür
-        public string label;
-    }
-
-    // Eşikler ARTAN sırada olmalı (claimed sayacı buna dayanır).
-    static readonly Gift[] Gifts =
-    {
-        new Gift { stars = 10, kind = Kind.UnlimitedLives, minutes = 10, label = "10 dk SINIRSIZ CAN" },
-        new Gift { stars = 20, kind = Kind.PowerUp, power = PowerUpType.SizeBurst, label = "Büyüme güç-up" },
-        new Gift { stars = 30, kind = Kind.PowerUp, power = PowerUpType.Speed,     label = "Hız güç-up" },
-        new Gift { stars = 45, kind = Kind.UnlimitedLives, minutes = 10, label = "10 dk SINIRSIZ CAN" },
-        new Gift { stars = 60, kind = Kind.PowerUp, power = PowerUpType.Magnet,    label = "Mıknatıs güç-up" },
-        new Gift { stars = 80, kind = Kind.UnlimitedLives, minutes = 10, label = "10 dk SINIRSIZ CAN" },
-        new Gift { stars = 100, kind = Kind.PowerUp, power = PowerUpType.SizeBurst, label = "Büyüme güç-up" },
+        (PowerUpType.Speed,     5,  "Hız"),
+        (PowerUpType.Magnet,    7,  "Mıknatıs"),
+        (PowerUpType.SizeBurst, 10, "Büyütme"),
+        (PowerUpType.Super,     20, "SÜPER"),
     };
 
-    const string KEY_CLAIMED = "StarGiftsClaimed";   // verilmiş hediye sayısı (0..Gifts.Length)
+    static string KeyGranted(PowerUpType t) => $"StarGift_{t}_Granted";
 
-    /// <summary>Toplam yıldıza göre hak edilen ama henüz verilmemiş hediyeleri verir. Yeni verilenlerin
-    /// açıklamalarını döndürür (boşsa yeni hediye yok).</summary>
-    public static List<string> CheckAndGrant()
+    /// <summary>Toplam yıldıza göre hak edilen ama verilmemiş güç-up'ları verir. Yeni verilenleri (tür, adet) döndürür
+    /// (success ekranı uçuş animasyonu bunu kullanır).</summary>
+    public static List<(PowerUpType type, int count)> CheckAndGrant()
     {
-        var granted = new List<string>();
+        var granted = new List<(PowerUpType, int)>();
         int total = StarManager.Total();
-        int claimed = Mathf.Clamp(PlayerPrefs.GetInt(KEY_CLAIMED, 0), 0, Gifts.Length);
-
-        // Eşikler artan → hak edilen sayısı = stars<=total olan hediye adedi.
-        int eligible = 0;
-        for (int i = 0; i < Gifts.Length; i++) if (total >= Gifts[i].stars) eligible++;
-
-        for (int i = claimed; i < eligible; i++)
+        bool any = false;
+        foreach (var r in Rules)
         {
-            Grant(Gifts[i]);
-            granted.Add(Gifts[i].label);
+            int earned  = total / r.per;                              // toplam yıldızdan hak edilen adet
+            int already = PlayerPrefs.GetInt(KeyGranted(r.type), 0);
+            if (earned > already)
+            {
+                int add = earned - already;
+                PowerUpInventory.Add(r.type, add);
+                PlayerPrefs.SetInt(KeyGranted(r.type), earned);
+                granted.Add((r.type, add));
+                any = true;
+            }
         }
-        if (eligible > claimed)
-        {
-            PlayerPrefs.SetInt(KEY_CLAIMED, eligible);
-            PlayerPrefs.Save();
-        }
+        if (any) PlayerPrefs.Save();
         return granted;
     }
 
-    static void Grant(Gift g)
+    public static string Label(PowerUpType t) => t switch
     {
-        switch (g.kind)
-        {
-            case Kind.UnlimitedLives:
-                if (LivesManager.Instance != null)
-                    LivesManager.Instance.GrantUnlimited(System.TimeSpan.FromMinutes(g.minutes));
-                break;
-            case Kind.PowerUp:
-                PowerUpInventory.Add(g.power, 1);
-                break;
-        }
+        PowerUpType.Speed => "Hız", PowerUpType.Magnet => "Mıknatıs",
+        PowerUpType.SizeBurst => "Büyütme", PowerUpType.Super => "SÜPER", _ => "",
+    };
+
+    /// <summary>(tür,adet) listesini metin etiketlerine çevirir ("2x Mıknatıs" vb.).</summary>
+    public static List<string> Format(List<(PowerUpType type, int count)> granted)
+    {
+        var l = new List<string>();
+        if (granted != null) foreach (var g in granted) l.Add(g.count > 1 ? $"{g.count}x {Label(g.type)}" : Label(g.type));
+        return l;
+    }
+
+    /// <summary>Bir sonraki ödüle kaç yıldız kaldı (UI ipucu için) — en yakın eşik.</summary>
+    public static int StarsToNextGift()
+    {
+        int total = StarManager.Total(), best = int.MaxValue;
+        foreach (var r in Rules) best = Mathf.Min(best, r.per - (total % r.per));
+        return best == int.MaxValue ? 0 : best;
     }
 }

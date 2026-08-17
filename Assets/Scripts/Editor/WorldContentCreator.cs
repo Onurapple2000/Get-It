@@ -289,8 +289,82 @@ public static class WorldContentCreator
     // DÜNYA 3 = BİNALAR: 96 binayı 20 levele OTOMATİK dağıtır (elle isim yazmadan). Her level ~13 bina türü
     // (kayan pencere → 20 levelda hepsi kapsanır, çeşitlilik), hedefler otomatik (binalar büyük → düşük adet),
     // artan zorluk (süre ↓, hedef ↑, bomba). Binalar YÜKSEK → kule (stack) YOK, hepsi dolu halka (stack 1).
+    // Yalnız BİNALAR (dünya 3) levellarını üretir + GameScene'deki LevelManager.worlds'te world3 girişini bağlar.
+    // Diğer dünyaların asset'lerine ve zaman ayarlarına DOKUNMAZ (Create All hepsini ezerdi). GameScene açık olmalı.
+    [MenuItem("Tools/GET_IT/Create Building Levels")]
+    public static void CreateBuildingLevels()
+    {
+        var bomb = AssetDatabase.LoadAssetAtPath<GameObject>(BOMB_PATH);
+        if (bomb == null) Debug.LogWarning("[WorldContent] Bomb.prefab yok — hard levellar bombasız kurulur.");
+        var buildings = BuildBuildingWorld(bomb);
+
+        var lmGo = GameObject.Find("LevelManager");
+        var lm = lmGo != null ? lmGo.GetComponent<LevelManager>() : null;
+        bool wired = false;
+        if (lm != null && lm.worlds != null)
+            foreach (var w in lm.worlds)
+                if (w != null && w.worldId == 3) { w.levels = buildings; wired = true; EditorUtility.SetDirty(lm); break; }
+        if (!wired) Debug.LogError("[WorldContent] worldId==3 girişi bulunamadı (GameScene açık mı?) — asset'ler üretildi ama BAĞLANMADI.");
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        if (lmGo != null) { UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(lmGo.scene); UnityEditor.SceneManagement.EditorSceneManager.SaveOpenScenes(); }
+        Debug.Log($"[WorldContent] Binalar levelları HAZIR + world3 {(wired ? "BAĞLANDI" : "bağlanmadı")}. Diğer dünyalar dokunulmadı.");
+    }
+
+    // BİNALAR (dünya 3) — 2026-07-31 SIFIRDAN: Cars-tarzı dizilim (LevelManager world3→ComposeCarCity).
+    // Hedef ÇEŞİDİ: L1=2, L2..L10=3, L11..L15=4 (hepsi FAZLA MİKTAR). Süre: normal 120, hard(5/10/15)=100.
+    // Küçük binalar + 500-600 yoğunluk → bol hedef toplanır. Bombalar hard levellarda (IsHard gizli+bol yerleştirir).
     static LevelData[] BuildBuildingWorld(GameObject bomb)
-        => BuildGenericWorld("Binalar", 3, BUILDINGS_DIR, bomb, 10, 22);
+    {
+        var names = new List<string>();
+        foreach (var guid in AssetDatabase.FindAssets("t:Prefab", new[] { BUILDINGS_DIR }))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guid);
+            if (path.StartsWith(BUILDINGS_DIR + "/") && path.EndsWith(".prefab"))
+                names.Add(System.IO.Path.GetFileNameWithoutExtension(path));
+        }
+        names.RemoveAll(n => RemoveBuildingModels.RemovedNames.Contains(n));   // kullanıcı çıkardı → hiç kullanma
+        names.Sort();
+        var levels = new LevelData[LEVELS_PER_WORLD];
+        int N = names.Count;
+        if (N == 0) { Debug.LogWarning("[WorldContent] Binalar prefab yok — önce Create Building Objects çalıştır."); return levels; }
+
+        int width = Mathf.Min(16, N);            // bol çeşit / level
+        int denom = LEVELS_PER_WORLD - 1;
+        for (int i = 0; i < LEVELS_PER_WORLD; i++)
+        {
+            var uniq = new List<string>(); var seen = new HashSet<string>();
+            for (int j = 0; j < N && uniq.Count < width; j++)
+            {
+                string nm = names[(i * 7 + j) % N];   // adım 7 → levellar arası farklı öbek
+                if (seen.Add(nm)) uniq.Add(nm);
+            }
+
+            var spawns = new List<S>();
+            foreach (var nm in uniq) spawns.Add(new S(nm, 1, 1, 1f));
+
+            // Hedef çeşidi rampası: L1=2, L2..L10=3, L11..L15=4 (uniq yeterliyse)
+            int nObj = (i == 0) ? 2 : (i <= 9 ? 3 : 4);
+            nObj = Mathf.Min(nObj, uniq.Count);
+
+            float f = i / (float)denom;
+            int baseReq = Mathf.RoundToInt(Mathf.Lerp(40f, 66f, f));   // FAZLA miktar (artan)
+            float[] fr = { 1f, 0.8f, 0.65f, 0.55f };
+            var objs = new List<O>();
+            for (int k = 0; k < nObj; k++) objs.Add(new O(uniq[k], Mathf.Max(12, Mathf.RoundToInt(baseReq * fr[k]))));
+
+            bool hard = (i == 4 || i == 9 || i == 14);        // 5/10/15. level
+            float time = hard ? 100f : 120f;                  // kolay 120, hard 100 (kullanıcı)
+            int bombCount = hard ? 8 : 0;                     // hard: bomba (IsHard gizli+bol yerleştirir)
+
+            levels[i] = CreateLevel($"World3_Level{i + 1}", 3, i, time, BUILDINGS_DIR,
+                spawns.ToArray(), objs.ToArray(), (bombCount > 0 ? bomb : null), bombCount);
+        }
+        EnsureAllCovered(levels, BUILDINGS_DIR, RemoveBuildingModels.RemovedNames);   // çıkarılanları kapsama-garantisine de sokma
+        Debug.Log($"[WorldContent] Binalar: {N} bina → 15 level (Cars-tarzı; hedef 2/3/4, süre 120/100).");
+        return levels;
+    }
 
     const int LEVELS_PER_WORLD = 15;   // 2026-07-24: dünya başına 20→15 (kullanıcı: daha az tekrar, oyuncu odaklı)
 

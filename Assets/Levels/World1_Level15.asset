@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 1
   levelIndex: 14
-  levelTime: 70
+  levelTime: 80
   spawns:
   - prefab: {fileID: 5407322644990780451, guid: 7e546b1d893ca4b8fb8591e8ae4cdc3c, type: 3}
     count: 1
@@ -86,16 +86,16 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: PizzaSlice
-    required: 64
+    required: 80
     icon: {fileID: 0}
   - objectType: MargheritaPizza
-    required: 54
+    required: 68
     icon: {fileID: 0}
   - objectType: WholePizza
-    required: 34
+    required: 42
     icon: {fileID: 0}
   - objectType: Cheeseburger
-    required: 44
+    required: 55
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

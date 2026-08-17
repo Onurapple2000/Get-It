@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 0
-  levelTime: 185
+  levelTime: 100
   spawns:
   - prefab: {fileID: 346872814459262526, guid: 0518b4ee4f1924b5092dc0d5ffbadcfc, type: 3}
     count: 1
@@ -93,11 +93,11 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Apple
-    required: 14
+  - objectType: AmberBottleWhe
+    required: 18
     icon: {fileID: 0}
-  - objectType: AeroWingGTRacer
-    required: 10
+  - objectType: Bench
+    required: 13
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

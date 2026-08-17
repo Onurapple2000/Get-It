@@ -94,16 +94,16 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Broccoli
-    required: 82
+    required: 102
     icon: {fileID: 0}
   - objectType: Tomato
-    required: 78
+    required: 98
     icon: {fileID: 0}
   - objectType: Cucumber
-    required: 42
+    required: 52
     icon: {fileID: 0}
   - objectType: Pear
-    required: 70
+    required: 88
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

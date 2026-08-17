@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 3
-  levelTime: 170
+  levelTime: 100
   spawns:
   - prefab: {fileID: 856293560491793551, guid: 7fa5a5a4fa09c49a9b76f8a9fde1aebf, type: 3}
     count: 1
@@ -198,13 +198,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: SpikedRustMuscle
-    required: 28
+    required: 35
     icon: {fileID: 0}
   - objectType: SunfireMuscleCar
-    required: 22
+    required: 28
     icon: {fileID: 0}
   - objectType: MidnightCopper
-    required: 18
+    required: 22
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 15
   levelIndex: 0
-  levelTime: 185
+  levelTime: 100
   spawns:
   - prefab: {fileID: 3017834157853879882, guid: a48a608eea8e24fc08f2043397e50a0d, type: 3}
     count: 1
@@ -68,6 +68,98 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 189314302184281226, guid: 8b64d8dde24204fa9b3892476fd46234, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3875624660030004539, guid: f70b87b9e210f49f4bffb7a542b96957, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 458253965407566341, guid: ce56bb8dad3f240fdb4cce47e31db61a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3373853589327253879, guid: facae395c50354069af5f7592ac63cda, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1585766723670520555, guid: 8021c04c4da414bde8a3340e44c6435a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4531703374692277568, guid: 79c584ca876e74d0780d345852cfa8ea, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2078467885659845860, guid: 0f89409d6712c45a5a0aa528bf21979d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3526951066501663691, guid: ce6d0a31d8cfe46d0abf83cc2dba1bb7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8145948135056401270, guid: a039da4261fd54fc8a61b399d302892b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2117645178205379073, guid: fae03ac903ad14113894c362af61085e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5854725377713950130, guid: b000846b910b64ba2a17e4f57bcf1f1a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6314868246370292072, guid: 691ddf14786504768abc90b337dde580, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5124921785386770914, guid: 6cd8d6bd8271249f7befcfd82cd62783, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7163147301266671365, guid: 0ee72a19d075b46fea30a750fcd64059, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5020711050121500272, guid: b3622d8c66bf34576a863350b72322c1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5712254639808982901, guid: 4366cc3f57ac54cceb3d8211b2d5248b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 149706722601701110, guid: 7959d17341e17488f82aa7d4703d200a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6141128563547099579, guid: 3e142b4dc13a64bebbfb8d066b4b96ed, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3468581094560081300, guid: e69fe29ddbec641ba95061df0acb573f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 684941140500957959, guid: fbd979b2af90942c2bef98fcea723d6e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7563397563535280277, guid: 1052692499b544afca1bb57b701a9763, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 953039843324486592, guid: e75f45e0c0e6943d4ac4af329157dc7b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8278930472512394854, guid: 6f45f7d5611944f24a75b8466c32dcf7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -80,24 +172,12 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 694494644896172356, guid: 359dcff1f496b412cb3656022b095c0b, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 3114332898036237742, guid: feadd8bf3d9304309b1623a5a02ce6d1, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 2307824531391625041, guid: a5e6db999d27b476cabbb3cbd0f2931a, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   objectives:
-  - objectType: 18KGoldGem
-    required: 12
+  - objectType: EasterEgg2026Fabe
+    required: 18
     icon: {fileID: 0}
-  - objectType: ArborealJewelCh
-    required: 8
+  - objectType: GoldenEleganceBrace
+    required: 13
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

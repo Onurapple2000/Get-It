@@ -70,9 +70,20 @@ public class HoleController : MonoBehaviour
         Vector3 newPos = transform.position + input * moveSpeed * Time.deltaTime;
         newPos.y = 0.05f;
         float halfSize = currentSize * 0.5f;
-        float limit = boundaryLimit;
-        newPos.x = Mathf.Clamp(newPos.x, -limit + halfSize, limit - halfSize);
-        newPos.z = Mathf.Clamp(newPos.z, -limit + halfSize, limit - halfSize);
+        // ŞEKİLLİ ARENA (world-5+): dikdörtgen + dışlama kutularına göre ANALİTİK sınırla (delik collider'sız, transform
+        // ile hareket ediyor → duvar durduramaz). Şekilsiz dünyalarda eski kare clamp (boundaryLimit) aynen çalışır.
+        var lm = LevelManager.Instance;
+        if (lm != null && lm.ArenaShaped)
+        {
+            Vector2 c = lm.ConfineHoleXZ(new Vector2(newPos.x, newPos.z), halfSize);
+            newPos.x = c.x; newPos.z = c.y;
+        }
+        else
+        {
+            float limit = boundaryLimit;
+            newPos.x = Mathf.Clamp(newPos.x, -limit + halfSize, limit - halfSize);
+            newPos.z = Mathf.Clamp(newPos.z, -limit + halfSize, limit - halfSize);
+        }
 
         transform.position = newPos;
         float dt = Mathf.Max(Time.deltaTime, 1e-5f);

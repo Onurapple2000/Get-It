@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using TMPro;
 
 /// <summary>Yutulan özel nesnenin verdiği güç türü (Sprint 4 — Materyal/Güç-Up sistemi).</summary>
-public enum PowerUpType { None, Speed, Magnet, SizeBurst }
+public enum PowerUpType { None, Speed, Magnet, SizeBurst, Super }
 
 /// <summary>
 /// Güç-Up / Materyal sistemi (Sprint 4). Belirli nesneler yutulunca OTOMATİK geçici güç verir
@@ -25,13 +25,22 @@ public class PowerUpManager : MonoBehaviour
     [Header("Magnet (Elmas)")]
     public float magnetDuration = 15f;
     [Tooltip("Delik yarıçapına eklenen çekim menzili.")]
-    public float magnetRange = 6f;
+    public float magnetRange = 6f;   // kinematik kaydırma ucuz olduğu için eski geniş menzil geri (güç korunur, kasma yok)
     [Tooltip("Çekim ivmesi (yerçekiminden bağımsız).")]
     public float magnetForce = 14f;
 
     [Header("SizeBurst (Araç)")]
     [Tooltip("Burst'te deliğe DOĞRUDAN eklenen boyut (GrowInstant → growMultiplier'sız). Belirgin anlık büyüme.")]
     public float burstGrow = 0.8f;
+
+    [Header("Super (SÜRESİZ — sadece ödül/satın alma; sahnede doğmaz)")]
+    [Tooltip("Kinematik süpürme menzili (delik yarıçapına eklenir). KISA → sadece çok yakın nesneleri çeker (kullanıcı 2026-08-17: 5→3).")]
+    public float superRange = 3f;
+    [Tooltip("Nesneleri deliğe kaydırma hızı (fizik-ötesi). 2026-08-17: 24→16 (çekiş gücü biraz azaltıldı).")]
+    public float superSweepSpeed = 16f;
+    [Tooltip("Süper aktifken delik büyüme çarpanı katı (genişleme hızlandırıcı).")]
+    public float superGrowMult = 3f;
+    bool superActive;
 
     HoleController hole;
     float baseSpeed;
@@ -52,6 +61,19 @@ public class PowerUpManager : MonoBehaviour
         hole = FindAnyObjectByType<HoleController>();
         if (hole != null) baseSpeed = hole.moveSpeed;
         BuildHud();
+        if (GetComponent<PowerUpInventoryHud>() == null) gameObject.AddComponent<PowerUpInventoryHud>();   // oyun-içi envanter HUD'ı
+    }
+
+    /// <summary>Level bitince (success): devam eden güç-up göstergelerini (süre barları/toast) + envanter HUD'ını gizle
+    /// ve etkileri durdur (kullanıcı 2026-08-17: bunlar success ekranında kalmasın).</summary>
+    public void EndLevelHud()
+    {
+        speedTime = 0f; magnetTime = 0f; superActive = false; flashTime = 0f;
+        if (hole != null) hole.moveSpeed = baseSpeed;
+        if (speedRow != null) speedRow.SetActive(false);
+        if (magnetRow != null) magnetRow.SetActive(false);
+        if (flashRoot != null) flashRoot.SetActive(false);
+        GetComponent<PowerUpInventoryHud>()?.Hide();
     }
 
     /// <summary>Bir güç-up nesnesi yutulunca çağrılır (GameManager.ReportSwallowed).</summary>
@@ -68,6 +90,12 @@ public class PowerUpManager : MonoBehaviour
                 break;
             case PowerUpType.SizeBurst:
                 if (hole != null) hole.GrowInstant(burstGrow);   // DOĞRUDAN (growMultiplier'sız) → belirgin büyüme
+                break;
+            case PowerUpType.Super:
+                // SÜRESİZ: (1) genişleme hızlandırıcı — büyüme çarpanını kalıcı yükselt + anlık büyüme,
+                // (2) KİNEMATİK SÜPÜRME MIKNATISI (FixedUpdate/SuperSweep) — menzildeki her şeyi deliğe kaydırır (cap yok).
+                superActive = true;
+                if (hole != null) { hole.GrowInstant(burstGrow); hole.growMultiplier *= superGrowMult; }
                 break;
         }
         AudioManager.Instance?.PlayPowerup();   // tüm güçler tek ses (powerups.mp3), yoksa prosedürel
@@ -87,15 +115,20 @@ public class PowerUpManager : MonoBehaviour
         }
         else if (type == PowerUpType.SizeBurst)
         {
-            Flash("BÜYÜME!", TipColor(type), 1.0f);   // anlık güç (HUD bar'ı yok) — kısa teyit
+            Flash(Loc.T("flashGrow"), TipColor(type), 1.0f);   // anlık güç (HUD bar'ı yok) — kısa teyit
+        }
+        else if (type == PowerUpType.Super)
+        {
+            Flash(Loc.T("flashSuper"), TipColor(type), 1.4f);
         }
     }
 
     static string TipText(PowerUpType t) => t switch
     {
-        PowerUpType.Speed     => "HIZ!  Delik bir süre daha hızlı hareket eder",
-        PowerUpType.Magnet    => "MIKNATIS!  Yakındaki nesneler deliğe çekilir",
-        PowerUpType.SizeBurst => "BÜYÜME!  Delik bir anda büyür",
+        PowerUpType.Speed     => Loc.T("tipSpeed"),
+        PowerUpType.Magnet    => Loc.T("tipMagnet"),
+        PowerUpType.SizeBurst => Loc.T("tipSize"),
+        PowerUpType.Super     => Loc.T("tipSuper"),
         _ => "",
     };
 
@@ -104,6 +137,7 @@ public class PowerUpManager : MonoBehaviour
         PowerUpType.Speed     => new Color(1f, 0.82f, 0.25f),
         PowerUpType.Magnet    => new Color(0.4f, 0.85f, 1f),
         PowerUpType.SizeBurst => new Color(0.45f, 0.95f, 0.5f),
+        PowerUpType.Super     => new Color(1f, 0.5f, 0.2f),
         _ => Color.white,
     };
 
@@ -132,13 +166,56 @@ public class PowerUpManager : MonoBehaviour
         UpdateHud();
     }
 
+    // Mıknatıs (ORİJİNAL hali — 2026-07-31 sıfırdan değerlendirme için geri döndürüldü): menzildeki tüm uyanık
+    // yutulabilirler deliğe doğru çekilir (AddForce, bombalar hariç). Cap/Active-liste/kinematik YOK.
     void FixedUpdate()
     {
-        if (magnetTime <= 0f || hole == null) return;
+        if (hole == null) return;
+        if (superActive) SuperSweep();
+        if (magnetTime > 0f) MagnetPull();
+    }
 
+    // SÜPER: KİNEMATİK SÜPÜRME MIKNATISI (2026-08-06, [[project-powerups]] saklı fikri). Menzildeki nesneleri kinematik
+    // yapıp MovePosition ile HIZLICA deliğe kaydırır (fizik-ötesi, cap yok — "hepsini süpür"). Merkeze ulaşınca kinematiği
+    // bırakır → normal yutma/suction devralır (sığıyorsa yutulur; büyükse delik büyüdükçe girer). Güç-up'ları süpürmez.
+    void SuperSweep()
+    {
+        Vector3 hp = hole.transform.position;
+        float hr = hole.currentSize * 0.5f;
+        float range = hr + superRange, range2 = range * range, releaseR = hr * 0.85f;
+        var list = PhysicsSwallowable.All;
+        for (int i = 0; i < list.Count; i++)
+        {
+            var s = list[i];
+            if (s == null || s.IsSwallowed || s.isBomb || s.powerUp != PowerUpType.None) continue;
+            var rb = s.Body; if (rb == null) continue;
+            Vector3 d = hp - s.transform.position; d.y = 0f;
+            float sq = d.sqrMagnitude;
+            if (sq > range2 || sq <= releaseR * releaseR)
+            {
+                if (rb.isKinematic) rb.isKinematic = false;   // menzil dışı / merkezde → normal fizik devralsın
+                continue;
+            }
+            if (!rb.isKinematic) rb.isKinematic = true;
+            Vector3 pos = s.transform.position, tgt = new Vector3(hp.x, pos.y, hp.z);
+            rb.MovePosition(Vector3.MoveTowards(pos, tgt, superSweepSpeed * Time.fixedDeltaTime));
+        }
+    }
+
+    void MagnetPull()
+    {
         Vector3 hp = hole.transform.position;
         float range = hole.currentSize * 0.5f + magnetRange;
         float range2 = range * range;
+
+        // ⚠️ KASMA FIX (2026-08-01, L12 makaron Pisa kulesi): mıknatıs+hız ile onlarca nesne deliği HIZLI takip
+        // ederken AddForce(Acceleration) + tavan-yok → nesneler ÇILGIN yörünge hızına ulaşıp (fırtına hortumu)
+        // birbirine/hareketli zemine DERİN penetrasyon yapıyor → PhysX solver/contact spike → kasma. Yavaş
+        // harekette hız düşük kalıyor → kasma yok (kullanıcı gözlemi: hız = tek değişken). Çözüm: yatay hızı
+        // deliği YAKALAMAYA yetecek ama taşkın olmayacak bir tavana kıstır. Çekilen nesne SETİ + kuvvet AYNI
+        // (güç korunur) — sadece runaway hız sönümlenir; normal mıknatıs kullanımı bu tavana ulaşmaz.
+        float maxV = Mathf.Max(hole.moveSpeed * 1.8f, 10f);
+        float maxV2 = maxV * maxV;
 
         var list = PhysicsSwallowable.All;
         for (int i = 0; i < list.Count; i++)
@@ -152,6 +229,16 @@ public class PowerUpManager : MonoBehaviour
             float sq = d.sqrMagnitude;
             if (sq > range2 || sq < 0.0001f) continue;
             rb.AddForce(d.normalized * magnetForce, ForceMode.Acceleration);
+
+            // Yatay hız tavanı (dikey hıza DOKUNMA → yutma/suction/gravity bozulmaz).
+            Vector3 v = rb.linearVelocity;
+            float hv2 = v.x * v.x + v.z * v.z;
+            if (hv2 > maxV2)
+            {
+                float k = maxV / Mathf.Sqrt(hv2);
+                v.x *= k; v.z *= k;
+                rb.linearVelocity = v;
+            }
         }
     }
 
@@ -169,8 +256,8 @@ public class PowerUpManager : MonoBehaviour
         var phRt = (RectTransform)powHud.transform; phRt.SetParent(safe, false);
         phRt.anchorMin = Vector2.zero; phRt.anchorMax = Vector2.one; phRt.offsetMin = phRt.offsetMax = Vector2.zero;
 
-        speedRow  = MakeRow(powHud.transform, -210, "HIZ",      new Color(1f, 0.78f, 0.20f), out speedBar);
-        magnetRow = MakeRow(powHud.transform, -290, "MIKNATIS", new Color(0.35f, 0.85f, 1f),  out magnetBar);
+        speedRow  = MakeRow(powHud.transform, -210, Loc.T("hudSpeed"),      new Color(1f, 0.78f, 0.20f), out speedBar);
+        magnetRow = MakeRow(powHud.transform, -290, Loc.T("hudMagnet"), new Color(0.35f, 0.85f, 1f),  out magnetBar);
         speedRow.SetActive(false); magnetRow.SetActive(false);
 
         // Güç ipucu "toast": yuvarlak koyu pill + renkli metin, üst-orta, fade in/out

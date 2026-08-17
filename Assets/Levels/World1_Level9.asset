@@ -94,13 +94,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Hamburger
-    required: 75
+    required: 94
     icon: {fileID: 0}
   - objectType: HotDog
-    required: 62
+    required: 78
     icon: {fileID: 0}
   - objectType: Sausage
-    required: 30
+    required: 38
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

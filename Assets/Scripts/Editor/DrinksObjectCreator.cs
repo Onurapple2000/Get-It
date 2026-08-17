@@ -20,13 +20,22 @@ public static class DrinksObjectCreator
     const string PREFAB_DIR = "Assets/Prefabs/Drinks";
     const string MESH_DIR   = "Assets/Prefabs/Drinks/Meshes";
     const string TEX_DIR    = "Assets/Prefabs/Drinks/Tex";
-    const float  COL_XZ_SHRINK = 0.82f;
+    // ⚠️ 2026-08-02 kullanıcı: İçecek nesneleri ÇOK KÜÇÜKTÜ → TÜM tier'lar ~3× büyütüldü.
+    // ⚠️ 2026-08-03 DÜZELTME (kullanıcı): shrink 0.75 iken collider görselin %75'iydi; nesneler 3× büyüyünce bu %25
+    // inset MUTLAK olarak büyüdü → (a) yan yana meshler GÖRÜNÜR iç içe, (b) footprint görselden küçük olduğundan
+    // "delikten büyük olsa da geçiyor". FIX: shrink 0.92 (DÜRÜST footprint; yalnız köşeli setlere hafif pay, yuvarlak
+    // içecekler zaten dertsiz). Soft-lock riski (en küçük tier 1.5 deliğe sığmaz) → dünya-5 başlangıç deliği 2.0'a
+    // çıkarıldı (LevelManager.ResetHole; 3× nesneli dünyaya orantılı, Tiny footprint ~1.66 < 2.0 → sığar).
+    const float  COL_XZ_SHRINK = 0.97f;   // 2026-08-03: 0.95→0.97 (bıçak-kesme fix; EN-UZAK-vertex hull + ~dürüst footprint)
 
+    // 2026-08-03 kullanıcı: 3× biraz büyüktü → ~%20 küçült (≈2.4× orijinal). Collider+mesh rebuild'de otomatik ölçeklenir
+    // (mesh tier'a göre; collider ColliderHullUtil telafisiyle görselin ~0.95'i). Start hole 1.7 (ResetHole) ile uyumlu.
     struct Tier { public float dim; public int score; public float grow; public Tier(float d, int s, float g){dim=d;score=s;grow=g;} }
-    static readonly Tier Tiny   = new Tier(0.6f,  12, 0.11f);
-    static readonly Tier Small  = new Tier(0.8f,  18, 0.15f);
-    static readonly Tier Medium = new Tier(1.05f, 28, 0.22f);
-    static readonly Tier Large  = new Tier(1.4f,  46, 0.30f);
+    // 2026-08-03: "çok az daha küçült" → tier'lar ~%10 küçüldü (daha çok nesne sığsın, çeşit artsın).
+    static readonly Tier Tiny   = new Tier(1.3f,  20, 0.11f);
+    static readonly Tier Small  = new Tier(1.8f,  34, 0.15f);
+    static readonly Tier Medium = new Tier(2.3f,  52, 0.22f);
+    static readonly Tier Large  = new Tier(3.0f,  82, 0.30f);   // footprint ~3.0×0.95 → < maxSize 5.5 → yutulur
 
     static readonly string[] TinyKeys  = { "cup", "mug", "glass", "espresso", "shot", "saucer", "egg", "companion" };
     static readonly string[] LargeKeys = { "set", "service", "maker", "machine", "grinder", "barista", "station", "pitcher", "tray", "carton", "lemonade", "moment", "harmony", "serenity", "elegance", "trove", "infusion" };

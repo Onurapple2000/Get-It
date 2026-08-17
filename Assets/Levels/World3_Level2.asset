@@ -14,53 +14,69 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 3
   levelIndex: 1
-  levelTime: 182.5
+  levelTime: 120
   spawns:
-  - prefab: {fileID: 5614116000741596420, guid: 083718f27678143f29ae3d1e84c406c6, type: 3}
+  - prefab: {fileID: 3447350045795678986, guid: f28db8c84e0774b6a8fbb9e3a29619b3, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 8868729477729006219, guid: 83c8d5b7464bf455999d263d78f01a25, type: 3}
+  - prefab: {fileID: 1535272064887436250, guid: 27bfc419a974343db88db13d527776f6, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2016089232936697365, guid: f28db8c84e0774b6a8fbb9e3a29619b3, type: 3}
+  - prefab: {fileID: 7548406480796303689, guid: f8f044e4de0d245f1ae8fda8cdbf401e, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3532418543703720773, guid: 27bfc419a974343db88db13d527776f6, type: 3}
+  - prefab: {fileID: 6509713952967657649, guid: 2ac87fcae90224ce28da5ad60109d39f, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4518537737967004385, guid: f8f044e4de0d245f1ae8fda8cdbf401e, type: 3}
+  - prefab: {fileID: 5757783121218323512, guid: 4ec5b617c265a4c76a424f7ad33a9b8a, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7661344549274226305, guid: 4ec5b617c265a4c76a424f7ad33a9b8a, type: 3}
+  - prefab: {fileID: 7039979412593115602, guid: 4aaf3dbdcafb241aaa5cfd8f65d2c9f2, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7516837856981800166, guid: 4aaf3dbdcafb241aaa5cfd8f65d2c9f2, type: 3}
+  - prefab: {fileID: 6528052046215268771, guid: 7c9870f348c1a4ad7bf279a5a8ed2af2, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 8372221034507873254, guid: 7c9870f348c1a4ad7bf279a5a8ed2af2, type: 3}
+  - prefab: {fileID: 7297774108299110286, guid: ad2c3c0db33c847d59abfb98549f6785, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4699123226949000565, guid: ad2c3c0db33c847d59abfb98549f6785, type: 3}
+  - prefab: {fileID: 2042527266374990383, guid: 55b448e7ad7f64115a2aae156d56a4bb, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 1825510946634887997, guid: 55b448e7ad7f64115a2aae156d56a4bb, type: 3}
+  - prefab: {fileID: 4150996264457555814, guid: ec06c88126ced42949aa8b582856e369, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2208628567755930859, guid: ec06c88126ced42949aa8b582856e369, type: 3}
+  - prefab: {fileID: 930164851123006893, guid: 2f7994e21ff1c4d41b0e3337d852e4e0, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4508746683527159220, guid: 2f7994e21ff1c4d41b0e3337d852e4e0, type: 3}
+  - prefab: {fileID: 4030485615966549135, guid: 8ae319b6806c54385a2e31b1fbad7eb5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3756445530757318115, guid: a2e67ffa51cb74ea5a0db75eb2e241f5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8254302058882668253, guid: 037f7457a17da412db58e5666cfd847c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2633274557827502797, guid: bfd408eb351b446a1aa0667be55c0909, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2868115792230832235, guid: 31e85ab39f2064d799b0082e752feaba, type: 3}
     count: 1
     stack: 1
     scale: 1
@@ -76,16 +92,15 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3963586233627933647, guid: 332c9f49a91f646de8f8a2650a02253a, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   objectives:
-  - objectType: AnimeNobleBui2
-    required: 11
+  - objectType: AnimeNobleBui4
+    required: 42
     icon: {fileID: 0}
-  - objectType: AnimeNobleBui3
-    required: 8
+  - objectType: AnimeNobleBui5
+    required: 34
+    icon: {fileID: 0}
+  - objectType: AroundTheWorldInf
+    required: 27
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

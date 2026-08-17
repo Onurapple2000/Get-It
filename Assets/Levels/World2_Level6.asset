@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 5
-  levelTime: 175
+  levelTime: 100
   spawns:
   - prefab: {fileID: 1748214623094694663, guid: e91eb7f5f0ed14341ac7a64c541468f3, type: 3}
     count: 1
@@ -198,10 +198,10 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: RustyRelic
-    required: 28
+    required: 35
     icon: {fileID: 0}
   - objectType: RusticLegacy
-    required: 22
+    required: 28
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

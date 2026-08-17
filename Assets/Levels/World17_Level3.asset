@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 2
-  levelTime: 180
+  levelTime: 100
   spawns:
   - prefab: {fileID: 1922286867511772346, guid: 17ef263463f95473ea67eea3f86a0a18, type: 3}
     count: 1
@@ -93,11 +93,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Dog12
-    required: 16
+  - objectType: Cookies
+    required: 21
     icon: {fileID: 0}
-  - objectType: CoastGuardPatrol
-    required: 11
+  - objectType: AnimeSt2
+    required: 15
+    icon: {fileID: 0}
+  - objectType: AirfieldRestingAirc
+    required: 12
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

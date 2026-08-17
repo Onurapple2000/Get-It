@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 0
   levelIndex: 8
-  levelTime: 165
+  levelTime: 100
   spawns:
   - prefab: {fileID: 4123365418987084257, guid: 02199c50cc9784dfb89edf084a3e43a0, type: 3}
     count: 1
@@ -68,6 +68,18 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 717325787285246234, guid: 5a3d38242de804b70a00b1f8f4342945, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3512854395108918256, guid: f12f2061801bc436f9d51a2387251f11, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8924977216457514350, guid: 8da63789cdd25436dbb1ee02582bfb2b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +93,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Mailbox
-    required: 23
+  - objectType: SmallCrate
+    required: 31
+    icon: {fileID: 0}
+  - objectType: Statue
+    required: 22
     icon: {fileID: 0}
   - objectType: PicnicTable
-    required: 16
-    icon: {fileID: 0}
-  - objectType: SmallBarrel
-    required: 13
+    required: 17
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 13
-  levelTime: 152.5
+  levelTime: 100
   spawns:
   - prefab: {fileID: 1834578133260790784, guid: 3849bd74b5cfa4c8aa0fc452bed1a6d1, type: 3}
     count: 1
@@ -93,14 +93,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: QuadTransport
-    required: 25
+  - objectType: SteelHorse
+    required: 38
     icon: {fileID: 0}
-  - objectType: StacksDollars
-    required: 18
+  - objectType: SmallAircraft
+    required: 27
     icon: {fileID: 0}
-  - objectType: RichDecoratedJewe5
-    required: 14
+  - objectType: SmallCruiseWaterbus
+    required: 21
+    icon: {fileID: 0}
+  - objectType: HighlyUltr8
+    required: 6
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

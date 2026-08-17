@@ -64,6 +64,7 @@ public class GameManager : MonoBehaviour
         {
             var active = LevelManager.Instance.Active;
             levelTime = active.levelTime;   // süre DOĞRUDAN LevelData'dan (hard levellar da birebir; yarıya indirme YOK — 2026-07-25 kullanıcı)
+            levelTime *= DifficultySettings.TimeMultiplier;   // KOLAY zorlukta süre ×2 (2026-08-06 kullanıcı)
         }
         timeLeft = levelTime;
     }
@@ -96,7 +97,8 @@ public class GameManager : MonoBehaviour
             BuildTopHud(safe);
         }
 
-        timerText.text = "Time : " + Mathf.CeilToInt(timeLeft);   // başlamadan tam süreyi göster
+        timerText.text = Loc.T("hudTime") + " " + Mathf.CeilToInt(timeLeft);   // başlamadan tam süreyi göster
+        if (scoreText != null) scoreText.text = Loc.T("hudScore") + " " + score;   // başlangıç skoru dile göre
 
         // Yıldız değerlendirmesi için MAKS puan = sahnedeki tüm yutulabilir (bomba hariç) nesnelerin skoru.
         // LevelManager (execution order -100) spawn'ları Awake'te bitirdi → burada All hazır. Toplam nesne = aynı sayım.
@@ -119,7 +121,7 @@ public class GameManager : MonoBehaviour
         int li = (LevelManager.Instance != null && LevelManager.Instance.Active != null)
             ? LevelManager.Instance.Active.levelIndex : LevelManager.CurrentIndex;
         levelLabel = MakeHudText(safe, "LevelLabel", new Vector2(0f, 1f), new Vector2(120, -100), new Vector2(320, 48), font);   // Score ile yer değişti (alt satır)
-        levelLabel.text = "LEVEL " + (li + 1);
+        levelLabel.text = Loc.T("level") + " " + (li + 1);
 
         // Sağ üst yutulan/toplam — Score ile aynı hiza (y=-100). "Time : XX" ise timer metnine gömülü (BuildTopHud öncesi konumlandı).
         swallowLabel = MakeHudText(safe, "SwallowCount", new Vector2(1f, 1f), new Vector2(-140, -100), new Vector2(320, 48), font);
@@ -205,7 +207,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // Yutma geri-bildirimi coalesce: metinleri karede BİR güncelle (yoğun yutmada N rebuild yerine 1).
-        if (scoreDirty && scoreText != null) { scoreText.text = "Score: " + score; scoreDirty = false; }
+        if (scoreDirty && scoreText != null) { scoreText.text = Loc.T("hudScore") + " " + score; scoreDirty = false; }
         if (labelDirty) { UpdateSwallowLabel(); labelDirty = false; }
         // Yoğun giriş bitince (kısa boşluk) grupta kalan puanı tek baloncukta göster (kuyruk flush → puan görsel kaybolmaz).
         if (burstCount > 0 && Time.unscaledTime - lastSwallowTime > FB_BURSTGAP)
@@ -232,11 +234,12 @@ public class GameManager : MonoBehaviour
         if (timeLeft <= 0f)
         {
             timeLeft = 0f;
+            if (timerText != null) timerText.text = Loc.T("hudTime") + " 0";   // sayaç 0 göstersin (eskiden son karedeki 1'de donuyordu)
             TriggerFail();
             return;
         }
 
-        timerText.text = "Time : " + Mathf.CeilToInt(timeLeft);
+        timerText.text = Loc.T("hudTime") + " " + Mathf.CeilToInt(timeLeft);
     }
 
     public void AddScore(int points)
@@ -299,8 +302,9 @@ public class GameManager : MonoBehaviour
     {
         if (!gameActive) return;
         gameActive = false;
-        successScoreText.text = "Skor: " + score;
+        successScoreText.text = Loc.T("score") + " " + score;
         successPanel.SetActive(true);
+        SetPanelTitle(successPanel, Loc.T("congrats"));   // baked "TEBRİKLER!" → dile göre
         AudioManager.Instance?.PlaySuccess();
         // İlerleme: sonraki level'ı kalıcı aç (PlayerPrefs)
         if (LevelManager.Instance != null) LevelManager.Instance.SaveProgressOnSuccess();
@@ -310,18 +314,20 @@ public class GameManager : MonoBehaviour
         if (LevelManager.Instance != null && LevelManager.Instance.Active != null)
         { world = LevelManager.Instance.Active.worldId; level = LevelManager.Instance.Active.levelIndex; }
 
+        PlayerProfile.AddScore(score);                           // ömür boyu toplam skora ekle (ana sayfada gösterilir)
         int stars = StarManager.Evaluate(score, maxScore);
         int oldBest = StarManager.Best(world, level);
         int newBest = StarManager.Record(world, level, stars);   // en iyi yıldızı sakla
         int delta = Mathf.Max(0, newBest - oldBest);             // toplam yıldıza net eklenen
-        var gifts = StarRewards.CheckAndGrant();                 // toplam yıldız eşiği hediyeleri
+        var earned = StarRewards.CheckAndGrant();                // (tür,adet) — kazanılan güç-up'lar
+        var giftStrs = StarRewards.Format(earned);
         StarRow.Build(successPanel.transform, stars, new Vector2(0, -320));   // 3 yıldız (skor ile buton ARASINDA; skordan uzak)
-        if (gifts.Count > 0) ShowGiftText(gifts);
+        if (giftStrs.Count > 0) ShowGiftText(giftStrs);
 
         // Patika ekranında (dünya reveal için) gösterilecek ödül özetini taşı.
-        LevelResult.Set(world, level, stars, delta, gifts);
+        LevelResult.Set(world, level, stars, delta, giftStrs);
+        LevelResult.StarsAnimated = true;   // ⭐ yıldız/ödül animasyonu ARTIK success ekranında → patika oynamasın (kullanıcı 2026-08-17)
 
-        // ── Yıldız akışı hazırlığı: sol üstte ESKİ toplam (delta hariç); Next Level'e basınca uçarak artar. ──
         rewardEarned = stars;
         rewardDelta = delta;
         bool hasNextLevel = LevelManager.Instance != null && LevelManager.Instance.HasNext;
@@ -331,7 +337,26 @@ public class GameManager : MonoBehaviour
         nextPressed = false;
         BuildSuccessStarBadge(Mathf.Max(0, StarManager.Total() - delta));
         // Etiket: sonraki bölüm var → "Sonraki Bölüm"; son level + sonraki dünya içerikli → "Sonraki Dünya"; yoksa "Ana Menü".
-        SetNextButtonLabel(hasNextLevel ? "Sonraki Bölüm" : (nextWorldExists ? "Sonraki Dünya" : "Ana Menü"));
+        SetNextButtonLabel(hasNextLevel ? Loc.T("nextLevel") : (nextWorldExists ? Loc.T("nextWorld") : Loc.T("mainMenu")));
+
+        // Devam eden güç-up göstergelerini (süre barları) success ekranında GİZLE (kullanıcı 2026-08-17).
+        PowerUpManager.Instance?.EndLevelHud();
+        // Yıldız + güç-up uçuş animasyonu OTOMATİK başlar (Sonraki Bölüm'e basmaya gerek yok).
+        StartCoroutine(SuccessRewardSequence(earned));
+        StartCoroutine(FireworksRoutine());   // kutlama: arka planda renkli havai fişekler
+    }
+
+    // Success ekranı ödül akışı (OTOMATİK): önce kazanılan yıldızlar uçarak sol-üst toplam sayaca girer, sonra
+    // (varsa) kazanılan güç-up'lar uçarak sağ-üstteki envanter hedeflerine girer ve adet artar. Kullanıcı 2026-08-17.
+    IEnumerator SuccessRewardSequence(System.Collections.Generic.List<(PowerUpType type, int count)> earned)
+    {
+        yield return new WaitForSeconds(0.4f);
+        yield return AnimateStarsToBadge();
+        if (earned != null && earned.Count > 0)
+        {
+            yield return new WaitForSeconds(0.25f);
+            yield return AnimatePowerupsToInventory(earned);
+        }
     }
 
     // Sol ÜST toplam yıldız rozeti (success paneli). MainMenu'deki MakeStarBadge ile aynı görünüm.
@@ -364,6 +389,13 @@ public class GameManager : MonoBehaviour
         if (lbl != null) { var t = lbl.GetComponent<TMP_Text>(); if (t != null) t.text = text; }
     }
 
+    // Panelin baked "Title" çocuğunu (SuccessScreenBuilder) aktif dile göre günceller.
+    static void SetPanelTitle(GameObject panel, string text)
+    {
+        var tr = panel.transform.Find("Title");
+        if (tr != null) { var t = tr.GetComponent<TMP_Text>(); if (t != null) t.text = text; }
+    }
+
     // Yeni kazanılan yıldız hediyelerini başarı ekranında göster.
     void ShowGiftText(System.Collections.Generic.List<string> gifts)
     {
@@ -372,7 +404,7 @@ public class GameManager : MonoBehaviour
         var t = go.AddComponent<TextMeshProUGUI>();
         t.fontSize = 34; t.fontStyle = FontStyles.Bold; t.alignment = TextAlignmentOptions.Center;
         t.color = new Color(1f, 0.85f, 0.3f); t.raycastTarget = false;
-        t.text = "HEDİYE: " + string.Join(" + ", gifts);
+        t.text = Loc.T("reward") + " " + string.Join(" + ", gifts);
         var rt = t.rectTransform;
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
         rt.anchoredPosition = new Vector2(0, -880); rt.sizeDelta = new Vector2(940, 60);   // buton altında (2026-07-24 -740→-880, büyük buton)
@@ -387,11 +419,11 @@ public class GameManager : MonoBehaviour
     Button retryButton;
     int failLivesShown = -1;   // animasyon için son gösterilen can
 
-    public void TriggerFail(string reason = "Süre doldu!")
+    public void TriggerFail(string reason = null)
     {
         if (!gameActive) return;
         gameActive = false;
-        failReason = reason;
+        failReason = reason ?? Loc.T("timeUp");
         ShowFailPanel();
     }
 
@@ -400,7 +432,7 @@ public class GameManager : MonoBehaviour
     {
         if (!gameActive) return;
         gameActive = false;
-        failReason = "Bomba patladı!";
+        failReason = Loc.T("bombExploded");
         AudioManager.Instance?.PlayBomb();
         ExplosionEffect.Spawn(pos);
         StartCoroutine(DelayedFail(0.7f));
@@ -416,6 +448,7 @@ public class GameManager : MonoBehaviour
     {
         if (LivesManager.Instance != null) LivesManager.Instance.LoseLife();   // kalıcı can -1 (sınırsız aktifse eksilmez)
         failPanel.SetActive(true);
+        SetPanelTitle(failPanel, Loc.T("failTitle"));   // baked "OLMADI!" → dile göre
         AudioManager.Instance?.PlayFail();
         ShowFailReason();
         BuildFailLives();
@@ -469,11 +502,11 @@ public class GameManager : MonoBehaviour
         if (unlimited)
             failLivesText.text = $"∞  Sınırsız can  ({Fmt(lm.UnlimitedSecondsLeft)})";
         else if (lives <= 0)
-            failLivesText.text = $"Can bitti!  Sonraki can: {lm.NextLifeClock()}";
+            failLivesText.text = Loc.T("livesOut") + "  " + Loc.T("nextLife") + " " + lm.NextLifeClock();
         else if (lm.IsFull)
             failLivesText.text = "";
         else
-            failLivesText.text = $"Sonraki can: {lm.NextLifeClock()}";
+            failLivesText.text = Loc.T("nextLife") + " " + lm.NextLifeClock();
 
         // Can yoksa tekrar oynanamaz → Retry pasif (yalnız Çıkış çalışır); can gelince otomatik aktifleşir.
         bool canPlay = lm.HasLife;
@@ -527,18 +560,14 @@ public class GameManager : MonoBehaviour
     // (hızlı), sonra: dünyanın son level'ı DEĞİLSE → doğrudan sonraki bölüm açılır (GameScene reload); SON
     // LEVEL ise → MainMenu'ye gidip yeni dünya reveal animasyonu oynar (yıldız akışı zaten burada oynandı).
     // TODO(Reklam sprint'i): son level dünya geçişinden önce reklam.
+    // "Sonraki Bölüm/Dünya": yıldız/ödül animasyonu ZATEN success ekranında otomatik oynandı → buton yalnız İLERLETİR.
     public void NextLevel()
     {
         if (nextPressed) return;
         nextPressed = true;
         var btn = successPanel.transform.Find("NextLevelButton")?.GetComponent<Button>();
         if (btn != null) btn.interactable = false;
-        StartCoroutine(NextRewardSequence());
-    }
-
-    IEnumerator NextRewardSequence()
-    {
-        yield return AnimateStarsToBadge();
+        StopAllCoroutines();   // sürmekte olan ödül animasyonunu bitir
 
         if (rewardLastOfWorld)
         {
@@ -551,6 +580,169 @@ public class GameManager : MonoBehaviour
             LevelManager.Instance?.AdvanceIndex();
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);   // GameScene reload → sonraki bölüm
         }
+    }
+
+    // Kazanılan güç-up'lar: success panelinin SAĞ-ÜSTünde hedef ikonlar + adet; merkezden uçup hedefe girer, adet artar.
+    IEnumerator AnimatePowerupsToInventory(System.Collections.Generic.List<(PowerUpType type, int count)> earned)
+    {
+        Canvas.ForceUpdateCanvases();
+        const float isz = 74f, istep = 92f;
+        float ty = -440f;   // X kapat tuşunun ALTINDA (kullanıcı 2026-08-17: çakışmasın)
+        var tIcon = new System.Collections.Generic.List<RectTransform>();
+        var tCnt  = new System.Collections.Generic.List<TMP_Text>();
+        var finals = new System.Collections.Generic.List<int>();
+        foreach (var e in earned)
+        {
+            var icon = MakePwIcon(new Vector2(-40f, ty), isz, e.type, new Vector2(1f, 1f));   // sağ-üst
+            int final = PowerUpInventory.Count(e.type);
+            var cnt = MakePwCount(new Vector2(-40f - isz - 8f, ty - isz * 0.5f), isz, Mathf.Max(0, final - e.count));
+            tIcon.Add((RectTransform)icon.transform); tCnt.Add(cnt); finals.Add(final);
+            ty -= istep;
+        }
+        yield return new WaitForSeconds(0.25f);
+        for (int i = 0; i < earned.Count; i++)
+        {
+            // Ekran ORTASINDA doğ → titreyerek büyü → YAVAŞÇA hedefe uç (kullanıcı 2026-08-17).
+            var flyer = MakePwIcon(new Vector2(0f, 60f), isz * 1.9f, earned[i].type, new Vector2(0.5f, 0.5f));
+            yield return PopShake((RectTransform)flyer.transform);
+            yield return new WaitForSeconds(0.12f);
+            yield return FlyRectTo((RectTransform)flyer.transform, tIcon[i], 0.75f, 0.48f);
+            if (tCnt[i] != null) tCnt[i].text = "×" + finals[i];
+            yield return PulseRect(tIcon[i]);
+        }
+        yield return new WaitForSeconds(0.7f);
+    }
+
+    // Ortada doğan güç-up: 0'dan titreyerek büyür (sarsıntı + hafif dönme, sona doğru sönümlenir).
+    IEnumerator PopShake(RectTransform rt)
+    {
+        Vector2 basePos = rt.anchoredPosition; float dur = 0.5f, t = 0f;
+        rt.localScale = Vector3.zero;
+        while (t < dur)
+        {
+            t += Time.deltaTime; float k = Mathf.Clamp01(t / dur);
+            rt.localScale = Vector3.one * Mathf.SmoothStep(0f, 1f, Mathf.Min(1f, k * 1.2f));
+            float sh = 12f * (1f - k);
+            rt.anchoredPosition = basePos + new Vector2(Mathf.Sin(t * 70f) * sh, Mathf.Cos(t * 61f) * sh * 0.5f);
+            rt.localEulerAngles = new Vector3(0, 0, Mathf.Sin(t * 55f) * 7f * (1f - k));
+            yield return null;
+        }
+        rt.localScale = Vector3.one; rt.anchoredPosition = basePos; rt.localEulerAngles = Vector3.zero;
+    }
+
+    Image MakePwIcon(Vector2 pos, float size, PowerUpType t, Vector2 anchor)
+    {
+        var go = new GameObject("PwIcon", typeof(RectTransform), typeof(Image));
+        var rt = (RectTransform)go.transform; rt.SetParent(successPanel.transform, false);
+        rt.anchorMin = rt.anchorMax = anchor; rt.pivot = anchor;
+        rt.anchoredPosition = pos; rt.sizeDelta = new Vector2(size, size);
+        var img = go.GetComponent<Image>(); img.sprite = PowerUpIcons.Get(t); img.preserveAspect = true; img.raycastTarget = false;
+        return img;
+    }
+
+    TMP_Text MakePwCount(Vector2 pos, float size, int start)
+    {
+        var go = new GameObject("PwCnt", typeof(RectTransform));
+        var rt = (RectTransform)go.transform; rt.SetParent(successPanel.transform, false);
+        rt.anchorMin = rt.anchorMax = new Vector2(1f, 1f); rt.pivot = new Vector2(1f, 0.5f);
+        rt.anchoredPosition = pos; rt.sizeDelta = new Vector2(90f, size);
+        var t = go.AddComponent<TextMeshProUGUI>();
+        t.fontSize = 30; t.fontStyle = FontStyles.Bold; t.alignment = TextAlignmentOptions.MidlineRight;
+        t.color = new Color(1f, 0.95f, 0.7f); t.raycastTarget = false; t.text = "×" + start;
+        return t;
+    }
+
+    IEnumerator FlyRectTo(RectTransform mover, RectTransform target, float dur = 0.34f, float endScale = 0.55f)
+    {
+        Vector3 start = mover.position, end = target.position;
+        float t = 0f;
+        while (t < dur)
+        {
+            t += Time.deltaTime; float k = Mathf.SmoothStep(0f, 1f, t / dur);
+            mover.position = Vector3.Lerp(start, end, k);
+            mover.localScale = Vector3.one * Mathf.Lerp(1f, endScale, k);
+            yield return null;
+        }
+        Destroy(mover.gameObject);
+    }
+
+    // ── KUTLAMA: renkli havai fişekler (success arka planı; içeriğin ALTINDA) ──
+    static readonly Color[] FwColors =
+    {
+        new(1f, 0.35f, 0.35f), new(1f, 0.85f, 0.25f), new(0.35f, 0.85f, 1f),
+        new(0.5f, 1f, 0.55f), new(1f, 0.5f, 1f), new(1f, 0.66f, 0.2f),
+    };
+
+    IEnumerator FireworksRoutine()
+    {
+        var container = new GameObject("Fireworks", typeof(RectTransform));
+        var crt = (RectTransform)container.transform; crt.SetParent(successPanel.transform, false);
+        crt.anchorMin = Vector2.zero; crt.anchorMax = Vector2.one; crt.offsetMin = crt.offsetMax = Vector2.zero;
+        crt.SetSiblingIndex(2);   // backdrop(0)+arka plan(1) ÜSTÜNDE, içerik (başlık/maskot/…) ALTINDA
+        int i = 0;
+        while (successPanel != null && successPanel.activeSelf)
+        {
+            Vector2 p = new Vector2(UnityEngine.Random.Range(-380f, 380f), UnityEngine.Random.Range(150f, 640f));
+            StartCoroutine(FireworkBurst(container.transform, p, FwColors[i % FwColors.Length]));
+            i++;
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.4f, 0.75f));
+        }
+    }
+
+    IEnumerator FireworkBurst(Transform parent, Vector2 center, Color col)
+    {
+        int n = UnityEngine.Random.Range(11, 17);
+        var rts = new RectTransform[n]; var imgs = new Image[n]; var vel = new Vector2[n];
+        for (int k = 0; k < n; k++)
+        {
+            var go = new GameObject("fw", typeof(RectTransform), typeof(Image));
+            var rt = (RectTransform)go.transform; rt.SetParent(parent, false);
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = center; rt.sizeDelta = new Vector2(16f, 16f);
+            var img = go.GetComponent<Image>(); img.sprite = FwDisc(); img.color = col; img.raycastTarget = false;
+            float ang = (k / (float)n) * 6.2832f + UnityEngine.Random.Range(-0.2f, 0.2f);
+            float spd = UnityEngine.Random.Range(280f, 620f);
+            vel[k] = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * spd;
+            rts[k] = rt; imgs[k] = img;
+        }
+        float t = 0f; const float dur = 0.95f;
+        while (t < dur)
+        {
+            float dt = Time.deltaTime; t += dt; float k01 = t / dur;
+            for (int k = 0; k < n; k++)
+            {
+                vel[k].y -= 780f * dt;   // yerçekimi → doğal düşüş
+                rts[k].anchoredPosition += vel[k] * dt;
+                var c = imgs[k].color; c.a = Mathf.Clamp01(1f - k01); imgs[k].color = c;
+                rts[k].localScale = Vector3.one * Mathf.Lerp(1f, 0.5f, k01);
+            }
+            yield return null;
+        }
+        for (int k = 0; k < n; k++) if (rts[k]) Destroy(rts[k].gameObject);
+    }
+
+    static Sprite _fwDisc;
+    static Sprite FwDisc()
+    {
+        if (_fwDisc) return _fwDisc;
+        const int s = 32; var tex = new Texture2D(s, s, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+        float c = (s - 1) * 0.5f;
+        for (int y = 0; y < s; y++) for (int x = 0; x < s; x++)
+        {
+            float d = Mathf.Sqrt((x - c) * (x - c) + (y - c) * (y - c));
+            float a = Mathf.Clamp01((c - d) / 1.5f);
+            tex.SetPixel(x, y, new Color(1f, 1f, 1f, a));
+        }
+        tex.Apply();
+        _fwDisc = Sprite.Create(tex, new Rect(0, 0, s, s), new Vector2(0.5f, 0.5f), 100f);
+        return _fwDisc;
+    }
+
+    IEnumerator PulseRect(RectTransform rt)
+    {
+        float t = 0f;
+        while (t < 0.16f) { t += Time.deltaTime; rt.localScale = Vector3.one * (1f + 0.3f * Mathf.Sin(t / 0.16f * Mathf.PI)); yield return null; }
+        rt.localScale = Vector3.one;
     }
 
     // Bu oyunda KAZANILAN (earned) yıldızların HEPSİ StarRow konumundan sol üst rozete uçar (her levelda görünür);

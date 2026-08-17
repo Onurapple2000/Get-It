@@ -14,12 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 11
-  levelTime: 157.5
+  levelTime: 100
   spawns:
-  - prefab: {fileID: 6804420852042847969, guid: 6987159d7a66e4e71a86dcbc0a461395, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   - prefab: {fileID: 1177438704497366769, guid: 4620824ccfa9e4c60955e5d4dafccdbf, type: 3}
     count: 1
     stack: 1
@@ -92,15 +88,22 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 4114002268633837681, guid: 457da9891459b458a873bac24b0106dd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   objectives:
-  - objectType: NeonCityCorner
-    required: 23
+  - objectType: TrashCan
+    required: 35
     icon: {fileID: 0}
-  - objectType: PralineSchokoM
-    required: 16
+  - objectType: RustyAbandonedDamag
+    required: 25
     icon: {fileID: 0}
-  - objectType: PastelEggCup
-    required: 13
+  - objectType: RaspberryF
+    required: 19
+    icon: {fileID: 0}
+  - objectType: Dog87
+    required: 6
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

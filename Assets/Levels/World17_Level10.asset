@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 9
-  levelTime: 55.5
+  levelTime: 80
   spawns:
   - prefab: {fileID: 5288894988431351457, guid: 1da547e90f78b44fe9f7865e28174f85, type: 3}
     count: 1
@@ -93,14 +93,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Dog68
-    required: 22
+  - objectType: SmallCrate
+    required: 32
     icon: {fileID: 0}
-  - objectType: OrnateOnePiece
-    required: 15
+  - objectType: NeonNightHypercar
+    required: 23
     icon: {fileID: 0}
-  - objectType: HighlyUltr2
-    required: 12
+  - objectType: Dog74
+    required: 8
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

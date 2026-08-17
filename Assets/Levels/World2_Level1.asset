@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 0
-  levelTime: 180
+  levelTime: 100
   spawns:
   - prefab: {fileID: 1218378775676522011, guid: 5c669ab0edb6d4c1685e4eed159206e6, type: 3}
     count: 1
@@ -197,11 +197,11 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: HondaAccordMaestro
-    required: 26
+  - objectType: RedPeugeotCity
+    required: 32
     icon: {fileID: 0}
-  - objectType: BlueFiatSedan
-    required: 22
+  - objectType: BlueCartoonCompact
+    required: 28
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

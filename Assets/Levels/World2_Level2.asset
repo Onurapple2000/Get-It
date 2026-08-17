@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 1
-  levelTime: 175
+  levelTime: 100
   spawns:
   - prefab: {fileID: 4042948823420433835, guid: a39b257feb6e746a0b9b5d5378f7523b, type: 3}
     count: 1
@@ -198,13 +198,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: BlueElegance
-    required: 28
+    required: 35
     icon: {fileID: 0}
   - objectType: RedElegance
-    required: 24
+    required: 30
     icon: {fileID: 0}
   - objectType: RusticLegacy
-    required: 20
+    required: 25
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

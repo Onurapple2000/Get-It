@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 4
-  levelTime: 40
+  levelTime: 80
   spawns:
   - prefab: {fileID: 8920043228930820040, guid: fe4e63513ed8a4cffa3490c061f84c70, type: 3}
     count: 1
@@ -93,14 +93,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: CartoonishBakeryB2
+  - objectType: IceCrea
+    required: 24
+    icon: {fileID: 0}
+  - objectType: GoldenCoinProfile
     required: 17
     icon: {fileID: 0}
   - objectType: FruitcakeF
-    required: 12
-    icon: {fileID: 0}
-  - objectType: CoffeeTrove
-    required: 9
+    required: 13
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

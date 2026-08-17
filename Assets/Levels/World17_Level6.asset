@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 5
-  levelTime: 172.5
+  levelTime: 100
   spawns:
   - prefab: {fileID: 760506028465533920, guid: c70b13fffb8244e81909b23e126dbcd3, type: 3}
     count: 1
@@ -56,10 +56,6 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6565496123534402068, guid: 62284dbe483c849c0b784f9a5b636e61, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   - prefab: {fileID: 2215942280491739692, guid: 8cf19154d64f44f85993e870d50be188, type: 3}
     count: 1
     stack: 1
@@ -93,14 +89,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: CharcoalSpellbook3
-    required: 18
+  - objectType: IceCream
+    required: 26
     icon: {fileID: 0}
-  - objectType: CatDark
-    required: 13
+  - objectType: ClockworkRubyBook
+    required: 19
     icon: {fileID: 0}
-  - objectType: Dog37
-    required: 10
+  - objectType: Gazebo
+    required: 14
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

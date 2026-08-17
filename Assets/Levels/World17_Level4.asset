@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 3
-  levelTime: 177.5
+  levelTime: 100
   spawns:
   - prefab: {fileID: 2078467885659845860, guid: 0f89409d6712c45a5a0aa528bf21979d, type: 3}
     count: 1
@@ -93,11 +93,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: FabergeEggMa
+  - objectType: Cupcake
+    required: 23
+    icon: {fileID: 0}
+  - objectType: EmblemDollarCoin2
     required: 17
     icon: {fileID: 0}
-  - objectType: FlowerPot
-    required: 12
+  - objectType: Fountain
+    required: 13
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

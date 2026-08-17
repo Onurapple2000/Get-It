@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 8
-  levelTime: 165
+  levelTime: 100
   spawns:
   - prefab: {fileID: 1476993383481111611, guid: 4c76c8b526a884ff88d13abeedf082bd, type: 3}
     count: 1
@@ -93,14 +93,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Japanes
-    required: 21
+  - objectType: MacaronGreen
+    required: 31
     icon: {fileID: 0}
-  - objectType: GiftBoxPattern
+  - objectType: JewelTiledFloral
+    required: 22
+    icon: {fileID: 0}
+  - objectType: MoneyBagEmbroidere
     required: 15
-    icon: {fileID: 0}
-  - objectType: EnchantedPumpkinJou
-    required: 12
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

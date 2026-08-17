@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 8
-  levelTime: 185
+  levelTime: 100
   spawns:
   - prefab: {fileID: 6935656964029363532, guid: 94bfa4ca980b44ca88b0b7da15950915, type: 3}
     count: 1
@@ -198,13 +198,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: PetronasMercedesF1
-    required: 30
+    required: 38
     icon: {fileID: 0}
   - objectType: BlueBlazeFormula
-    required: 24
+    required: 30
     icon: {fileID: 0}
   - objectType: F1
-    required: 18
+    required: 22
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

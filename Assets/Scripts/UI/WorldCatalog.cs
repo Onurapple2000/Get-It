@@ -63,6 +63,9 @@ public static class WorldCatalog
         // 2026-07-24: index13 "Paralar"→"Hazine" (Para+Altın birleşik); index14 "Altın" ARTIK KULLANILMIYOR (Order'dan çıktı).
     };
 
+    /// <summary>Aktif dile göre dünya adı (Loc "w{index}"). UI bunu kullanır (Names yerine).</summary>
+    public static string LocalizedName(int world) => Loc.T("w" + world);
+
     /// <summary>O dünyada oynanabilir (LevelData mevcut) level sayısı. Park=5; içerikli dünyalar 15; gerisi 0.</summary>
     public static int PlayableLevels(int world)
     {

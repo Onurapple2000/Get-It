@@ -14,53 +14,69 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 3
   levelIndex: 9
-  levelTime: 55.5
+  levelTime: 100
   spawns:
-  - prefab: {fileID: 517345782144784833, guid: 12d586407ceef4828812a7816b7ee685, type: 3}
+  - prefab: {fileID: 5472966720137975245, guid: e2c2cf54ef18c4d16b0c8324a87b8e81, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 8746374730914824308, guid: 5274053ce3d5b46c0aab24797bb5f304, type: 3}
+  - prefab: {fileID: 8769150379520737170, guid: a3cb6780600bf4e188972ee408aecb8b, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 9172352589104338390, guid: f9dedef685d334a139096dcb1c8c917b, type: 3}
+  - prefab: {fileID: 4114002268633837681, guid: 457da9891459b458a873bac24b0106dd, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 740753330662001460, guid: 93555050b8db543d7ac6d4cf795fb094, type: 3}
+  - prefab: {fileID: 2307536316579537692, guid: fa01288bc99364004a04318583eb9648, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2091495621816251471, guid: dff2dd96bb16f4baa8f9fdf91b182e26, type: 3}
+  - prefab: {fileID: 5141121223646874668, guid: 5c2ccf9c7468145d1a410d03a5dc50fd, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3696924183850969256, guid: 9b3775f78aa074af182c47db1a360596, type: 3}
+  - prefab: {fileID: 7538050333674813937, guid: 38be105d287a24fc6a516a7207258039, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4810101443558205709, guid: 2ac87fcae90224ce28da5ad60109d39f, type: 3}
+  - prefab: {fileID: 6577069785927494725, guid: 1e369bdee588e466eb1b4fd61201c3ee, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7496330855939771101, guid: 2a694d6f181174a4f911c08c049f879d, type: 3}
+  - prefab: {fileID: 838754606176445342, guid: 173a20f0da62f4364b7d7105e4fd728d, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 5710864901993346827, guid: f145b02b6051648949330961163d7de1, type: 3}
+  - prefab: {fileID: 7034481183496550418, guid: 99b0ee14cbd5d4b68bf7d71ffd512bfa, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3276664576086849807, guid: 7fa0b8404e87e426f8cd14fe0e300653, type: 3}
+  - prefab: {fileID: 107391899923899307, guid: 7163ab0baec8040a78396bca0c718527, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3968795267944015703, guid: ebb0cb7392c604e328e009aee33df357, type: 3}
+  - prefab: {fileID: 7765803740670226445, guid: 4de5e166bb2c2492494ad4aa6f12fa3b, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6733296667903360578, guid: e95f937e69d96426fbf28f443d1c6471, type: 3}
+  - prefab: {fileID: 8711875935968297672, guid: fdd875757df554d74b498adcff2c59a1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4971541012924321761, guid: 226319925426c48159314a8032df0220, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 899110158796581645, guid: 523ebd8cad39e47f988ff486e0bdbfb0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2102297028081139672, guid: 2b859e02e4a8c4081a64253a4a4ea3e1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2345659336789438714, guid: f91e229812d7d490eb64974aa6241c3d, type: 3}
     count: 1
     stack: 1
     scale: 1
@@ -76,20 +92,16 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3787687804914884050, guid: 874614489c3204e038ebe38757ad37aa, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   objectives:
-  - objectType: FantacticLivingBuil
-    required: 18
+  - objectType: MediterraneanUrbanR3
+    required: 57
     icon: {fileID: 0}
-  - objectType: Frozen
-    required: 13
+  - objectType: MidnightGlassBuildi
+    required: 46
     icon: {fileID: 0}
-  - objectType: FuturisticRedBuildi
-    required: 10
+  - objectType: MiniJaponai
+    required: 37
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
-  bombCount: 6
+  bombCount: 8

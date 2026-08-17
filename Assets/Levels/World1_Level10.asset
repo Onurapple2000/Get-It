@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 1
   levelIndex: 9
-  levelTime: 55
+  levelTime: 80
   spawns:
   - prefab: {fileID: 2460625516221276672, guid: dba498999debc4bf6ba452c21508967c, type: 3}
     count: 1
@@ -90,13 +90,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Taco
-    required: 62
+    required: 78
     icon: {fileID: 0}
   - objectType: PizzaSlice
-    required: 42
+    required: 52
     icon: {fileID: 0}
   - objectType: Khachapuri
-    required: 50
+    required: 62
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

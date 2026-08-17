@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 10
-  levelTime: 160
+  levelTime: 100
   spawns:
   - prefab: {fileID: 2202210848566317802, guid: f0fa761ca4c3a4029b1b5da63c6f8749, type: 3}
     count: 1
@@ -93,13 +93,16 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: OceanicGemRing2
-    required: 23
+  - objectType: ORNATEFANTASYGOBLET2
+    required: 34
     icon: {fileID: 0}
-  - objectType: Statue
-    required: 16
+  - objectType: StreetLamp
+    required: 24
     icon: {fileID: 0}
-  - objectType: Pumpkin
+  - objectType: MagicBook
+    required: 19
+    icon: {fileID: 0}
+  - objectType: PumpkinPirateShip
     required: 13
     icon: {fileID: 0}
   bombsEnabled: 1

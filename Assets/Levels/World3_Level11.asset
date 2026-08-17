@@ -14,53 +14,69 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 3
   levelIndex: 10
-  levelTime: 160
+  levelTime: 120
   spawns:
-  - prefab: {fileID: 3696924183850969256, guid: 9b3775f78aa074af182c47db1a360596, type: 3}
+  - prefab: {fileID: 5947288330082190103, guid: a5d1f6a73386d446b820899e10f9c1be, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4810101443558205709, guid: 2ac87fcae90224ce28da5ad60109d39f, type: 3}
+  - prefab: {fileID: 7034481183496550418, guid: 99b0ee14cbd5d4b68bf7d71ffd512bfa, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7496330855939771101, guid: 2a694d6f181174a4f911c08c049f879d, type: 3}
+  - prefab: {fileID: 107391899923899307, guid: 7163ab0baec8040a78396bca0c718527, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 5710864901993346827, guid: f145b02b6051648949330961163d7de1, type: 3}
+  - prefab: {fileID: 7765803740670226445, guid: 4de5e166bb2c2492494ad4aa6f12fa3b, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3276664576086849807, guid: 7fa0b8404e87e426f8cd14fe0e300653, type: 3}
+  - prefab: {fileID: 8711875935968297672, guid: fdd875757df554d74b498adcff2c59a1, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3968795267944015703, guid: ebb0cb7392c604e328e009aee33df357, type: 3}
+  - prefab: {fileID: 4971541012924321761, guid: 226319925426c48159314a8032df0220, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6733296667903360578, guid: e95f937e69d96426fbf28f443d1c6471, type: 3}
+  - prefab: {fileID: 899110158796581645, guid: 523ebd8cad39e47f988ff486e0bdbfb0, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3296914403179555475, guid: 2ad0e23a4d3f84890a57bbe1a4396c35, type: 3}
+  - prefab: {fileID: 2102297028081139672, guid: 2b859e02e4a8c4081a64253a4a4ea3e1, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6216461603269859790, guid: 83d7e89cc8f124ff784dbb89f5e26544, type: 3}
+  - prefab: {fileID: 2345659336789438714, guid: f91e229812d7d490eb64974aa6241c3d, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2912918078317541857, guid: 650586120ab0e471184cba40eae9fcba, type: 3}
+  - prefab: {fileID: 8261996124977993339, guid: 13cf31172c87141178ee62ffc439db7d, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4056058494739369230, guid: 6937dfb2139e94b1280781277d844471, type: 3}
+  - prefab: {fileID: 8855414287916069707, guid: 9b3775f78aa074af182c47db1a360596, type: 3}
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2704150650619701247, guid: 6acd62de568204e7aa6b41a64040b3fb, type: 3}
+  - prefab: {fileID: 7894002279804434368, guid: e61c1cbfde89f461a9818ea1bba94bfd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4788242232186102484, guid: 971325939911d4e4d9487647f27d8370, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5499099642478514248, guid: e7168185a2a234b4b8b26fcf8471b437, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1845179460216778674, guid: 332c9f49a91f646de8f8a2650a02253a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8039962590439584943, guid: 81939459dc4b8427ea114e0e9b7ac2e2, type: 3}
     count: 1
     stack: 1
     scale: 1
@@ -76,23 +92,19 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2317540853731066302, guid: b19511f2ef8224fd5a5a5fcacf755512, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   objectives:
-  - objectType: HARDEDGEFantasy
-    required: 19
+  - objectType: Christmas2025Col
+    required: 59
     icon: {fileID: 0}
-  - objectType: IsometricMausoleumB
-    required: 13
+  - objectType: Parisian
+    required: 47
     icon: {fileID: 0}
-  - objectType: HighDetailAnime
-    required: 10
+  - objectType: PleaseSimil
+    required: 38
     icon: {fileID: 0}
-  - objectType: Ideal
-    required: 8
+  - objectType: RealityThisIs
+    required: 32
     icon: {fileID: 0}
-  bombsEnabled: 1
-  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
-  bombCount: 7
+  bombsEnabled: 0
+  bombPrefab: {fileID: 0}
+  bombCount: 0

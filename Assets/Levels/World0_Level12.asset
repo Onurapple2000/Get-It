@@ -14,8 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 0
   levelIndex: 11
-  levelTime: 157.5
+  levelTime: 100
   spawns:
+  - prefab: {fileID: 7963649546485444209, guid: ce267e50df1c04221824d0b7586f3a3c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7828562465193124960, guid: 84f9162033e4745648df428712a29bb2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 717325787285246234, guid: 5a3d38242de804b70a00b1f8f4342945, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3512854395108918256, guid: f12f2061801bc436f9d51a2387251f11, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 8924977216457514350, guid: 8da63789cdd25436dbb1ee02582bfb2b, type: 3}
     count: 1
     stack: 1
@@ -64,10 +80,6 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7963649546485444209, guid: ce267e50df1c04221824d0b7586f3a3c, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +93,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: LargePlanter
-    required: 27
+  - objectType: SmallCrate
+    required: 35
     icon: {fileID: 0}
   - objectType: Mailbox
+    required: 25
+    icon: {fileID: 0}
+  - objectType: Bush
     required: 19
     icon: {fileID: 0}
-  - objectType: PicnicTable
-    required: 15
+  - objectType: Gazebo
+    required: 16
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

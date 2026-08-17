@@ -14,8 +14,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 12
   levelIndex: 9
-  levelTime: 55.5
+  levelTime: 80
   spawns:
+  - prefab: {fileID: 8182373191392631945, guid: 7ce54ea4ab8d5406ea82509b32ffcca8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 248898488011579825, guid: 05dc7826d1345419894c22c4b15b703e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1091193758199905079, guid: 829501942154442d1b7cfe8e1c31110c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1834578133260790784, guid: 3849bd74b5cfa4c8aa0fc452bed1a6d1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6022079497900344336, guid: f6c17b57be7034075860b1cb631e94dc, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4155417819068940166, guid: 00974e0cb14264e86b75f201e590b960, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 254805835848735904, guid: fa1e63b99772549819c13405e7f10faa, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9098924997784947175, guid: 14838fe6674484e099e5e26b6a7c078b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6177298166043948631, guid: dfd0ace7bb20a4893bd40984e3839362, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4253852555646802443, guid: d735b8f1775fb46ff9a8d589db95af62, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 304333189999777760, guid: 52a76ce959a8745a1b15d229334dbc03, type: 3}
     count: 1
     stack: 1
@@ -68,6 +108,58 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 5325437550223684453, guid: c5e9245e002054d55baa4477cd5ed397, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6128873757790559292, guid: f6fc35c5b3c05410dbfe662520845a66, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5909530899919855532, guid: ba8504bb1983f4097bf6580d8ed55a7e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7592013566693811705, guid: 3f0ba439090e049bf97851b045084004, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4511758803426925206, guid: 2edf7a72f6e1845d6b904fc94dc026c1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3424609055076327630, guid: 6f787ade3cc88411789cde100b539034, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5609792150351358850, guid: f2c2c0444177a49829d52fababc41d8f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1508946049183663702, guid: 62439d257edf641fb89fbedc1fab33d4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1375630222541543085, guid: 76ef9aa391b284109a683356effe6cd2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1976264882270921874, guid: 39796b16598244ecf8fd205cb162e9f3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7936019131625073786, guid: 6a7cd4ae16fd840688b2dc04db0b4270, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9197502477530404091, guid: cd2adc8c66cd8427d86256309a7f547e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2875355551043306786, guid: 0a29e30226293404d84dcc1c0a9a4b91, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +173,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Ww2FighterPlanes
-    required: 21
+  - objectType: StukaAircraftIllust
+    required: 32
     icon: {fileID: 0}
-  - objectType: 8cmCmFighet
-    required: 15
+  - objectType: FidelityMode
+    required: 23
     icon: {fileID: 0}
-  - objectType: A10ThunderboltAttac
-    required: 12
+  - objectType: Plane
+    required: 8
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

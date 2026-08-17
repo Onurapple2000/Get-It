@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 4
-  levelTime: 40
+  levelTime: 80
   spawns:
   - prefab: {fileID: 3209769045276146946, guid: 3f9fbe98970ec491787dd6f0459f123a, type: 3}
     count: 1
@@ -198,13 +198,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: BlueRallyRacer
-    required: 30
+    required: 38
     icon: {fileID: 0}
   - objectType: LimeGreenRacing
-    required: 26
+    required: 32
     icon: {fileID: 0}
   - objectType: NeonFlameRacer
-    required: 20
+    required: 25
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

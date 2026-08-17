@@ -14,24 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 0
   levelIndex: 5
-  levelTime: 172.5
+  levelTime: 100
   spawns:
-  - prefab: {fileID: 8780361313986981261, guid: d18efabbfa45e4ad0a0c609199730970, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 6471281029032185253, guid: c8a32d8181661425f9c17652297ba2c3, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 8451822691086256394, guid: 77651e0a98dd446fa83590144e2fb8a4, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 5631508047028168050, guid: 6d2e0d705136d4d978e05e34dd093489, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   - prefab: {fileID: 2073950525914499943, guid: 6ea25a729c29f46a59b52064ed6ca617, type: 3}
     count: 1
     stack: 1
@@ -68,6 +52,34 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 3512854395108918256, guid: f12f2061801bc436f9d51a2387251f11, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8924977216457514350, guid: 8da63789cdd25436dbb1ee02582bfb2b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4123365418987084257, guid: 02199c50cc9784dfb89edf084a3e43a0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8780361313986981261, guid: d18efabbfa45e4ad0a0c609199730970, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6471281029032185253, guid: c8a32d8181661425f9c17652297ba2c3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8451822691086256394, guid: 77651e0a98dd446fa83590144e2fb8a4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5631508047028168050, guid: 6d2e0d705136d4d978e05e34dd093489, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +93,14 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: PicnicTable
-    required: 20
-    icon: {fileID: 0}
-  - objectType: SmallBarrel
-    required: 14
-    icon: {fileID: 0}
   - objectType: SmallCrate
-    required: 11
+    required: 26
+    icon: {fileID: 0}
+  - objectType: Mailbox
+    required: 19
+    icon: {fileID: 0}
+  - objectType: Fountain
+    required: 14
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

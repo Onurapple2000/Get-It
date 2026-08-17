@@ -14,8 +14,124 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 11
   levelIndex: 11
-  levelTime: 157.5
+  levelTime: 100
   spawns:
+  - prefab: {fileID: 6971576602315623323, guid: 3722a236bd57d4f6ea36ac018f882339, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1657826682161673391, guid: 639904070cea041abb71fd2d57a3bc71, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8730698538244551507, guid: 4786f9c3b77d9401588079a3a7b6e9d1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 487319072533397072, guid: 352699cdc729c47518ff513606cef7ad, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8352993421365362180, guid: f346c4fbca1cf4c6cb32a9843939970f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4748636593910322660, guid: e13e29fcb509b4738bd538cec958db91, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2800822526830874901, guid: 0713ade1c88e944a789e15fd4d7b7d1b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7333414729566691725, guid: 5b83b7041724e48aca3e61d3081c6d02, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1290860914942534960, guid: 825a1763e21b740b2882599f94209a96, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7595520997921672086, guid: dbf3c3ec2e14646f18427b720621d398, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7283612128495637864, guid: 852ec3bc04d7647e68b5cf9cd69c8469, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2765527753820901455, guid: 33e9c7e2b70a748a09fe4734e710fba7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4466084778547738431, guid: 8ea4c0f3891f3426cb0a6653745d89fd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7949882959504022958, guid: 5b65dc43f39e1408a81c83921b1a216c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4982243349670975355, guid: aa3f754bfbc724d9697d7f8603cf0920, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3511686716927757008, guid: 0d261ad533e28448fa3729aed3ba875d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4270714656111784648, guid: fd165a474260b4da9b93e120dc94754d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8887587314365294693, guid: ffc60e7731eaf4f06b8740b91de0ade8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2917686181149935308, guid: 724206b7271a147daa1a524faa33262f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 150878660859491774, guid: 0b0c679fdf92c46f1a4c6008e1d26e49, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5226014577573505896, guid: 8147b9385f61348e6af82279e68c4a0d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9052760062725386616, guid: 71c5feb42426b41e59866c38211d7002, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2017123848711340833, guid: d03aadd7e79374f8ebd427d565307698, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7967989258230135831, guid: 529b40a379ab44a3dadd16be0270c775, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3114651112531120402, guid: 2a906bb1bb66b42e9b500459754a8924, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5867385889130471461, guid: 6ec4ea32400944055a0f8c2953b39242, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8124212692357235372, guid: bdbf5cd67cb8145369cb8e78d73e0c60, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9114500012135966710, guid: 45bafb19e59d14d24910f59b8aad254c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8987173201782542138, guid: 11f88ef97b8f14b018031f704d2bff66, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 15814115358993645, guid: 8f60a3c97d8d54ecbbd09ad6bf6021f5, type: 3}
     count: 1
     stack: 1
@@ -44,30 +160,6 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 6009887413491131979, guid: e52ed06d374ae463fa75a7af4f1a1ab3, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 1154994420330691974, guid: 7ab623bbdbb0e4590a2f8a80dc656e45, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 6159684666957274888, guid: 951b1bec422c84fbfa3f8ce12baccd6c, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 82581431953249446, guid: 6901d23d022ba430e97d0d45d2339797, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 9145906086073596819, guid: 432d3ac8000f5455baca5d3267c74426, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 2010824006349703626, guid: f41718fb748ea4b2482a4fa230916557, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +173,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: SailingShipGalleon
-    required: 23
+  - objectType: ModernFishingBoat
+    required: 30
     icon: {fileID: 0}
-  - objectType: SailingShipGalleon2
-    required: 16
+  - objectType: SailingShipBaltic2
+    required: 25
     icon: {fileID: 0}
-  - objectType: Ship
-    required: 13
+  - objectType: PirateShipPBR
+    required: 15
+    icon: {fileID: 0}
+  - objectType: OnePieceSh3
+    required: 6
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

@@ -14,8 +14,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 11
   levelIndex: 14
-  levelTime: 70
+  levelTime: 80
   spawns:
+  - prefab: {fileID: 9114500012135966710, guid: 45bafb19e59d14d24910f59b8aad254c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8987173201782542138, guid: 11f88ef97b8f14b018031f704d2bff66, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 15814115358993645, guid: 8f60a3c97d8d54ecbbd09ad6bf6021f5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1455249817235870948, guid: 98d164edfcbfd4b52ba15a4300c7e194, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6271549868975426136, guid: fa0ce6b27356544989eeb000ca35e8d5, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6967666020493113699, guid: 60a5f2a85bc1b45958d018989900861f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8114467474730795960, guid: 22495b92a0c6f438eb1d75cefdc8a4b1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1973236676296308958, guid: a2163775b18ac4f08bb3ddb173f6d813, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7781705600189083198, guid: 517ce376027c344baaa56c8b790bacdc, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6009887413491131979, guid: e52ed06d374ae463fa75a7af4f1a1ab3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1154994420330691974, guid: 7ab623bbdbb0e4590a2f8a80dc656e45, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6159684666957274888, guid: 951b1bec422c84fbfa3f8ce12baccd6c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 82581431953249446, guid: 6901d23d022ba430e97d0d45d2339797, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9145906086073596819, guid: 432d3ac8000f5455baca5d3267c74426, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2010824006349703626, guid: f41718fb748ea4b2482a4fa230916557, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3515282029169071022, guid: 5149250d47da64741ad94ef2d4aa6d1e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5643629694159963978, guid: 4d8d3df91136f4cf286fb29634de38ad, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 1877629949602663704, guid: 37079e198083749dcb137b392c63d0c3, type: 3}
     count: 1
     stack: 1
@@ -68,6 +136,30 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 6088226742433051917, guid: 2de9a45e150f14d269129b89369ac71f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4724519924559631259, guid: fd11e281ab7c7471497889521fb86956, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2560521293321652492, guid: 4caa1ad2ea19249a8ba5c80c2fa2197a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3530763619560344115, guid: d027cd3d9510e4c1d83dc987ece171c3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3038949201664332275, guid: c3efe67cf00924d63a3b610b24639388, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4038348190033389746, guid: be9451de7dd3e491c836af8923410f81, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +173,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: SteamPunkPirate
-    required: 26
+  - objectType: SmallCruiseWaterbus
+    required: 30
     icon: {fileID: 0}
-  - objectType: SupllyBoat
-    required: 18
+  - objectType: BlueHarborFishing
+    required: 28
     icon: {fileID: 0}
-  - objectType: YachtBoat
-    required: 14
+  - objectType: SteampunkAirshipAi2
+    required: 15
+    icon: {fileID: 0}
+  - objectType: CargoShipSimulation
+    required: 6
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

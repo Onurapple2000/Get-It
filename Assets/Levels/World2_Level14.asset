@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 13
-  levelTime: 195
+  levelTime: 100
   spawns:
   - prefab: {fileID: 2795496377077930092, guid: 62206952703fa4eef96c8a6f39cde662, type: 3}
     count: 1
@@ -198,16 +198,16 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: YellowCometEV
-    required: 28
+    required: 35
     icon: {fileID: 0}
   - objectType: AuroraOne
-    required: 24
+    required: 30
     icon: {fileID: 0}
   - objectType: LumenTreadHypercar
-    required: 20
+    required: 25
     icon: {fileID: 0}
   - objectType: SilverHypercar
-    required: 16
+    required: 20
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

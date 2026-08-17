@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 12
-  levelTime: 195
+  levelTime: 100
   spawns:
   - prefab: {fileID: 58892523173176245, guid: 1610e6cb10af247d7aedfec40789362e, type: 3}
     count: 1
@@ -198,16 +198,16 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: FerrariGTOIcon
-    required: 26
+    required: 32
     icon: {fileID: 0}
   - objectType: OrangeLamborghiniRe
-    required: 22
+    required: 28
     icon: {fileID: 0}
   - objectType: SunburstVeyron
-    required: 18
+    required: 22
     icon: {fileID: 0}
   - objectType: FerrariStretchLimou
-    required: 14
+    required: 18
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

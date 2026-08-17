@@ -90,13 +90,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Cookies
-    required: 95
+    required: 119
     icon: {fileID: 0}
   - objectType: Croissant
-    required: 38
+    required: 48
     icon: {fileID: 0}
   - objectType: Donut
-    required: 68
+    required: 85
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

@@ -89,6 +89,7 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         }
         Active = lv[Mathf.Clamp(CurrentIndex, 0, lv.Length - 1)];
 
+        SetupArena();   // şekilli arena (world-5+): boyut + dışlama kutuları — ResetHole/SpawnObjects'ten ÖNCE
         ResetHole();
         SpawnObjects();
     }
@@ -118,6 +119,7 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         var lv = CurrentLevels();
         if (lv == null || lv.Length == 0) { Debug.LogWarning("[Preview] level yok"); return; }
         Active = lv[Mathf.Clamp(levelIndex, 0, lv.Length - 1)];
+        SetupArena();   // şekilli arena (boyut+kutular) preview'da da kurulsun (Awake'siz çağrıldığı için)
         SpawnObjects();
         BuildArena();
     }
@@ -148,6 +150,53 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         Wall(parent, new Vector3(-wallH, wh * 0.5f, 0), new Vector3(t2, wh, 2 * wallH + t2));
 
         BuildOuterFade(parent, h, outerFadeHalf);
+
+        // ŞEKİLLİ ARENA (world-5+): dışlama kutularını YÜKSELTİLMİŞ BLOK olarak kur (görünür + BoxCollider → nesneler
+        // çarpar; delik analitik olarak dışında tutulur). İç ada / kenar çıkıntısı — ikisi de aynı blok.
+        if (arenaShaped)
+        {
+            const float blockH = 3.0f, blockWallH = 6.0f;
+            foreach (var b in arenaBoxes)
+            {
+                // 1) GÖRÜNÜR blok — ZEMİN dokusuyla kaplı (kullanıcı: yükseltiler zemin resmiyle kaplansın). Collider YOK
+                //    (çarpışmayı aşağıdaki görünmez keep-out duvarı sağlar; delik rim'i analitik olarak zaten dışarıda).
+                var vis = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                vis.name = "ArenaBlock";
+                var vc = vis.GetComponent<Collider>();
+                if (vc != null) { if (Application.isPlaying) Destroy(vc); else DestroyImmediate(vc); }
+                vis.transform.SetParent(parent, false);
+                vis.transform.localPosition = new Vector3(b.center.x, blockH * 0.5f, b.center.y);
+                vis.transform.localScale = new Vector3(b.half.x * 2f, blockH, b.half.y * 2f);
+                vis.GetComponent<MeshRenderer>().sharedMaterial = MakeGroundBlockMat(b);
+
+                // 2) GÖRÜNMEZ KEEP-OUT duvarı — blok + BOX_KEEPOUT (kullanıcı: kutuların çevresine görünmez duvar).
+                //    Nesneler rim mesafesi kadar uzakta kalır; blok yüzüne rim'den yakın saçılan/dinlenen nesne olmaz.
+                var wall = new GameObject("ArenaBlockWall", typeof(BoxCollider));
+                wall.transform.SetParent(parent, false);
+                wall.transform.localPosition = new Vector3(b.center.x, blockWallH * 0.5f, b.center.y);
+                wall.GetComponent<BoxCollider>().size = new Vector3((b.half.x + BOX_KEEPOUT) * 2f, blockWallH, (b.half.y + BOX_KEEPOUT) * 2f);
+            }
+        }
+    }
+
+    // Şekilli arena bloğu için ZEMİN dokulu Lit materyal — sahneyle bütünleşsin (blok boyutuna göre tile'lanır).
+    Material MakeGroundBlockMat(ArenaBox b)
+    {
+        var sh = SafeShader("Universal Render Pipeline/Lit");
+        var m = new Material(sh) { name = "ArenaBlockMat" };
+        Color tint = (_groundTex != null) ? _groundTint : new Color(0.34f, 0.26f, 0.20f);
+        if (m.HasProperty("_BaseColor")) m.SetColor("_BaseColor", tint); else m.color = tint;
+        if (_groundTex != null)
+        {
+            if (m.HasProperty("_BaseMap")) m.SetTexture("_BaseMap", _groundTex);
+            m.mainTexture = _groundTex;
+            float tile = Mathf.Max(0.01f, _groundTile);
+            Vector2 sc = new Vector2((b.half.x * 2f) / tile, (b.half.y * 2f) / tile);
+            m.mainTextureScale = sc;
+            if (m.HasProperty("_BaseMap")) m.SetTextureScale("_BaseMap", sc);
+        }
+        if (m.HasProperty("_Smoothness")) m.SetFloat("_Smoothness", 0.1f);
+        return m;
     }
 
     // Görünmez tutma duvarı (sadece collider).
@@ -254,14 +303,29 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         for (int i = 0; i < worlds.Length; i++)
             if (worlds[i] != null && worlds[i].worldId == CurrentWorld) { set = worlds[i]; break; }
         if (set == null) return;
+        _groundTex = set.groundTexture; _groundTint = set.groundTint; _groundTile = set.groundTile;   // BuildArena blok materyali için sakla
         var floor = FindAnyObjectByType<HoleFloor>();
-        if (floor != null) floor.SetGroundTheme(set.groundTexture, set.groundTint, set.groundTile);
+        if (floor != null)
+        {
+            // ŞEKİLLİ ARENA: alan büyüdü → zemin diski köşeleri kaplasın (kare ~24 → köşe ~34; radius'u büyüt).
+            if (arenaShaped) floor.boundaryRadius = Mathf.Max(floor.boundaryRadius, 42f);
+            floor.SetGroundTheme(set.groundTexture, set.groundTint, set.groundTile);
+        }
     }
 
     void ResetHole()
     {
         var hole = FindAnyObjectByType<HoleController>();
-        if (hole != null) hole.currentSize = holeStartSize;
+        // İÇECEKLER (dünya 5): nesneler ~2.4× büyük + DÜRÜST collider → küçük tier baştan sığsın diye delik biraz büyük
+        // başlar. 2026-08-03 nesneler %20 küçülünce 2.0→1.7 (Tiny footprint ~1.38 < 1.7). Diğer dünyalar holeStartSize (1.5).
+        float start = BigObjWorld(CurrentWorld) ? 1.7f : holeStartSize;
+        if (hole != null)
+        {
+            hole.currentSize = start;
+            // İÇECEKLER: en büyük (geniş) hedef footprint ~3.2 → deliğin ona ULAŞABİLMESİ + üstüne pay için maxSize'ı
+            // genişlet (kullanıcı 2026-08-03: "max büyüme size'ını biraz daha geniş yap"). 4.5→5.5.
+            if (BigObjWorld(CurrentWorld)) hole.maxSize = 5.5f;
+        }
     }
 
     // Görünmez arena duvarı (HoleController.boundaryLimit) — tüm spawn'lar bunun İÇİNDE kalır (ayak izi dahil).
@@ -271,6 +335,166 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
     readonly Dictionary<string, int> _typeCount = new(); // araç düzeninde tür başına yerleştirilen adet (hedef garantisi)
     readonly List<(Vector2 p, float r)> _objOcc = new();  // HEDEF park lotları (sokak/blok/dolgu bunların üstüne gelmesin)
     bool _thinBuildings = false;   // BİNALAR (dünya 3): ızgara formasyonlarında binaların ~%25'ini atla (seyrek şehir)
+
+    // ── ŞEKİLLİ ARENA (2026-08-03, world-5+ pilotu) ─────────────────────────────────────────────────────────────
+    // Sahne artık dünya-5'te DİKDÖRTGEN + eksen-hizalı "dışlama kutuları" (iç ada VEYA kenar çıkıntısı). Kutu = engel:
+    // ne oyuncu (delik) ne nesne içine girer → oyuncu etrafından DOLANIR (daha çok gezinti). Delik collider'sız
+    // (transform ile hareket) → duvarlarla durdurulamaz, bu yüzden ANALİTİK sınırlama (ConfineHoleXZ). Nesneler için
+    // gerçek box-collider bloklar (BuildArena) + spawn'da InBox filtresi. ŞEKİLSİZ dünyalar (0-4,6+): arenaShaped=false
+    // → tüm bu yollar KAPALI, eski kare davranış birebir korunur.
+    public struct ArenaBox { public Vector2 center; public Vector2 half; }   // eksen-hizalı (xz merkez + yarı-boyut)
+    bool arenaShaped = false;
+    float arenaHalfX, arenaHalfZ;
+    readonly List<ArenaBox> arenaBoxes = new();
+    public bool ArenaShaped => arenaShaped;
+    const float RIM_MARGIN = 0.7f;    // delik RİM'i (HoleRim.ringWidth ~0.6) blokların ALTINA girmesin → confine bu kadar fazla dışarıda tutar
+    const float BOX_KEEPOUT = 0.7f;   // nesneler blok yüzünden bu kadar UZAK kalsın (görünmez keep-out duvarı + spawn payı; rim erişimiyle hizalı)
+    // Zemin teması (BuildArena blok materyali için ApplyGroundTheme'de saklanır).
+    Texture2D _groundTex; Color _groundTint = Color.white; float _groundTile = 6f;
+
+    // BÜYÜK-NESNE dünyaları (İçecekler 5 … Mücevher 15): drink-tarzı kompozisyon + fizik (growMultiplier, maxSize,
+    // knife-cut fix, seyrek/ground-shape dolgu, rank fazlası, footprint-hedef). Cars(2)/Buildings(3) ayrı; Sweets(4) hariç.
+    static bool BigObjWorld(int w) => w == 0 || (w >= 5 && w <= 15) || w == 17;   // + Park(0) + Karma(17) (2026-08-05)
+
+    // Dünya+level bazlı şekil kataloğu. null = şekilsiz (eski kare). Büyük-nesne dünyaları ~2× alan; boyut dünyaya göre değişir.
+    // İçecekler (5): TÜM levellar engelli. Diğer büyük dünyalar (6-15): ÇİFT levellar engelli, TEK levellar düz (kutu yok).
+    static (float hx, float hz, ArenaBox[] boxes)? ArenaShapeFor(int world, int levelIndex)
+    {
+        if (world == 5) return (24f, 24f, DrinkBoxes());              // İçecekler: TÜM levellar engelli
+        if (BigObjWorld(world))                                       // diğer büyük dünyalar (6-15, Park 0, Karma 17): ÇİFT level engelli
+        {
+            float half = ArenaHalfForWorld(world);                    // dünyaya göre farklı boyut (22-26)
+            bool even = ((levelIndex + 1) % 2) == 0;                  // level NUMARASI çift → engelli; tek → düz büyük kare
+            return (half, half, even ? BoxesFor(world, levelIndex, half) : new ArenaBox[0]);
+        }
+        return null;
+    }
+
+    // Dünyaya göre kare arena yarı-boyutu (farklı BOYUT versiyonları). Kare tutulur (dairesel dolgu köşeleri iyi kaplar).
+    static float ArenaHalfForWorld(int world)
+    {
+        float[] sizes = { 24f, 26f, 22f, 25f, 23f };
+        return sizes[((world % sizes.Length) + sizes.Length) % sizes.Length];
+    }
+
+    static ArenaBox[] DrinkBoxes() => new[]
+    {
+        new ArenaBox { center = new Vector2(-17f,  5f), half = new Vector2(7f, 5f) },   // SOL kenardan çıkıntı
+        new ArenaBox { center = new Vector2(  8f, -9f), half = new Vector2(5f, 5f) },   // İÇ ada
+        new ArenaBox { center = new Vector2( 18f,  8f), half = new Vector2(6f, 5f) },   // SAĞ kenardan çıkıntı
+    };
+
+    // Büyük dünyalar (6-15) ÇİFT levelları: 5 şablonluk kütüphaneden (world,level) ile seçilen FARKLI yerleşim,
+    // arena boyutuna (half/24) ölçeklenir. Şablonlar half=24 referansına göre tanımlı.
+    static ArenaBox[] BoxesFor(int world, int levelIndex, float half)
+    {
+        int idx = (((world * 3 + levelIndex) % 5) + 5) % 5;
+        ArenaBox[] t;
+        switch (idx)
+        {
+            case 0: t = DrinkBoxes(); break;                                                      // 3 karışık
+            case 1: t = new[] { Box(-9f, 8f, 6f, 4f), Box(11f, -7f, 5f, 5f) }; break;             // 2 ada
+            case 2: t = new[] { Box(16f, 6f, 7f, 4f), Box(-10f, -8f, 5f, 5f) }; break;            // sağ çıkıntı + ada
+            case 3: t = new[] { Box(-3f, 18f, 6f, 5f), Box(5f, -18f, 6f, 5f) }; break;            // üst + alt kenar çıkıntısı
+            default: t = new[] { Box(-12f, 10f, 4f, 4f), Box(13f, 4f, 4f, 4f), Box(2f, -12f, 4f, 4f) }; break;  // 3 küçük dağınık ada
+        }
+        float s = half / 24f;
+        if (Mathf.Abs(s - 1f) > 0.001f)
+            for (int i = 0; i < t.Length; i++) { t[i].center *= s; t[i].half *= s; }
+        return t;
+    }
+
+    static ArenaBox Box(float cx, float cz, float hx, float hz) => new ArenaBox { center = new Vector2(cx, cz), half = new Vector2(hx, hz) };
+
+    // Awake'te (spawn'dan ÖNCE) çağrılır: aktif dünyanın arena şeklini kur + boyut alanlarını (playHalf/frameHalf/
+    // boundaryLimit) ona göre ayarla. Şekilsizse eski değerleri korur.
+    void SetupArena()
+    {
+        arenaBoxes.Clear();
+        var shape = ArenaShapeFor(CurrentWorld, Active != null ? Active.levelIndex : CurrentIndex);
+        if (shape.HasValue)
+        {
+            arenaShaped = true;
+            arenaHalfX = shape.Value.hx; arenaHalfZ = shape.Value.hz;
+            arenaBoxes.AddRange(shape.Value.boxes);
+            playHalf = Mathf.Min(arenaHalfX, arenaHalfZ);              // dairesel dolgu yarıçapı (kare pilotta = halfX)
+            frameHalf = Mathf.Max(arenaHalfX, arenaHalfZ) + 1.5f;
+            var hc = FindFirstObjectByType<HoleController>();
+            if (hc != null) hc.boundaryLimit = Mathf.Max(arenaHalfX, arenaHalfZ) + 0.5f;
+
+            // LANDMARK LEVELLARI (L3/6/9/12 = idx 2/5/8/11; foods hariç): dünya harikası ARKA-ORTADA (0, playHalf*0.62,
+            // yarıçap ≤9.5). O bölgeye DENK GELEN engel kutularını ELE → yapı engelin içinde kalmasın (kullanıcı: gemiler L6).
+            int li = Active != null ? Active.levelIndex : CurrentIndex;
+            if (CurrentWorld != 1 && (li == 2 || li == 5 || li == 8 || li == 11) && arenaBoxes.Count > 0)
+            {
+                Vector2 lm = new Vector2(0f, playHalf * 0.62f);
+                const float lmClear = 11f;   // en geniş landmark (TowerBridge 9.5) + pay
+                arenaBoxes.RemoveAll(b =>
+                {
+                    float cx = Mathf.Clamp(lm.x, b.center.x - b.half.x, b.center.x + b.half.x);
+                    float cz = Mathf.Clamp(lm.y, b.center.y - b.half.y, b.center.y + b.half.y);
+                    return (new Vector2(cx, cz) - lm).sqrMagnitude < lmClear * lmClear;   // kutu, landmark diskine değiyor
+                });
+            }
+        }
+        else { arenaShaped = false; arenaHalfX = arenaHalfZ = playHalf; }
+    }
+
+    // Nokta (yarıçap r ile) herhangi bir dışlama kutusunun İÇİNDE mi? (spawn/yerleşim bunlardan kaçınır.)
+    // Şekilsiz dünyalarda arenaBoxes boş → daima false → hiçbir şeyi etkilemez.
+    bool InBox(Vector2 p, float r)
+    {
+        for (int i = 0; i < arenaBoxes.Count; i++)
+        {
+            var b = arenaBoxes[i];
+            // + BOX_KEEPOUT: nesne blok yüzüne rim mesafesinden yakın DOĞMASIN/saçılmasın (delik oraya rim ile ulaşamaz).
+            if (Mathf.Abs(p.x - b.center.x) < b.half.x + r + BOX_KEEPOUT && Mathf.Abs(p.y - b.center.y) < b.half.y + r + BOX_KEEPOUT) return true;
+        }
+        return false;
+    }
+
+    // Deliğin XZ konumunu şekilli arenada tut: dış dikdörtgene clamp + her kutunun (rim payı ile) DIŞINA it.
+    // HoleController (transform ile hareket, collider'sız) her kare bunu çağırır (yalnız arenaShaped iken).
+    public Vector2 ConfineHoleXZ(Vector2 pos, float holeHalf)
+    {
+        float lx = Mathf.Max(0.5f, arenaHalfX - holeHalf), lz = Mathf.Max(0.5f, arenaHalfZ - holeHalf);
+        pos.x = Mathf.Clamp(pos.x, -lx, lx);
+        pos.y = Mathf.Clamp(pos.y, -lz, lz);
+        // KÖŞE YUVARLAMA (2026-08-05 kullanıcı, pilot world 7): kare bloğun keskin köşesinde yuvarlak delik takılıyordu.
+        // Kutuyu KESKİN dikdörtgen yerine YUVARLAK-köşeli kabul et → delik köşe etrafında m yarıçaplı YAY çizer, akıcı döner.
+        // (Blok görseli/collider'ı kare kalır; sadece deliğin izlediği sınır köşede yuvarlanır.)
+        // 2026-08-05: world-7 pilotu onaylandı → TÜM engelli dünyalara açıldı (ConfineHoleXZ zaten yalnız şekilli arenada çağrılır).
+        bool rounded = true;
+        for (int i = 0; i < arenaBoxes.Count; i++)
+        {
+            var b = arenaBoxes[i];
+            float m = holeHalf + RIM_MARGIN;
+            float qx = pos.x - b.center.x, qz = pos.y - b.center.y;
+            float sx = qx < 0f ? -1f : 1f, sz = qz < 0f ? -1f : 1f;
+            float ax = Mathf.Abs(qx) - b.half.x;   // >0 → x ekseninde kutu DIŞINDA
+            float az = Mathf.Abs(qz) - b.half.y;
+            if (ax >= m || az >= m) continue;      // keep-out bandının tamamen dışında
+
+            if (rounded && ax > 0f && az > 0f)     // KÖŞE bölgesi → köşe noktasından radyal it (yuvarlak dönüş)
+            {
+                Vector2 corner = new Vector2(b.center.x + sx * b.half.x, b.center.y + sz * b.half.y);
+                Vector2 d = pos - corner;
+                float dist = d.magnitude;
+                if (dist < m)
+                {
+                    d = dist > 1e-4f ? d / dist : new Vector2(sx, sz).normalized;
+                    pos = corner + d * m;
+                }
+            }
+            else                                    // YÜZ (veya kutu içi) → en yakın yüze eksen-it
+            {
+                float px = (b.half.x + m) - Mathf.Abs(qx), pz = (b.half.y + m) - Mathf.Abs(qz);
+                if (px <= pz) pos.x = b.center.x + sx * (b.half.x + m);
+                else          pos.y = b.center.y + sz * (b.half.y + m);
+            }
+        }
+        return pos;
+    }
 
     // Konum bir HEDEF lotuna değiyor mu? (sokak/blok yerleşimi hedef lotlarından kaçınsın)
     bool NearObj(Vector2 p, float r)
@@ -305,15 +529,15 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         // Görünmez duvarı bul → spawn clamp sınırı. Nesneler bu duvara (rim tuğlaları kadar) yaklaşabilir, aşamaz.
         var hcLimit = FindFirstObjectByType<HoleController>();
         _arenaLimit = hcLimit != null ? hcLimit.boundaryLimit : (frameHalf - 0.6f);
-        // ARABALAR dünyasında araç sayısı ~2 katına çıktı → delik yutma-başına DAHA AZ büyüsün (aksi halde çok
-        // çabuk büyür). Dünya-bazlı growMultiplier (diğer dünyalar varsayılan 0.5). (kullanıcı 2026-07-28)
-        // ARABALAR: growMultiplier=1 → yutma büyümesi DOĞRUDAN growAmount (SpawnStack her araca boyuta göre yazar:
-        // küçük ~0.02, büyük ~0.05, dev ~0.10-0.13). Diğer dünyalar 0.5 (prefab growAmount × 0.5).
-        // BİNALAR (dünya 3): delik hâlâ hızlı büyüyordu (prefab growAmount 0.12-0.17 × 0.25 = ~0.03-0.043, HÂLÂ çok) →
-        // kullanıcı 2026-07-29 "ARABALAR dünyasındaki gibi yap". ARABALAR gibi: growMultiplier=1 + growAmount SpawnObjects
-        // sonunda BOYUTA göre yazılır (post-pass §aşağıda) → ~0.003-0.02 (7-20x daha yavaş). growMultiplier=1 → büyüme
-        // DOĞRUDAN growAmount.
-        if (hcLimit != null) hcLimit.growMultiplier = (Active.worldId == 2 || Active.worldId == 3) ? 1.0f : 0.5f;
+        // ⭐ DELİK BÜYÜMESİ = TÜM DÜNYALARDA ARABALAR/BİNALAR GİBİ (kullanıcı 2026-07-29): growMultiplier=1 + growAmount
+        // SpawnObjects SONUNDA nesnenin BOYUTUNA göre yazılır (post-pass §aşağıda) → prefabın tutarsız growAmount'u EZİLİR,
+        // büyüme küçük ~0.002 / orta ~0.004 / büyük ~0.006 / dev ~0.01-0.02 olur (yavaş, boyutla orantılı). Post-pass
+        // root'taki TÜM PhysicsSwallowable'ı gezer → L3/6/9/12 LANDMARK yapıları da AYNI kurala girer. growMultiplier=1
+        // → büyüme DOĞRUDAN growAmount.
+        // ⚠️ İÇECEKLER (dünya 5, 2026-08-03): nesneler ~2.4× BÜYÜK ama SEYREK (az nesne) → size-tabanlı küçük growAmount
+        // (0.0015-0.007) ile delik en büyük hedefe (footprint ~3.2) ULAŞAMIYOR / çok yavaş (kullanıcı). Bu dünyada
+        // büyüme çarpanını 4× yap → yutulan her nesne deliği belirgin büyütür, büyük hedefe makul sürede ulaşır.
+        if (hcLimit != null) hcLimit.growMultiplier = ((Active != null && BigObjWorld(Active.worldId)) ? 3.0f : 1.0f) * DifficultySettings.GrowthMultiplier;   // 2026-08-03: 4→3; 2026-08-06: KOLAY zorlukta ×3 (yutulan başına daha hızlı büyüme)
 
         SetupLandmarkArea();   // L3/6/9/12: dünya harikası konum + temiz alan (LandmarkBuilder.cs)
 
@@ -327,7 +551,9 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
             var psw = s.prefab.GetComponent<PhysicsSwallowable>();
             if (psw != null && psw.powerUp != PowerUpType.None)
             {
-                for (int i = 0; i < Mathf.Max(1, s.count); i++) sparse.Add(s.prefab);
+                // ZOR zorlukta sahnede güç-up DOĞMAZ (oyuncu yalnız kendi envanterini kullanır — 2026-08-06 kullanıcı).
+                if (DifficultySettings.PowerUpsSpawnInScene)
+                    for (int i = 0; i < Mathf.Max(1, s.count); i++) sparse.Add(s.prefab);
                 continue;
             }
             types.Add((s.prefab, Mathf.Max(1, s.stack), s.scale > 0.01f ? s.scale : 1f));
@@ -363,21 +589,32 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         // ZORUNLU: her hedef türünden, gerekli sayıdan (+ pay) AZ varsa eksiği tamamla → level kazanılabilir olsun.
         EnsureObjectiveCounts(root);
 
-        // ARABALAR + BİNALAR: TÜM yutulabilir nesnelerin (kompozisyon + LANDMARK L3/6/9/12 yapıları dahil) delik-büyümesini
-        // BOYUTLA orantılı TEK YERDEN ayarla → landmark nesneleri de diğerleriyle AYNI büyütsün (kullanıcı 2026-07-28/29;
-        // BİNALAR: "arabalar gibi yap" → prefab'ın yüksek/tutarsız growAmount'unu boyuta göre EZER, MeshCollider bounds'tan md).
-        // Güç-up'lar hariç. Değerler düşük (küçük ~0.002, orta ~0.004, büyük ~0.006, dev ~0.01-0.02) → yavaş büyüme.
-        if (Active.worldId == 2 || Active.worldId == 3)
+        // ⭐ TÜM DÜNYALAR: TÜM yutulabilir nesnelerin (kompozisyon + LANDMARK L3/6/9/12 yapıları dahil) delik-büyümesini
+        // BOYUTLA orantılı TEK YERDEN ayarla → prefab'ın tutarsız growAmount'unu EZER, landmark dahil hepsi AYNI kural
+        // (kullanıcı 2026-07-29: "bütün dünyalar arabalar/binalar gibi olsun, L3/6/9/12 özel yapılar dahil"). Güç-up hariç.
+        // md = BoxCollider varsa bc.size·lossyScale, yoksa collider/renderer dünya-bounds. Değerler: küçük ~0.002 / orta
+        // ~0.004 / büyük ~0.006 / dev ~0.01-0.02 → yavaş, boyutla orantılı büyüme.
+        // İÇECEKLER (dünya 5, 2026-08-03): "delik ağzı yarı-delikteki nesneyi bıçak gibi kesiyor (hızlı sürüklerken)".
+        // Zemin deliği BİREBİR takip eder; nesne ise gecikir → deliğin GERİ kenarına düşer → katı zemin halkası
+        // gövdeyi keser. Çözüm: yutulan (delik üstünde+giren) nesneyi MERKEZE + AŞAĞI daha sert çek → rim'de oyalanmaz,
+        // hızlı sürüklemede bile açıklığın ortasında/dibinde kalır. Yalnız dünya-5 (büyük nesneler bu artefaktı gösteriyor).
+        bool drk5 = Active != null && BigObjWorld(Active.worldId);
         {
             foreach (var psw in root.GetComponentsInChildren<PhysicsSwallowable>())
             {
                 if (psw.powerUp != PowerUpType.None) continue;   // güç-up'a dokunma
+                if (drk5)
+                {
+                    psw.holeCentering = 11f; psw.holeSuction = 40f;   // 4→11 merkeze, 28→40 aşağı (rim'de oyalanmasın)
+                    psw.wakeDepenetration = 2.5f;                     // 0.35→2.5: hareketli zemin nesneyi HIZLI geri itsin (bıçak-kesme gitsin)
+                    if (psw.Body != null) psw.Body.mass = 2f;         // büyük içeceğin dim*4 kütlesi (≤13) → ATALET/gecikme; 2 sabit → zemin açıklığını daha iyi takip eder
+                }
                 float md = 1f;
                 var bc = psw.GetComponent<BoxCollider>();
                 if (bc != null) { var ws = Vector3.Scale(bc.size, psw.transform.lossyScale); md = Mathf.Max(ws.x, Mathf.Max(ws.y, ws.z)); }
                 else
                 {
-                    // BİNALAR: BoxCollider YOK (MeshCollider) → dünya-uzayı bounds'tan boyut (collider, yoksa renderer).
+                    // BoxCollider YOK (MeshCollider / convex) → dünya-uzayı bounds'tan boyut (collider, yoksa renderer).
                     var cs = psw.GetComponentsInChildren<Collider>();
                     if (cs.Length > 0) { Bounds b = cs[0].bounds; for (int i = 1; i < cs.Length; i++) b.Encapsulate(cs[i].bounds); md = Mathf.Max(b.size.x, Mathf.Max(b.size.y, b.size.z)); }
                     else { var rs = psw.GetComponentsInChildren<Renderer>(); if (rs.Length > 0) { Bounds b = rs[0].bounds; for (int i = 1; i < rs.Length; i++) b.Encapsulate(rs[i].bounds); md = Mathf.Max(b.size.x, Mathf.Max(b.size.y, b.size.z)); } }
@@ -399,6 +636,10 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         foreach (var s in Active.spawns)
             if (s.prefab != null && !map.ContainsKey(s.prefab.name)) map[s.prefab.name] = s.prefab;
 
+        // İÇECEKLER (2026-08-03): ComposeCarCity hedefi RANK'a göre req+[0,2,3,5] koyar (kullanıcının fazla şeması).
+        // EnsureObjectiveCounts +3 pay eklerse bu şemayı EZER (hepsi ≥req+3 olur). Bu yüzden dünya-5'te pay=0 →
+        // yalnız GARANTİ: eksikse en az req'e tamamla (kazanılabilirlik), fazlaya karışma.
+        bool drk = Active != null && BigObjWorld(Active.worldId);
         int spot = 0;
         foreach (var o in Active.objectives)
         {
@@ -407,24 +648,39 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
             for (int i = 0; i < all.Count; i++)
                 if (all[i] != null && !all[i].IsSwallowed && all[i].ResolvedType == o.objectType) have++;
 
-            int need = (o.required + 3) - have;   // +3 pay
+            int need = (o.required + (drk ? 0 : 3)) - have;   // diğer dünyalar +3 pay; İçecekler yalnız req (fazla ComposeCarCity'de)
             if (need <= 0 || !map.TryGetValue(o.objectType, out var pf)) continue;
 
             float cr = Footprint(pf) * 0.5f;
+            // Dış yarıçapı ARENA SINIRI içinde tut → SpawnStack'in clamp'i (özellikle İçecekler dünya-5 clamp-atla)
+            // bu zorunlu hedef nesnesini ELEMESİN (aksi halde required+3 garantisi bozulur). arenaLimit-cr-0.6 < clamp lim.
+            float maxR = Mathf.Max(centerClearance + 2f, Mathf.Min(playHalf - 1f, _arenaLimit - cr - 0.6f));
             for (int i = 0; i < need; i++)
             {
                 // golden-angle saçılım — mevcut araçların ÜSTÜNE BİNMESİN: BOŞ (OccFree) nokta bulunca yerleştir;
                 // bulunamazsa ATLA (çakışma yaratma). Araç düzeninde hedefler zaten grid'de garanti (yukarıda) →
                 // burası genelde no-op; diğer dünyalarda _occ boş → ilk nokta hep serbest.
                 bool ok = false; Vector2 p = Vector2.zero;
-                for (int a = 0; a < 120; a++)
+                // 1) TERCİH: kutu dışı + BOŞ (çakışmasız) nokta.
+                for (int a = 0; a < 140; a++)
                 {
                     float ang = spot * 2.39996323f;
-                    float r = Mathf.Lerp(centerClearance + 1f, playHalf - 1f, ((spot * 0.61803f) % 1f));
+                    float r = Mathf.Lerp(centerClearance + 1f, maxR, ((spot * 0.61803f) % 1f));
                     spot++;
                     p = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * r;
-                    if (OccFree(p, cr)) { ok = true; break; }
+                    if (!InBox(p, cr) && OccFree(p, cr)) { ok = true; break; }   // şekilli arena: kutuya koyma
                 }
+                // 2) YEDEK (KAZANILABİLİRLİK GARANTİSİ): boş yer yoksa çakışmayı GÖZ ARDI et, yeter ki kutu DIŞI + arena
+                // İÇİ bir yer olsun → hedef nesnesi KESİN doğar (aksi halde 1 eksik kalıp level kazanılamıyordu — kullanıcı: uçaklar L13).
+                if (!ok)
+                    for (int a = 0; a < 140; a++)
+                    {
+                        float ang = spot * 2.39996323f;
+                        float r = Mathf.Lerp(centerClearance + 1f, maxR, ((spot * 0.61803f) % 1f));
+                        spot++;
+                        p = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * r;
+                        if (!InBox(p, cr)) { ok = true; break; }
+                    }
                 if (ok) SpawnStack(pf, 1, 1f, p, Random.value * 360f, root);
             }
         }
@@ -434,14 +690,15 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
     void ComposeFormations(List<(GameObject prefab, int stack, float scale)> types, Transform root)
     {
         _carLayout = false;
-        // İÇECEKLER (dünya 5): kullanıcı isteğiyle KENDİ kompozisyonu — az sayıda (4) yoğun öbek + geri kalan
-        // hücrelerde TANINMIŞ GEOMETRİK yapılar (piramit/silindir/kubbe/kule), nesneler daha BÜYÜK, yapılar KISA
-        // (kamerayı kapatmasın). Diğer dünyalar aşağıdaki genel yerleşimi kullanmaya devam eder.
-        if (Active != null && Active.worldId == 5) { ComposeDrinks(types, root); return; }
 
         // ARABALAR (dünya 2): ŞEHİR kompozisyonu — sürekli araç CADDELERİ (ızgara) + blok içi GARAJ KULELERİ (dikey);
         // merkezde küçük araç, kenara doğru büyük (boyut gradyanı). Oyuncu caddeleri takip ederek kesintisiz gezer/yutar.
-        if (Active != null && Active.worldId == 2) { ComposeCarCity(types, root); return; }
+        // Arabalar (2), Binalar (3) VE İÇECEKLER (5): Cars-tarzı şehir kompozisyonu (Voronoi çeşit, anlamlı şekil öbekleri,
+        // yatay zemin desenleri + dikey kule/istif, hedef garantisi, boyut-orantılı büyüme). Binalar 2026-07-31 sıfırdan.
+        // ⚠️ İÇECEKLER 2026-08-03: nesneler ~3× büyüyünce GENEL ızgara/formasyon (Tatlılar yolu) çok SIKIŞIK oldu → nesneler
+        // İÇ İÇE doğuyordu (kullanıcı). ComposeCarCity TÜM yerleşimi OccFree ile ÇAKIŞMASIZ kurar + yoğunluğu kontrol eder →
+        // büyük içeceklere doğru ev. Dünya-5 için SEYREK "drk" profili (bkz ComposeCarCity: nGiant 0, geniş grid, kısa istif).
+        if (Active != null && (Active.worldId == 2 || Active.worldId == 3 || BigObjWorld(Active.worldId))) { ComposeCarCity(types, root); return; }
 
         if (IsBigObjectLevel(types)) { ComposeBigObjects(types, root); return; }
 
@@ -683,6 +940,7 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         {
             if (maxCount > 0 && placed >= maxCount) return false;
             if (p.magnitude > extent - 0.6f || p.magnitude < centerClearance + 0.8f) return false;
+            if (InBox(p, cr)) return false;   // şekilli arena: dışlama kutusuna (engel/çıkıntı) girme
             if (InLandmarkArea(p) || NearObj(p, cr) || !OccFree(p, cr)) return false;
             float head = Mathf.Atan2(dir.x, dir.y) * Mathf.Rad2Deg;
             SpawnStack(pf, stack, sc, p, d.yaw + head, root);
@@ -773,6 +1031,13 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
     void ComposeCarCity(List<(GameObject prefab, int stack, float scale)> types, Transform root)
     {
         _carLayout = true;
+        // BİNALAR (dünya 3): daha SEYREK yoğunluk (hedef 500-600, arabalar ~800) + kısa istif. Grid'ler büyür,
+        // dolgu istifi 2-4 (dikey mimariyi korur ama sayıyı patlatmaz). (2026-07-31 kullanıcı: yoğunluk 500-600.)
+        bool bld = Active != null && Active.worldId == 3;
+        // İÇECEKLER (dünya 5, 2026-08-03): nesneler ~3× → EN SEYREK profil (kullanıcı: "sahneler çok kalabalık, sayıyı
+        // azalt"). Geniş grid (az öbek), kısa istif, DEV içecek YOK (×3-4 dev = maxSize'ı aşar), şekil öbekleri ZEMİN
+        // (tall kule yok → büyük bardak kuleleri kamerayı kapatmasın). Boyut zaten 3× → ComposeCarCity büyütmesi KAPALI.
+        bool drk = Active != null && BigObjWorld(Active.worldId);
         _occ.Clear();
         _typeCount.Clear();
         // Araç boyutunu biraz büyüt (kullanıcı 2026-07-28) + çok küçükleri daha çok → görsel dolgunluk.
@@ -781,12 +1046,20 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         {
             if (t.prefab == null || t.prefab.name == "Tray") continue;
             var d = t; float md = MaxDim(d.prefab) * d.scale;
-            d.scale *= (md < 1.0f) ? 1.4f : (md < 1.9f) ? 1.18f : 1.0f;   // küçük/orta büyür; BÜYÜK araç DOKUNULMAZ (yoksa büyük-araç level'ı seyrekleşir)
+            if (!drk) d.scale *= (md < 1.0f) ? 1.4f : (md < 1.9f) ? 1.18f : 1.0f;   // küçük/orta büyür; BÜYÜK DOKUNULMAZ. İÇECEK: zaten 3× → dokunma.
             cars.Add(d);
         }
         if (cars.Count == 0) return;
         var objSet = new HashSet<string>();
         foreach (var o in Active.objectives) objSet.Add(o.objectType);
+
+        // İÇECEKLER (2026-08-03 kullanıcı): hedeflerden biri GENİŞ/BÜYÜK bir nesne mi (footprint ≥ 2.8 → deliğin ~3.3'e
+        // büyümesi gerekir)? Öyleyse o levelda KÜÇÜK+ORTA nesne sayısını artır (grid'i sıklaştır) → oyuncu deliği büyütecek
+        // bol "yakıt" bulur (büyük hedefi yutacak boyuta ulaşır). Sadece dünya-5.
+        bool hasBigObjective = false;
+        if (drk)
+            foreach (var t in cars)
+                if (objSet.Contains(t.prefab.name) && Footprint(t.prefab) * t.scale >= 2.8f) { hasBigObjective = true; break; }
 
         float wall = (_arenaLimit < 900f) ? _arenaLimit : (frameHalf - 0.6f);
         float extent = Mathf.Min(playHalf, wall - 1.0f);
@@ -800,7 +1073,11 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         for (int ti = 0; ti < cars.Count; ti++)
         {
             var t = cars[ti];
-            int K = objSet.Contains(t.prefab.name) ? 3 : 2;
+            // İÇECEKLER (2026-08-03 kullanıcı: "çok kolay; hedef her yerde"): HEDEF türlerini Voronoi dolgusundan ÇIKAR →
+            // dolgu (şekil/kule/fill) YALNIZ non-hedef olur. Sahnede hedef nesnesi SADECE aşağıdaki kontrollü kümelerde
+            // (= req+5) bulunur → oyuncu tek köşeden yığınla toplayıp bitiremez. Non-hedef K=3 (çeşit + yayılım).
+            if (drk && objSet.Contains(t.prefab.name)) continue;
+            int K = drk ? 3 : (objSet.Contains(t.prefab.name) ? 3 : 2);
             float A = ti * gA;
             float R = Mathf.Lerp(rInner, rOuter, (ti * 0.61803f) % 1f);
             for (int k = 0; k < K; k++)
@@ -829,26 +1106,30 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         foreach (var o in Active.objectives)
         {
             GameObject opf0 = null; float osc0 = 1f;
-            for (int s = 0; s < seeds.Count; s++) if (seeds[s].pf.name == o.objectType) { opf0 = seeds[s].pf; osc0 = seeds[s].sc; break; }
+            for (int s = 0; s < cars.Count; s++) if (cars[s].prefab.name == o.objectType) { opf0 = cars[s].prefab; osc0 = cars[s].scale; break; }   // seeds değil cars (hedef seeds'ten çıkarıldı)
             if (opf0 != null) vObj.Add((opf0, osc0, o.required));
         }
-        const int KOBJ = 2;
-        int totalC = Mathf.Max(1, vObj.Count * KOBJ);
+        // İÇECEKLER: hedef sahnede EN FAZLA req+5; kobj=3 AYRI bölgeye böl → her disk ~(req+5)/3 < required → tek köşeden
+        // tamamlanamaz, oyuncu gezmek zorunda. Diğer dünyalar: eski davranış (req+3, 2 lot).
+        int kobj = drk ? 3 : 2;
+        int totalC = Mathf.Max(1, vObj.Count * kobj);
         for (int oi = 0; oi < vObj.Count; oi++)
         {
             var (opf, osc, req) = vObj[oi];
             float ocr = Footprint(opf) * osc * 0.5f;
-            int target = req + 3, done = 0;
-            for (int kk = 0; kk < KOBJ && done < target; kk++)
+            // İÇECEK: sahnedeki FAZLA rank'a göre (kullanıcı): rank0 = TAM req (fazla 0), rank1 +2, rank2 +3, rank3 +5.
+            // (DrinksObjectiveTuner AYNI diziyle required'ı maxPlaceable-fazla ile tavanlar → toplam sığar.)
+            int surplus = drk ? (oi == 0 ? 0 : oi == 1 ? 2 : oi == 2 ? 3 : 5) : 3;
+            int target = req + surplus, done = 0;
+            for (int kk = 0; kk < kobj && done < target; kk++)
             {
-                // 8 disk (N hedef × 2) benzersiz açıya: iç disk oi·2π/N, dış disk +π/N (komşuya yarı yol). Böylece HİÇBİR
-                // iki disk aynı açıda değil → üst üste binmez, NearObj reddetmez, her hedef payını koyar.
-                float ang = oi * (2f * Mathf.PI / vObj.Count) + kk * (Mathf.PI / vObj.Count) + 0.3f;
-                float rr = extent * (kk == 0 ? 0.42f : 0.72f);
+                // Her hedefin kobj diski FARKLI açı+yarıçapta → arenanın farklı köşe/bölgeleri; iki disk asla aynı açıda değil.
+                float ang = oi * (2f * Mathf.PI / vObj.Count) + kk * (2f * Mathf.PI / kobj) + 0.3f;
+                float rr = extent * (kobj > 1 ? Mathf.Lerp(0.45f, 0.85f, (float)kk / (kobj - 1)) : 0.5f);
                 Vector2 center = new(Mathf.Cos(ang) * rr, Mathf.Sin(ang) * rr);
-                int need = Mathf.CeilToInt((target - done) / (float)(KOBJ - kk));
+                int need = Mathf.CeilToInt((target - done) / (float)(kobj - kk));
                 int before = _occ.Count;
-                done += BuildCarShapeCluster(0, opf, osc, center, extent * 0.35f, extent, root, need);   // DOLU DAİRE, need adete kadar
+                done += BuildCarShapeCluster(0, opf, osc, center, extent * 0.28f, extent, root, need);   // DOLU DAİRE (kompakt küme), need adete kadar
                 for (int z = before; z < _occ.Count; z++) _objOcc.Add(_occ[z]);                          // sokak/şekil bunlardan kaçınsın
             }
             // ⚠️ KAZANILABİLİRLİK GARANTİSİ: disk kenara taşıp target'a ulaşamazsa KALAN eksiği arena ızgarasında
@@ -863,7 +1144,7 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
                     for (int gx = -gnn; gx <= gnn && done < target; gx++)
                     {
                         Vector2 p = new(gx * gstep + off, gy * gstep + off);
-                        if (p.magnitude > extent - 0.6f || p.magnitude < centerClearance + 0.8f || InLandmarkArea(p) || !OccFree(p, ocr)) continue;
+                        if (p.magnitude > extent - 0.6f || p.magnitude < centerClearance + 0.8f || InLandmarkArea(p) || InBox(p, ocr) || !OccFree(p, ocr)) continue;   // şekilli arena: kutuya koyma (yoksa done sayar ama SpawnStack atlar → eksik hedef)
                         SpawnStack(opf, 1, osc, p, od.yaw, root);
                         _objOcc.Add((p, ocr));
                         done++;
@@ -874,7 +1155,7 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         // DEV ARAÇLAR (3-4 landmark, ×3-4 ölçek) — HEDEFLERDEN SONRA (hedefler öncelik alsın, dev alanı çalmasın).
         // Hedef-olmayan türlerden; OccFree ile BOŞ yere konur (hedeflerin üstüne gelmez); _objOcc'a eklenir → şekil/kule/
         // dolgu etrafından geçer. Bulamazsa açıyı döndürerek dener.
-        int nGiant = Random.Range(3, 5);
+        int nGiant = (bld || drk) ? 0 : Random.Range(3, 5);   // BİNALAR/İÇECEKLER: dev YOK (×3-4 → hole maxSize'ı aşar, yutulamaz/takılı kalır).
         for (int gi = 0; gi < nGiant; gi++)
         {
             var gt = cars[(gi * 13 + 5) % cars.Count];
@@ -887,7 +1168,7 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
                 float gang = (gi + a * 0.37f) * (2f * Mathf.PI / nGiant) + 0.5f;
                 float grad = extent * (0.4f + (a % 5) * 0.1f);
                 Vector2 gc = new(Mathf.Cos(gang) * grad, Mathf.Sin(gang) * grad);
-                if (gc.magnitude + gcr > extent - 0.5f || gc.magnitude < centerClearance + gcr || InLandmarkArea(gc) || !OccFree(gc, gcr)) continue;
+                if (gc.magnitude + gcr > extent - 0.5f || gc.magnitude < centerClearance + gcr || InLandmarkArea(gc) || InBox(gc, gcr) || !OccFree(gc, gcr)) continue;
                 SpawnStack(gt.prefab, 1, gscale, gc, gd.yaw, root);
                 _objOcc.Add((gc, gcr));
                 break;
@@ -897,24 +1178,27 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         // ŞEKİL ÖBEKLERİ (Yiyecekler tarzı): jitter'lı ızgarada her hücre bir ŞEKİL çizen araç öbeği — daire/halka/
         // yıldız/kare/beşgen/spiral/kule (Voronoi türü). Regimente sokak/park YOK; araçlar yerde desen çizer, kuleler
         // dikey verir. Her araç OccFree → öbekler birbirine girmez. HEDEF dolu-dairelerinden KAÇINIR (NearObj).
-        float G = 3.5f;
+        // İÇECEK: hedef türleri artık dolguda YOK → boşluğu non-hedef ÇEŞİTLE doldur (kullanıcı: çeşit+diğer sayı artsın). Grid sıklaştı.
+        float G = drk ? (hasBigObjective ? 3.0f : 3.3f) : (bld ? 4.0f : 3.5f);
         int gn = Mathf.FloorToInt(extent / G) + 1;
         for (int j = -gn; j <= gn; j++)
             for (int i = -gn; i <= gn; i++)
             {
                 Vector2 c = new(j * G + Random.Range(-1.0f, 1.0f), i * G + Random.Range(-1.0f, 1.0f));
                 if (c.magnitude < centerClearance - 0.3f || c.magnitude > extent - 0.6f) continue;
-                if (InLandmarkArea(c) || NearObj(c, G * 0.1f)) continue;
+                if (InLandmarkArea(c) || InBox(c, G * 0.5f) || NearObj(c, G * 0.1f)) continue;   // şekilli arena: kutu hücresini atla
                 var (pf, sc) = Pick(c);
                 int h = Mathf.Abs(j) * 5 + Mathf.Abs(i) * 11 + (j + i < 0 ? 2 : 0);
-                int shp = (h % 5 < 3) ? 6 : (h % 6);   // ~%60 KULE ÖBEĞİ (dikey, bina gibi), gerisi zemin şekli
+                // İÇECEK: yalnız ZEMİN şekilleri (0-5) → tall bardak kulesi yok (kamerayı kapatmaz); dikeylik kısa dolgu
+                // istifinden gelir. Arabalar/Binalar: ~%60 kule öbeği (dikey silüet).
+                int shp = drk ? (h % 6) : ((h % 5 < 3) ? 6 : (h % 6));
                 float radius = G * Random.Range(0.44f, 0.58f);
                 BuildCarShapeCluster(shp, pf, sc, c, radius, extent, root);
             }
 
         // BOŞLUK DOLDURMA + DİKEY: ince ızgarada BOŞ kalan yerlere o bölgenin türünden GARAJ KULESİ koy. Sadece
         // OccFree (mevcut araçtan uzak) yerlere → ÇAKIŞMA YOK. Boş alanları kapatır + dikey dizilimi artırır.
-        float fg = 2.2f;
+        float fg = drk ? (hasBigObjective ? 2.2f : 2.4f) : (bld ? 2.8f : 2.2f);   // İÇECEK: daha sık dolgu (hedef dışı boşluğu doldur)
         int fn = Mathf.FloorToInt(extent / fg);
         for (int i = -fn; i <= fn; i++)
             for (int j = -fn; j <= fn; j++)
@@ -925,8 +1209,9 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
                 if (InLandmarkArea(c)) continue;
                 var (pf, sc) = Pick(c);
                 float rr = Footprint(pf) * sc * 0.5f;
+                if (InBox(c, rr)) continue;                               // şekilli arena: kutuya girme
                 if (!OccFree(c, rr * 1.02f)) continue;                    // sadece BOŞ yerlere
-                SpawnStack(pf, Random.Range(5, 8), sc, c, CarDims(pf, sc).yaw, root);   // tek tall kule (dar+yüksek, kurala uygun)
+                SpawnStack(pf, (bld || drk) ? Random.Range(2, 4) : Random.Range(5, 8), sc, c, CarDims(pf, sc).yaw, root);   // tall kule (bina/içecek: kısa 2-3 istif)
             }
     }
 
@@ -2099,15 +2384,58 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         int n = items.Count;
         if (n == 0) return;
         // Güç-up'lar HER LEVELDA FARKLI, RASTGELE konumlarda. Per-level seed (SpawnObjects.InitState) → aynı level
-        // her girişte aynı, ama dünyalar/levellar arası farklı yerlerde. Altın açı dağılım + jitter → üst üste binmez.
+        // her girişte aynı, ama dünyalar/levellar arası farklı yerlerde.
+        // ⚠️ BİRLEŞİK-DOĞMA FIX (2026-08-02): eskiden altın-açı + jitter ile ÇAKIŞMA KONTROLSÜZ yerleştiriliyordu →
+        // yoğun dünyalarda (Araba/Bina/Tatlılar formasyonları) güç-up bir nesnenin İÇİNE doğuyor, delik uyandırınca
+        // ayrışıyordu. Çözüm: bu ana kadar YERLEŞMİŞ nesnelerin (formasyon + landmark) XZ dolu-alanlarını topla, her
+        // güç-up'ı BOŞ bir cebe koy (altın-açı taraması). Cep bulunamazsa (çok yoğun) → ayak izini ClearArea ile aç.
+        var occ = new List<(Vector2 p, float r)>();
+        foreach (var psw in parent.GetComponentsInChildren<PhysicsSwallowable>())
+        {
+            if (psw == null || psw.powerUp != PowerUpType.None) continue;
+            Bounds b; var cs = psw.GetComponentsInChildren<Collider>();
+            if (cs.Length > 0) { b = cs[0].bounds; for (int i = 1; i < cs.Length; i++) b.Encapsulate(cs[i].bounds); }
+            else { var rs = psw.GetComponentsInChildren<Renderer>(); if (rs.Length == 0) continue; b = rs[0].bounds; for (int i = 1; i < rs.Length; i++) b.Encapsulate(rs[i].bounds); }
+            occ.Add((new Vector2(b.center.x, b.center.z), Mathf.Max(b.extents.x, b.extents.z)));
+        }
+
         float rMin = centerClearance + 2f;
         float rMax = Mathf.Max(rMin + 1f, playHalf - 2f);
         float baseAng = Random.value * Mathf.PI * 2f;
+        int spot = 0;
         for (int j = 0; j < n; j++)
         {
-            float ang = baseAng + j * 2.399963f + Random.Range(-0.35f, 0.35f);
-            float r = Random.Range(rMin, rMax);
-            Vector2 pos = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * r;
+            float pr = Footprint(items[j]) * 0.5f;
+            Vector2 pos = Vector2.zero; bool found = false;
+            for (int a = 0; a < 200; a++)
+            {
+                float ang = baseAng + spot * 2.399963f + Random.Range(-0.2f, 0.2f);
+                float r = Mathf.Lerp(rMin, rMax, (spot * 0.61803399f) % 1f);
+                spot++;
+                Vector2 cand = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * r;
+                if (InLandmarkArea(cand) || InBox(cand, pr)) continue;   // ŞEKİLLİ ARENA: kutuya koyma (yoksa SpawnStack atlar → güç-up KAYBOLUR)
+                bool clear = true;
+                for (int k = 0; k < occ.Count; k++)
+                {
+                    float rr = occ[k].r + pr + 0.35f;   // ayak-izi + pay → dokunmasın
+                    if ((occ[k].p - cand).sqrMagnitude < rr * rr) { clear = false; break; }
+                }
+                if (clear) { pos = cand; found = true; break; }
+            }
+            if (!found)
+            {
+                // Boş cep yok → çakışmayı GÖZ ARDI et ama yine de KUTU/landmark DIŞINDA bir yer bul (güç-up kesin doğsun).
+                for (int a = 0; a < 200; a++)
+                {
+                    float ang = baseAng + spot * 2.399963f; float r = Mathf.Lerp(rMin, rMax, (spot * 0.61803399f) % 1f); spot++;
+                    Vector2 cand = new Vector2(Mathf.Cos(ang), Mathf.Sin(ang)) * r;
+                    if (InLandmarkArea(cand) || InBox(cand, pr)) continue;
+                    pos = cand; found = true; break;
+                }
+                if (found) ClearArea(parent, pos, pr + 0.9f);   // çevresini aç (EnsureObjectiveCounts hedefi geri doldurur)
+            }
+            if (!found) continue;   // (teorik) uygun yer yok → bu güç-up'ı atla, diğerlerini dene
+            occ.Add((pos, pr));   // sonraki güç-up bunun üstüne gelmesin
             SpawnStack(items[j], 1, 1f, pos, Random.value * 360f, parent);
         }
     }
@@ -2187,6 +2515,18 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         return yaw;
     }
 
+    /// <summary>Aktif dünyada nesnelerin SPAWN yaw'ının TABANI (jitter'sız). Kameraya-yüz dünyalarında (kediler/köpekler/
+    /// binalar) faceCameraYaw, diğerlerinde 0. HUD hedef ikonu (IconRenderer) bunu kullanır → tabela resmi, nesnenin
+    /// sahnedeki (kameraya dönük) görünümüyle eşleşir (sırtı değil).</summary>
+    public float BaseFacingYaw()
+    {
+        bool faceCam = CurrentWorld == 3;
+        if (!faceCam && faceCameraWorlds != null)
+            for (int i = 0; i < faceCameraWorlds.Length; i++)
+                if (faceCameraWorlds[i] == CurrentWorld) { faceCam = true; break; }
+        return faceCam ? faceCameraYaw : 0f;
+    }
+
     // Nesneyi görünmez arena duvarının İÇİNDE tutar: merkez + ayak izi/2 duvarı geçmesin (rim tuğlası kadar pay).
     Vector2 ClampToArena(Vector2 xz, float footprint)
     {
@@ -2207,9 +2547,12 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
             if ((((hx * 73856093) ^ (hz * 19349663)) & 0x7fffffff) % 4 == 0) return;
         }
         yaw = ResolveYaw(yaw);
+        // ŞEKİLLİ ARENA: dışlama kutusuna (engel/çıkıntı) düşen nesneyi YERLEŞTİRME (kompozisyon zaten kaçınır; bu son güvenlik).
+        if (arenaShaped && InBox(xz, Footprint(prefab) * scale * 0.5f)) return;
         var clampedXz = ClampToArena(xz, Footprint(prefab) * scale);
-        // ARAÇ düzeninde: kenar duvarına sıkışacak aracı (clamp konumu belirgin kaydırdıysa) YERLEŞTİRME → başka
-        // araçların üstüne binip "yapışık ikiz" oluşmasın. (Yiyecek düzeni etkilenmez; _carLayout yalnız worldId==2.)
+        // ARAÇ/BÜYÜK-NESNE düzeninde (Arabalar/Binalar/İÇECEKLER — hepsi _carLayout): kenar duvarına sıkışacak nesneyi
+        // (clamp konumu belirgin kaydırdıysa) YERLEŞTİRME → başka nesnelerin üstüne binip iç içe geçmesin. (Diğer
+        // dünyaların formasyon düzeni etkilenmez; _carLayout yalnız ComposeCarCity'de açık = worldId 2/3/5.)
         if (_carLayout && (clampedXz - xz).sqrMagnitude > 0.01f) return;
         xz = clampedXz;
         if (_carLayout)

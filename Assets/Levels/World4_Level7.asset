@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 4
   levelIndex: 6
-  levelTime: 170
+  levelTime: 100
   spawns:
   - prefab: {fileID: 1934498354419082302, guid: 0de349bf0a047437e9abd438541dfeeb, type: 3}
     count: 1
@@ -82,13 +82,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: SliceCaramelDr
-    required: 21
+    required: 32
     icon: {fileID: 0}
   - objectType: SliceCaramelDr2
-    required: 15
+    required: 24
     icon: {fileID: 0}
   - objectType: Sprinkle
-    required: 12
+    required: 19
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

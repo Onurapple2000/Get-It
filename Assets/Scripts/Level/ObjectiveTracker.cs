@@ -117,7 +117,10 @@ public class ObjectiveTracker : MonoBehaviour
     {
         if (cache.TryGetValue(type, out var s)) return s;
         GameObject src = FindSceneSource(type);
-        s = src != null ? IconRenderer.Render(src) : null;
+        // Kameraya-yüz dünyalarında (kediler/köpekler/binalar) nesne sahnede faceCameraYaw ile dönük → ikon da o yaw'la
+        // çekilsin ki tabela resmi oyundaki görünümle eşleşsin (kedinin sırtı değil yüzü).
+        float iconYaw = LevelManager.Instance != null ? LevelManager.Instance.BaseFacingYaw() : 0f;
+        s = src != null ? IconRenderer.Render(src, 160, iconYaw) : null;
         cache[type] = s;
         return s;
     }

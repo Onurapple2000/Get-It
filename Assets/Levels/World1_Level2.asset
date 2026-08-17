@@ -102,13 +102,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: PizzaSlice
-    required: 48
+    required: 60
     icon: {fileID: 0}
   - objectType: HotDog
-    required: 30
+    required: 38
     icon: {fileID: 0}
   - objectType: Broccoli
-    required: 24
+    required: 30
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

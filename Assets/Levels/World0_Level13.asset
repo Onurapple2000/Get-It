@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 0
   levelIndex: 12
-  levelTime: 155
+  levelTime: 100
   spawns:
   - prefab: {fileID: 5631508047028168050, guid: 6d2e0d705136d4d978e05e34dd093489, type: 3}
     count: 1
@@ -68,6 +68,18 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 8780361313986981261, guid: d18efabbfa45e4ad0a0c609199730970, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6471281029032185253, guid: c8a32d8181661425f9c17652297ba2c3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8451822691086256394, guid: 77651e0a98dd446fa83590144e2fb8a4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +93,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: Statue
-    required: 28
+  - objectType: SmallCrate
+    required: 37
     icon: {fileID: 0}
-  - objectType: StreetLamp
+  - objectType: Mailbox
+    required: 27
+    icon: {fileID: 0}
+  - objectType: Bush
     required: 20
     icon: {fileID: 0}
-  - objectType: TrashCan
-    required: 15
+  - objectType: Gazebo
+    required: 17
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 9
-  levelTime: 55
+  levelTime: 80
   spawns:
   - prefab: {fileID: 5714025648774165315, guid: 4a6a8c1d3304549ffbcb167bf6b531e3, type: 3}
     count: 1
@@ -198,13 +198,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: KoenigseggAgeraRS
-    required: 26
+    required: 32
     icon: {fileID: 0}
   - objectType: SpikedRustMuscle
-    required: 22
+    required: 28
     icon: {fileID: 0}
   - objectType: CyberpunkPoliceCar
-    required: 16
+    required: 20
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

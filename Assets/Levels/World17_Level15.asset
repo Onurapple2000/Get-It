@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 14
-  levelTime: 70
+  levelTime: 80
   spawns:
   - prefab: {fileID: 3335105072656847630, guid: e357d41508ca04cbb89009e6c93d9719, type: 3}
     count: 1
@@ -68,10 +68,6 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 8328741441494939664, guid: 107446068502f4ab58165b986fa0883c, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   - prefab: {fileID: 3482284124324633341, guid: 97eb9be3a653f41508f061d3b15aef5c, type: 3}
     count: 1
     stack: 1
@@ -93,14 +89,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: TallStoneWatchtow3
-    required: 26
-    icon: {fileID: 0}
   - objectType: Strawberry2
-    required: 18
+    required: 40
+    icon: {fileID: 0}
+  - objectType: TreeLifeGem
+    required: 29
+    icon: {fileID: 0}
+  - objectType: StuntPlane
+    required: 22
     icon: {fileID: 0}
   - objectType: TeaTimeElegance
-    required: 14
+    required: 6
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

@@ -39,6 +39,9 @@ public static class WorldObjectCreator
         public int pTiny = 20, pSmall = 60, pMedium = 88;
         // Tema-özel boyut kademeleri (null → evrensel Tiny/Small/Medium/Large). Sıra: [tiny,small,medium,large].
         public Tier[] tiers;
+        // Collider XZ daraltma (footprint = colShrink×görsel). Varsayılan 0.82; İçecekler/Hediyeler DÜRÜST collider (~0.9)
+        // → "delik yarı-batmış nesneyi bıçak gibi kesme" artefaktı azalır (bkz drinks çözümü).
+        public float colShrink = COL_XZ_SHRINK;
     }
 
     static readonly HashSet<string> Noise = new HashSet<string> {
@@ -55,6 +58,9 @@ public static class WorldObjectCreator
         artSub = "gifts", prefabDir = "Assets/Prefabs/Gifts", fallbackName = "Gift",
         tinyKeys = new[]{ "small","mini","tiny","single" },
         largeKeys = new[]{ "big","large","huge","stack","pile","tower","giant" },
+        // 2026-08-04 kullanıcı: Hediyeler İÇECEKLER gibi olsun → boyutlar drink kademeleri (~2.4×), collider DÜRÜST (0.9).
+        tiers = new[]{ new Tier(1.3f, 20, 0.11f), new Tier(1.8f, 34, 0.15f), new Tier(2.3f, 52, 0.22f), new Tier(3.0f, 82, 0.30f) },
+        colShrink = 0.9f,
     };
     static Config BooksCfg => new Config {
         artSub = "books", prefabDir = "Assets/Prefabs/Books", fallbackName = "Book",
@@ -64,9 +70,12 @@ public static class WorldObjectCreator
     static Config CatsCfg => new Config {
         artSub = "cats", prefabDir = "Assets/Prefabs/Cats", fallbackName = "Cat",
         texSize = 512,
-        tinyKeys = new[]{ "kitten","baby","small","mini","low" },
+        // 2026-08-05 kullanıcı: TINY kedi OLMASIN, SMALL az olsun. tinyKeys BOŞ (isimle tiny zorlanmasın) + pTiny=0
+        // (hash tiny üretmesin) + pSmall=12 (yalnız %12 small; kalan medium/large → kediler daha iri/net).
+        tinyKeys = new string[0],
         largeKeys = new[]{ "big","large","battle","giant","fat","huge","king" },
-        // Kediler EVRENSELDEN BÜYÜK (kullanıcı: küçük kediler net değil) — taban 0.8→1.2 yükseltildi.
+        pTiny = 0, pSmall = 12, pMedium = 58,
+        // Kademe boyutları: tiny(1.2) artık KULLANILMAZ (pTiny=0 + tinyKeys boş) — en küçük kedi Small(1.6).
         tiers = new[]{ new Tier(1.2f, 20, 0.16f), new Tier(1.6f, 30, 0.22f), new Tier(2.1f, 42, 0.28f), new Tier(2.8f, 58, 0.34f) },
     };
 
@@ -80,9 +89,12 @@ public static class WorldObjectCreator
     static Config DogsCfg => new Config {
         artSub = "dogs", prefabDir = "Assets/Prefabs/Dogs", fallbackName = "Dog",
         texSize = 512,
-        tinyKeys = new[]{ "puppy","pup","small","mini","chihuahua","teacup" },
+        // 2026-08-06 kullanıcı: köpeklerde TINY ve SMALL boyut OLMASIN, büyüt. tinyKeys BOŞ + pTiny=0 + pSmall=0 →
+        // hiç tiny/small yok; hepsi Medium(2.1)/Large(2.8). (Kedilerde small az idi; köpeklerde HİÇ small.)
+        tinyKeys = new string[0],
         largeKeys = new[]{ "big","large","mastiff","great","dane","giant","husky","shepherd","st","bernard" },
-        // Kediler gibi net görünsün (küçük hayvan modelleri belirsiz kalmasın) — taban 1.2.
+        pTiny = 0, pSmall = 0, pMedium = 55,
+        // tiny(1.2)/small(1.6) KULLANILMAZ; en küçük köpek Medium(2.1).
         tiers = new[]{ new Tier(1.2f, 20, 0.16f), new Tier(1.6f, 30, 0.22f), new Tier(2.1f, 42, 0.28f), new Tier(2.8f, 58, 0.34f) },
     };
     [MenuItem("Tools/GET_IT/Create Dog World Objects")]                 public static void Dogs()         { overwrite = false; Build(DogsCfg); }
@@ -93,8 +105,9 @@ public static class WorldObjectCreator
         texSize = 512,
         tinyKeys = new[]{ "boat","dinghy","canoe","raft","kayak","small","fishing","ferry" },
         largeKeys = new[]{ "carrier","cruiser","battleship","tanker","titanic","galleon","destroyer","cargo","container","liner","warship" },
-        // Gemiler büyük vasıtalar → biraz iri (net silüet).
-        tiers = new[]{ new Tier(1.3f, 22, 0.16f), new Tier(1.7f, 32, 0.22f), new Tier(2.3f, 46, 0.28f), new Tier(3.0f, 62, 0.34f) },
+        // 2026-08-06 kullanıcı: tiny/small gemiler ÇOK küçüktü → tiny/small kademeleri BÜYÜTÜLDÜ (medium/large ~aynı).
+        // (Özel yapı/landmark gemileri ScaleTo ile kendi boyutuna ölçeklendiğinden tier'dan BAĞIMSIZ → değişmez.)
+        tiers = new[]{ new Tier(2.0f, 22, 0.16f), new Tier(2.4f, 32, 0.22f), new Tier(2.6f, 46, 0.28f), new Tier(3.1f, 62, 0.34f) },
     };
     [MenuItem("Tools/GET_IT/Create Ship World Objects")]                 public static void Ships()        { overwrite = false; Build(ShipsCfg); }
     [MenuItem("Tools/GET_IT/Rebuild Ship World Objects (overwrite sizes)")] public static void ShipsRebuild() { overwrite = true; Build(ShipsCfg); }
@@ -209,7 +222,7 @@ public static class WorldObjectCreator
         rb.maxDepenetrationVelocity = 1.5f;
 
         EnsureDir(meshDir);
-        Mesh colMesh = ColliderHullUtil.BuildConvexColliderMesh(mesh, COL_XZ_SHRINK, name);
+        Mesh colMesh = ColliderHullUtil.BuildConvexColliderMesh(mesh, cfg.colShrink, name);
         if (colMesh != null)
         {
             string colPath = $"{meshDir}/{name}_col.asset";

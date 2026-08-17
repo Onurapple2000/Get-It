@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 4
   levelIndex: 7
-  levelTime: 167.5
+  levelTime: 100
   spawns:
   - prefab: {fileID: 3881925700698822319, guid: f417c93c5ba7947598bec9c26ebd33be, type: 3}
     count: 1
@@ -82,13 +82,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Strawberry2
-    required: 22
+    required: 35
     icon: {fileID: 0}
   - objectType: Sweet
-    required: 15
+    required: 24
     icon: {fileID: 0}
   - objectType: SweetSwirl
-    required: 12
+    required: 19
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

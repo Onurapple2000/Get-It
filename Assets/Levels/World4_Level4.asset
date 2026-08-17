@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 4
   levelIndex: 3
-  levelTime: 177.5
+  levelTime: 100
   spawns:
   - prefab: {fileID: 2357167949966302130, guid: 889d6d98485fb4a21874cad53d684fe2, type: 3}
     count: 1
@@ -82,10 +82,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Jelly
-    required: 17
+    required: 38
     icon: {fileID: 0}
   - objectType: Lat
-    required: 12
+    required: 27
+    icon: {fileID: 0}
+  - objectType: Lat2
+    required: 21
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

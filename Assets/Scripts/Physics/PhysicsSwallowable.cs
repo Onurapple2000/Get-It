@@ -86,6 +86,12 @@ public class PhysicsSwallowable : MonoBehaviour
              "bunu yenecek kadar güçlü olduğundan yutulma yavaşlamaz.")]
     public float wakeLinearDamping = 1.6f;
 
+    [Tooltip("Uyanınca uygulanan maxDepenetrationVelocity. Düşük (0.35) = uyanınca komşularla çakışmadan ÇIKARKEN " +
+             "PATLAMAZ. AMA büyük nesnede (İçecekler): hareketli zemin yarı-batmış nesneye girince onu bu hızla İTER → " +
+             "0.35 çok yavaş → zemin ağzı nesneyi 'bıçak gibi' keser (birkaç kare çakışık kalır). Büyük nesnelerde " +
+             "yükselt (zemin nesneyi hızlı geri itsin, kesme görüntüsü olmasın). LevelManager dünya-5'te ~2.5 yazar.")]
+    public float wakeDepenetration = 0.35f;
+
     // Kare başına uyanma kotası (tüm nesneler paylaşır; spike'ı birkaç kareye yayar).
     const int WAKE_BUDGET_PER_FRAME = 8;
     static int s_wakeFrame = -1, s_wakeUsed;
@@ -135,6 +141,11 @@ public class PhysicsSwallowable : MonoBehaviour
     {
         hole = FindFirstObjectByType<HoleController>();
         if (rb == null) rb = GetComponent<Rigidbody>();
+        // ⚠️ PERF (2026-08-01, TÜM DÜNYALAR): mıknatıs+hız ile çok dinamik gövde deliği hızlı takip ederken
+        // ContinuousSpeculative (hıza bağlı spekülatif contact'lar) PhysX'i zorluyordu → kasma. Discrete çok daha
+        // ucuz ve Tatlılar testinde kasmayı çözdü (tünelleme görülmedi; nesneler donuk başlar, yüksekten hızlı
+        // düşmez). Prefab'lar ContinuousSpeculative ile üretilir; burada RUNTIME override → hepsi Discrete.
+        if (rb != null) rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
         cols = GetComponentsInChildren<Collider>();
         // Takla (somersault) önlemek için açısal hızı sınırla → yumuşak devrilme
         if (rb != null) rb.maxAngularVelocity = maxAngularSpeed;
@@ -157,7 +168,7 @@ public class PhysicsSwallowable : MonoBehaviour
         if (rb != null)
         {
             rb.isKinematic = false;
-            rb.maxDepenetrationVelocity = 0.35f;
+            rb.maxDepenetrationVelocity = wakeDepenetration;
             rb.linearDamping = Mathf.Max(rb.linearDamping, wakeLinearDamping);   // zeminde fazla kaymasın (kayma sönümlensin)
         }
     }

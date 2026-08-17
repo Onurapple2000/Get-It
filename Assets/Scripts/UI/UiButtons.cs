@@ -9,12 +9,31 @@ using TMPro;
 /// </summary>
 public static class UiButtons
 {
-    static Sprite _rect, _circle, _play, _refresh, _power;
+    static Sprite _rect, _circle, _play, _refresh, _power, _gear;
     public static Sprite Rect()    => _rect    ? _rect    : (_rect    = Resources.Load<Sprite>("burrow_button_empty_rect"));
     public static Sprite Circle()  => _circle  ? _circle  : (_circle  = Resources.Load<Sprite>("burrow_button_empty_circle"));
     public static Sprite Play()    => _play    ? _play    : (_play    = MakePlay(64));
     public static Sprite Refresh() => _refresh ? _refresh : (_refresh = MakeRefresh(72));
     public static Sprite Power()   => _power   ? _power   : (_power   = MakePower(72));
+    public static Sprite Gear()    => _gear    ? _gear    : (_gear    = MakeGear(80));
+
+    // Çark (ayarlar) ikonu: halka + 8 diş + merkez delik.
+    static Sprite MakeGear(int s)
+    {
+        var t = NewTex(s);
+        for (int y = 0; y < s; y++) for (int x = 0; x < s; x++)
+        {
+            float u = (x + 0.5f) / s, v = (y + 0.5f) / s, dx = u - 0.5f, dy = v - 0.5f;
+            float r = Mathf.Sqrt(dx * dx + dy * dy);
+            float ang = Mathf.Atan2(dy, dx) * Mathf.Rad2Deg; ang = (ang + 360f) % 360f;
+            bool ring = r > 0.16f && r < 0.32f;                                  // gövde halkası
+            float nearest = Mathf.Round(ang / 45f) * 45f;                        // 8 diş, her 45°
+            bool tooth = Mathf.Abs(Mathf.DeltaAngle(ang, nearest)) < 15f && r >= 0.30f && r < 0.44f;
+            bool hole = r < 0.13f;                                               // merkez boşluk
+            t.SetPixel(x, y, ((ring || tooth) && !hole) ? Color.white : Clear);
+        }
+        return Finish(t, s);
+    }
 
     /// <summary>Pill buton: rect görsel (Simple) + sola ikon + ortalı yazı. Button döner.</summary>
     public static Button Build(Transform parent, Vector2 anchor, Vector2 pos, Vector2 size,
@@ -41,6 +60,9 @@ public static class UiButtons
 
         var t = NewText(rt, fontSize);
         t.text = label; t.color = new Color(0.22f, 0.15f, 0.08f);
+        // Taşma önleme (lokalizasyon: EN/TR uzunluk farkı): tek satır + otomatik küçülme (alana sığar, kaymaz).
+        t.enableAutoSizing = true; t.fontSizeMin = Mathf.Max(14f, fontSize * 0.5f); t.fontSizeMax = fontSize;
+        t.enableWordWrapping = false; t.overflowMode = TextOverflowModes.Ellipsis;
         var tr = t.rectTransform;
         tr.anchorMin = Vector2.zero; tr.anchorMax = Vector2.one;
         tr.offsetMin = new Vector2(icon != null ? h * 1.0f : 12f, 0f);
@@ -57,6 +79,7 @@ public static class UiButtons
         go.transform.SetParent(parent, false);
         var t = go.AddComponent<TextMeshProUGUI>();
         t.fontSize = size; t.fontStyle = FontStyles.Bold; t.raycastTarget = false;
+        t.isRightToLeftText = Loc.Current == Language.Arabic;   // Arapça sağdan-sola
         return t;
     }
 

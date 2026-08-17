@@ -98,10 +98,10 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Donut
-    required: 48
+    required: 60
     icon: {fileID: 0}
   - objectType: Tomato
-    required: 36
+    required: 45
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

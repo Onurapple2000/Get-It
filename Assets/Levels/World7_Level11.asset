@@ -14,8 +14,76 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 7
   levelIndex: 10
-  levelTime: 160
+  levelTime: 100
   spawns:
+  - prefab: {fileID: 2486253887446716274, guid: 69ed777ea5c79437eb5c454a7fc87edd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1217836891804991187, guid: fbd419c1d99a141b3a921ec7aad2e5cc, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6800375950254421030, guid: af0d1ad8b0f6a4d7d8264d0ae6a94021, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4628878900055299266, guid: d847032f2f51b4b49b0e2d262e1cdd29, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2729399156551223326, guid: 47f366816e2f94d54ae7fb357108865f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3820094329190482852, guid: 2c86faeed1b0843ba8afa07e040a6e94, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2173717287040381838, guid: 4a38199e869c749e797939711d22d986, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7360001054481692500, guid: b98bb92515b01476183f748d04ab6e54, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3374122319301664495, guid: 8e59a6abd63a04e39af2f83d44e9005f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 743427452224419054, guid: 707d41753de4b4592ae3bd7457bc2199, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2544560554177041448, guid: e2b77d579a2a345598e5d78106bdbd8a, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1761222845822026563, guid: 758e01251fe754a939510e0da62ecb39, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6977435579396185173, guid: 208e07597646f4b03b4c81dde3651257, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5218833369029021603, guid: f66461bebc3db4eea89e5add709db426, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5397362749103294962, guid: accf29cd302be49e8a303330f631dcf2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7370565624461481123, guid: 56a3bdd19d5fb47ed96c15b078264ac1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 6886385352024807803, guid: 8177f081605954b0397f95f7075efa99, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 6785691030906506176, guid: 89172604c961f42898b9417860819d67, type: 3}
     count: 1
     stack: 1
@@ -37,10 +105,6 @@ MonoBehaviour:
     stack: 1
     scale: 1
   - prefab: {fileID: 3514651799925942641, guid: 1232ce77cebac44cbaed84ad30f08c07, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 1377309976359358354, guid: 76cfcd9a6813c46c6b1c7ac073fc063b, type: 3}
     count: 1
     stack: 1
     scale: 1
@@ -68,6 +132,34 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 7797753278666425935, guid: 9c2c0dd664ceb48649db4f9fd0710b9f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2485106139630995042, guid: f86f9ce88242d4c3cbec764c83caa417, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3245926404043022602, guid: 08f5724be2ad84db9a05a43b7efa3ba7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 751721314018158518, guid: 64136de69338f4f42a2293c085d33136, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 9113068464125235909, guid: 3fd6c094b5cb64dcb84dd9bc8b09d276, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2903185073825284501, guid: f2f0d1805665f408c8d72ad1f76c0b71, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7280989824684471324, guid: cdbd5b59d4ccf4d70a9d438edfa2a2f4, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -81,14 +173,17 @@ MonoBehaviour:
     stack: 1
     scale: 1
   objectives:
-  - objectType: PetitLivreAu
-    required: 22
+  - objectType: VintageLeatherBook
+    required: 34
     icon: {fileID: 0}
-  - objectType: PileBooks
-    required: 15
+  - objectType: HighlyDetai
+    required: 24
     icon: {fileID: 0}
-  - objectType: PilesBooks
-    required: 12
+  - objectType: MonsterBookEm
+    required: 19
+    icon: {fileID: 0}
+  - objectType: InteriorDesignBook2
+    required: 13
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

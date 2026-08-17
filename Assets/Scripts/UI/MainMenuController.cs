@@ -26,6 +26,8 @@ public class MainMenuController : MonoBehaviour
 
     Canvas canvas;
     GameObject levelPanel, worldsPanel, levelContent;
+    GameObject homePanel, settingsPanel;   // Sprint: karşılama (Home) + Ayarlar
+    Transform homeContent, settingsContent, worldsContent;
     float _pathTopOffset = 760f;   // patika alanı üst ofseti — dünya ikonunun (responsive boyut) altına göre hesaplanır
     Sprite lockSprite;
     TMP_Text infoText;
@@ -43,13 +45,15 @@ public class MainMenuController : MonoBehaviour
         AudioManager.Instance?.PlayMenuMusic();   // ana menü müziği (dosya yoksa prosedürel)
 
         BuildBackground();
+        BuildHomePanel();
         BuildLevelPanel();
         BuildWorldsPanel();
-        ShowLevelMenu();
+        BuildSettingsPanel();
 
-        // Levellar arası: ödül özeti (yıldızlar) + dünyanın SON level'ı bitirildiyse dünya geçiş animasyonu.
+        // Levellar arası dönüş: patika ekranını göster + ödül/geçiş animasyonu. TAZE açılış (dönüş yok): KARŞILAMA (Home).
         if (LevelResult.Pending)
         {
+            ShowLevelMenu();
             int fw = LevelResult.World, fl = LevelResult.Level, nextW = WorldCatalog.NextWorld(fw);   // SIRADA sonraki (Order)
             bool reveal = (fl + 1 >= WorldCatalog.PlayableLevels(fw))            // son level bitti mi
                           && nextW >= 0 && WorldCatalog.HasContent(nextW)        // sonraki dünya içerikli mi
@@ -58,6 +62,12 @@ public class MainMenuController : MonoBehaviour
 #endif
                           ;
             StartCoroutine(PostLevelSequence(reveal ? nextW : -1, fw));
+        }
+        else
+        {
+            ShowHome();
+            if (!Loc.Chosen) ShowLanguagePicker();                 // ilk açılış: ÖNCE dil seç
+            else if (!PlayerProfile.NameChosen) ShowNameEntry(true);   // sonra isim ("Player" ön-dolu)
         }
     }
 
@@ -102,9 +112,9 @@ public class MainMenuController : MonoBehaviour
         foreach (Transform c in levelContent.transform) Destroy(c.gameObject);
         int w = SelectedWorld;
 
-        // Üst-orta başlık: dünya adı ("Dünyalar" sol + "Devam Et" sağ butonlarıyla aynı hizada, aralarında).
+        // Üst-orta başlık: dünya adı ("Dünyalar" sol + Loc.T("continue") sağ butonlarıyla aynı hizada, aralarında).
         var name = NewText("WorldName", levelContent.transform, 56, FontStyles.Bold, TextAlignmentOptions.Center);
-        name.text = WorldCatalog.Names[w]; name.color = new Color(1f, 0.95f, 0.75f);
+        name.text = WorldCatalog.LocalizedName(w); name.color = new Color(1f, 0.95f, 0.75f);
         name.enableAutoSizing = true; name.fontSizeMin = 30; name.fontSizeMax = 60;   // dar ekranda taşmasın
         var nr = name.rectTransform;
         nr.anchorMin = new Vector2(0f, 1f); nr.anchorMax = new Vector2(1f, 1f); nr.pivot = new Vector2(0.5f, 1f);
@@ -137,21 +147,21 @@ public class MainMenuController : MonoBehaviour
         // "Dünyalar" butonu (sol-üst, world_mixed ikonlu)
         MakeWorldsButton();
 
-        // "Devam Et" — oynanacak sıradaki level'a atlar (sağ üst)
+        // Loc.T("continue") — oynanacak sıradaki level'a atlar (sağ üst)
         MakeContinueButton();
 
         BuildPath(w);
     }
 
-    // "Devam Et": seçili dünyada bir sonraki oynanacak level (kilitli sınırda klamplenir). Yoksa gizli.
+    // Loc.T("continue"): seçili dünyada bir sonraki oynanacak level (kilitli sınırda klamplenir). Yoksa gizli.
     void MakeContinueButton()
     {
         int target = ResumeLevel(SelectedWorld);
         if (target < 0) return;   // oynanabilir level yok (kilitli dünya)
         // Sağ üst köşe ("Dünyalar" butonu sol üstte → simetrik).
         var b = UiButtons.Build(levelContent.transform, new Vector2(1f, 1f), new Vector2(-26, -110),
-            new Vector2(300, 104), "Devam Et", UiButtons.Play(), new Color(0.88f, 1f, 0.88f), 32);
-        b.onClick.AddListener(() => Play(SelectedWorld, target));
+            new Vector2(300, 104), Loc.T("continue"), UiButtons.Play(), new Color(0.88f, 1f, 0.88f), 32);
+        b.onClick.AddListener(() => Play(SelectedWorld, target, (RectTransform)b.transform, b.image));
     }
 
     // Sıradaki oynanacak level indeksi: açık (unlocked) level; hepsi bittiyse son level (tekrar). -1 = oynanamaz.
@@ -236,19 +246,63 @@ public class MainMenuController : MonoBehaviour
             btn.transition = Selectable.Transition.None;
             int idx = i;
             if (locked) btn.interactable = false;
-            else btn.onClick.AddListener(() => { AudioManager.Instance?.PlayUiClick(); Play(world, idx); });
+            else
+            {
+                btn.onClick.AddListener(() => { AudioManager.Instance?.PlayUiClick(); Play(world, idx, rt, img); });
+                go.AddComponent<PressFeedback>();   // dokununca küçülüp koyulaşır → "basıldı" hissi (kullanıcı 2026-08-17)
+            }
 
             if (open) go.AddComponent<Pulse>();   // sıradaki durak nabız
         }
     }
 
-    void Play(int world, int level)
+    bool loadingLevel;   // aynı anda tek yükleme; ekstra dokunuşları yut
+
+    void Play(int world, int level, RectTransform stopRT, Image stopImg)
     {
+        if (loadingLevel) return;
         if (LivesManager.Instance != null && !LivesManager.Instance.HasLife)
-        { infoText.text = "Can yok! Yenilenmesini bekle."; return; }
+        { infoText.text = Loc.T("noLives"); return; }
+        loadingLevel = true;
         LevelManager.CurrentWorld = world;   // dünya-bazlı level seti (Sprint 5)
         LevelManager.CurrentIndex = level;
-        SceneManager.LoadScene(gameScene);
+
+        // Basılan durağı "seçili" renge boya (yeşil) + üstüne "Yükleniyor..." yaz + diğer butonları kilitle (kullanıcı 2026-08-17)
+        if (stopImg != null) stopImg.color = new Color(0.30f, 0.80f, 0.38f);
+        var lbl = NewText("LoadingLbl", stopRT.parent, 34, FontStyles.Bold, TextAlignmentOptions.Center);
+        lbl.isRightToLeftText = false;                                   // akan nokta efekti hep soldan-sağa
+        lbl.color = new Color(1f, 0.95f, 0.7f);
+        var lr = lbl.rectTransform;
+        lr.anchorMin = stopRT.anchorMin; lr.anchorMax = stopRT.anchorMax;   // basılan butonla aynı hizada dur
+        lr.pivot = new Vector2(0.5f, 0.5f);
+        lr.anchoredPosition = stopRT.anchoredPosition + new Vector2(0f, stopRT.sizeDelta.y * 0.5f + 46f);
+        lr.sizeDelta = new Vector2(420f, 64f);
+
+        // Tam-ekran şeffaf tıklama engelleyici (siyah DEĞİL) → yükleme boyunca başka butona basılamaz
+        var blk = new GameObject("LoadBlocker", typeof(RectTransform), typeof(Image));
+        var brt = (RectTransform)blk.transform; brt.SetParent(levelPanel.transform, false); Stretch(brt);
+        var bi = blk.GetComponent<Image>(); bi.color = new Color(0, 0, 0, 0f); bi.raycastTarget = true;
+
+        StartCoroutine(LoadRoutine(lbl));
+    }
+
+    IEnumerator LoadRoutine(TMP_Text lbl)
+    {
+        string baseText = Loc.T("loading");
+        // Görsel geri bildirimin render olması için birkaç kare bekle (yoksa yükleme donması önce olur)
+        for (int i = 0; i < 2; i++) { LoadTick(lbl, baseText); yield return null; }
+
+        var op = SceneManager.LoadSceneAsync(gameScene);
+        op.allowSceneActivation = true;
+        while (op != null && !op.isDone) { LoadTick(lbl, baseText); yield return null; }
+        // Sahne değişince bu MonoBehaviour zaten yok olur; ek temizlik gerekmez.
+    }
+
+    static void LoadTick(TMP_Text lbl, string baseText)
+    {
+        if (lbl == null) return;
+        int dots = (int)((Time.realtimeSinceStartup * 3f) % 4f);   // 0..3 nokta, soldan-sağa akar
+        lbl.text = baseText + new string('.', dots);
     }
 
     // ════════ DÜNYALAR EKRANI ════════
@@ -258,19 +312,26 @@ public class MainMenuController : MonoBehaviour
         var dim = NewImage("Dim", worldsPanel.transform, null); Stretch(dim.rectTransform);
         dim.color = new Color(0f, 0f, 0f, 0.55f); dim.raycastTarget = true;   // karartma tam-ekran
 
-        // Kontroller (başlık/geri/ızgara) GÜVENLİ ALAN'a — çentik/kenar dışı.
+        // İçerik GÜVENLİ ALAN'a (çentik/kenar dışı) — kalıcı konteyner; içerik her gösterimde YENİDEN kurulur (dil için).
         var wsafe = new GameObject("WSafe", typeof(RectTransform), typeof(SafeArea));
-        var wsafeRt = (RectTransform)wsafe.transform; wsafeRt.SetParent(worldsPanel.transform, false);
-        var worldsSafe = wsafe.transform;
+        var wsafeRt = (RectTransform)wsafe.transform; wsafeRt.SetParent(worldsPanel.transform, false); Stretch(wsafeRt);
+        worldsContent = wsafe.transform;
+    }
+
+    // Dünyalar içeriğini (başlık/geri/ızgara) aktif dile göre YENİDEN kurar (dil değişince eski dilde kalmasın — 2026-08-17).
+    void RebuildWorldsContent()
+    {
+        foreach (Transform c in worldsContent) Destroy(c.gameObject);
+        var worldsSafe = worldsContent;
 
         var title = NewText("Title", worldsSafe, 64, FontStyles.Bold, TextAlignmentOptions.Center);
-        title.text = "Dünyalar"; title.color = new Color(1f, 0.95f, 0.75f);
+        title.text = Loc.T("worlds"); title.color = new Color(1f, 0.95f, 0.75f);
         var tr = title.rectTransform; tr.anchorMin = tr.anchorMax = new Vector2(0.5f, 1f); tr.pivot = new Vector2(0.5f, 1f);
         tr.anchoredPosition = new Vector2(0, -50); tr.sizeDelta = new Vector2(900, 90);
 
         var back = UiButtons.Build(worldsSafe, new Vector2(0f, 1f), new Vector2(30, -50),
-            new Vector2(230, 84), "Geri", null, Color.white, 32);
-        back.onClick.AddListener(ShowLevelMenu);
+            new Vector2(230, 84), Loc.T("back"), null, Color.white, 32);
+        back.onClick.AddListener(ShowHome);   // Dünyalar → Geri → Ana Sayfa (kullanıcı 2026-08-06)
 
         // Izgara (3 sütun) — RESPONSIVE: hücre boyutu ölçülen güvenli alana göre → 15 dünya ekranı tam kaplar,
         // alt boşluk kalmaz (2026-07-24, kullanıcı isteği).
@@ -308,7 +369,7 @@ public class MainMenuController : MonoBehaviour
         img.color = unlocked ? Color.white : new Color(1f, 1f, 1f, 0.8f);   // kilitli = soluk (resim görünür)
 
         var name = NewText("Name", rt, 26, FontStyles.Bold, TextAlignmentOptions.Center);
-        name.text = WorldCatalog.Names[w]; name.color = Color.white;
+        name.text = WorldCatalog.LocalizedName(w); name.color = Color.white;
         var nr = name.rectTransform; nr.anchorMin = new Vector2(0, 0); nr.anchorMax = new Vector2(1, 0); nr.pivot = new Vector2(0.5f, 0);
         nr.offsetMin = new Vector2(0, 4); nr.offsetMax = new Vector2(0, 40);
 
@@ -321,8 +382,402 @@ public class MainMenuController : MonoBehaviour
     }
 
     // ════════ EKRAN GEÇİŞ ════════
-    void ShowLevelMenu() { RebuildLevelContent(); levelPanel.SetActive(true); worldsPanel.SetActive(false); PlayIntro(levelPanel); }
-    void ShowWorlds()    { worldsPanel.SetActive(true); levelPanel.SetActive(false); PlayIntro(worldsPanel); }
+    void HideAllPanels()
+    {
+        if (homePanel) homePanel.SetActive(false);
+        if (levelPanel) levelPanel.SetActive(false);
+        if (worldsPanel) worldsPanel.SetActive(false);
+        if (settingsPanel) settingsPanel.SetActive(false);
+    }
+    void ShowHome()      { RefreshHome(); HideAllPanels(); homePanel.SetActive(true); PlayIntro(homePanel); }
+    void ShowSettings()  { RefreshSettings(); HideAllPanels(); settingsPanel.SetActive(true); PlayIntro(settingsPanel); }
+    void ShowLevelMenu() { RebuildLevelContent(); HideAllPanels(); levelPanel.SetActive(true); PlayIntro(levelPanel); }
+    void ShowWorlds()    { RebuildWorldsContent(); HideAllPanels(); worldsPanel.SetActive(true); PlayIntro(worldsPanel); }
+
+    // ════════ KARŞILAMA (HOME) ════════
+    void BuildHomePanel()
+    {
+        homePanel = NewPanel("HomePanel");
+        var safe = new GameObject("HomeSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(homePanel.transform, false); Stretch(srt);
+        homeContent = safe.transform;
+    }
+
+    void RefreshHome()
+    {
+        foreach (Transform c in homeContent) Destroy(c.gameObject);
+
+        var title = NewText("Title", homeContent, 88, FontStyles.Bold, TextAlignmentOptions.Center);
+        title.text = "GET IT"; title.color = new Color(1f, 0.92f, 0.55f);
+        title.isRightToLeftText = false;   // Latin marka adı → HER ZAMAN soldan-sağa (Arapça'da "TI TEG" görünmesin, kullanıcı 2026-08-17)
+        Top(title.rectTransform, 0, -140, 900, 120);
+
+        var nm = NewText("PlayerName", homeContent, 46, FontStyles.Bold, TextAlignmentOptions.Center);
+        nm.text = Loc.T("hello") + " " + PlayerProfile.Name; nm.color = Color.white;
+        // Oyuncu adı LATİN ise selamlamayı SOLDAN SAĞA yaz (Arapça'da bile) — Latin ad ters/RTL görünmesin (kullanıcı 2026-08-17).
+        nm.isRightToLeftText = ContainsRTL(PlayerProfile.Name);
+        Top(nm.rectTransform, 0, -270, 900, 64);
+
+        // Settings (sağ üst): çark ikonu + yazı
+        var setBtn = UiButtons.Build(homeContent, new Vector2(1f, 1f), new Vector2(-24, -34),
+            new Vector2(290, 92), Loc.T("settings"), UiButtons.Gear(), Color.white, 34);
+        setBtn.onClick.AddListener(ShowSettings);
+
+        // Skor + Yıldız rozetleri (skor GENİŞ + otomatik-küçülme → büyük değer/uzun dilde taşmaz)
+        MakeStat(homeContent, new Vector2(-260, -380), StarArt.Full(), StarManager.Total().ToString(), 300f);
+        MakeStat(homeContent, new Vector2(240, -380), null, Loc.T("score") + " " + PlayerProfile.TotalScore, 480f);
+
+        // OYNA (merkez, büyük) → DÜNYALAR ekranı
+        var play = UiButtons.Build(homeContent, new Vector2(0.5f, 0.5f), new Vector2(0, 150),
+            new Vector2(520, 150), Loc.T("play"), UiButtons.Play(), new Color(0.85f, 1f, 0.85f), 60);
+        play.onClick.AddListener(ShowWorlds);
+
+        // Aksiyon butonları (dikey liste)
+        float y = -60f; const float bh = 104f, gap = 118f, bw = 640f;
+        AddHomeButton(Loc.T("tellFriend"), ref y, gap, bw, bh, Color.white, () => { Social.ShareGame(); Toast(Loc.T("linkReady")); });
+        AddHomeButton(Loc.T("rate"), ref y, gap, bw, bh, Color.white, Social.Rate);
+        if (!PlayerProfile.NoAds)
+            AddHomeButton(Loc.T("removeAds"), ref y, gap, bw, bh, new Color(1f, 0.9f, 0.8f), ShowNoAds);
+        AddHomeButton(Loc.T("buy"), ref y, gap, bw, bh, new Color(1f, 0.95f, 0.7f), ShowStore);
+    }
+
+    void AddHomeButton(string label, ref float y, float gap, float bw, float bh, Color tint, System.Action onClick)
+    {
+        var b = UiButtons.Build(homeContent, new Vector2(0.5f, 0.5f), new Vector2(0, y), new Vector2(bw, bh), label, null, tint, 36);
+        b.onClick.AddListener(() => onClick());
+        y -= gap;
+    }
+
+    // Skor/yıldız rozeti: pill (verilen genişlik) + (opsiyonel) ikon + değer (otomatik-küçülme → taşmaz).
+    void MakeStat(Transform parent, Vector2 pos, Sprite icon, string value, float width = 320f)
+    {
+        var pill = NewImage("Stat", parent, UiButtons.Rect());
+        pill.type = Image.Type.Simple; pill.color = new Color(1f, 1f, 1f, 0.92f); pill.raycastTarget = false;
+        Top(pill.rectTransform, pos.x, pos.y, width, 92);
+        if (icon != null)
+        {
+            var ic = NewImage("Ic", pill.transform, icon); ic.preserveAspect = true; ic.raycastTarget = false;
+            var ir = ic.rectTransform; ir.anchorMin = ir.anchorMax = new Vector2(0f, 0.5f); ir.pivot = new Vector2(0f, 0.5f);
+            ir.anchoredPosition = new Vector2(22, 0); ir.sizeDelta = new Vector2(58, 58);
+        }
+        var t = NewText("V", pill.transform, 42, FontStyles.Bold, TextAlignmentOptions.Center);
+        t.color = new Color(0.2f, 0.14f, 0.07f); t.text = value;
+        t.enableAutoSizing = true; t.fontSizeMin = 18f; t.fontSizeMax = 42f; t.enableWordWrapping = false; t.overflowMode = TextOverflowModes.Ellipsis;
+        var tr = t.rectTransform; Stretch(tr); tr.offsetMin = new Vector2(icon != null ? 84 : 14, 0); tr.offsetMax = new Vector2(-14, 0);
+    }
+
+    // ════════ AYARLAR ════════
+    void BuildSettingsPanel()
+    {
+        settingsPanel = NewPanel("SettingsPanel");
+        var dim = NewImage("Dim", settingsPanel.transform, null); Stretch(dim.rectTransform);
+        dim.color = new Color(0.08f, 0.06f, 0.05f, 0.9f); dim.raycastTarget = true;
+        var safe = new GameObject("SetSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(settingsPanel.transform, false); Stretch(srt);
+        settingsContent = safe.transform;
+    }
+
+    void RefreshSettings()
+    {
+        foreach (Transform c in settingsContent) Destroy(c.gameObject);
+
+        var title = NewText("Title", settingsContent, 64, FontStyles.Bold, TextAlignmentOptions.Center);
+        title.text = Loc.T("settings"); title.color = new Color(1f, 0.95f, 0.75f);
+        Top(title.rectTransform, 0, -40, 600, 90);
+
+        var x = UiButtons.Build(settingsContent, new Vector2(1f, 1f), new Vector2(-24, -30), new Vector2(92, 92), "X", null, new Color(1f, 0.8f, 0.75f), 44);
+        x.onClick.AddListener(ShowHome);
+
+        var nl = NewText("NL", settingsContent, 34, FontStyles.Bold, TextAlignmentOptions.Left);
+        nl.color = new Color(1f, 1f, 1f, 0.92f); nl.text = Loc.T("name"); Top(nl.rectTransform, -270, -150, 300, 54, 0f);
+        var input = MakeInputField(settingsContent, PlayerProfile.Name, new Vector2(0, -202), new Vector2(560, 92));
+        input.onEndEdit.AddListener(v => { PlayerProfile.Name = v; });
+
+        MakeToggle(settingsContent, -320, Loc.T("sfx"), () => AudioManager.SfxOn, v => AudioManager.SfxOn = v);
+        MakeToggle(settingsContent, -420, Loc.T("music"), () => AudioManager.MusicOn, v => AudioManager.MusicOn = v);
+        MakeToggle(settingsContent, -520, Loc.T("vibration"), () => AudioManager.HapticOn, v => { AudioManager.HapticOn = v; if (v) AudioManager.Instance?.HapticTest(); });
+
+        var dl = NewText("DL", settingsContent, 34, FontStyles.Bold, TextAlignmentOptions.Center);
+        dl.color = new Color(1f, 1f, 1f, 0.92f); dl.text = Loc.T("difficulty"); Top(dl.rectTransform, 0, -620, 400, 54);
+        var cur = DifficultySettings.Current;
+        DiffButton(settingsContent, -300, -700, Difficulty.Easy, cur);
+        DiffButton(settingsContent, 0, -700, Difficulty.Normal, cur);
+        DiffButton(settingsContent, 300, -700, Difficulty.Hard, cur);
+
+        // Dil satırı: etiket + 7 bayrak (tek sıra). Seçili bayrak parlak+büyük.
+        var ll = NewText("LL", settingsContent, 34, FontStyles.Bold, TextAlignmentOptions.Center);
+        ll.color = new Color(1f, 1f, 1f, 0.92f); ll.text = Loc.T("language"); Top(ll.rectTransform, 0, -800, 400, 54);
+        for (int i = 0; i < Langs.Length; i++)
+            LangFlag(settingsContent, (i - 3) * 135f, -900, Langs[i].lang, Langs[i].flag);
+    }
+
+    // Desteklenen diller (bayrak + endonim etiket). Sıra Language enum ile aynı.
+    static readonly (Language lang, string flag, string label)[] Langs =
+    {
+        (Language.Turkish, "turkey_flag",  "Türkçe"),
+        (Language.English, "us_flag",      "English"),
+        (Language.Spanish, "spain_flag",   "Español"),
+        (Language.German,  "germany_flag", "Deutsch"),
+        (Language.Arabic,  "saudi_flag",   "العربية"),
+        (Language.Korean,  "korea_flag",   "한국어"),
+        (Language.Russian, "russia_flag",  "Русский"),
+    };
+
+    // Ayarlar dil bayrağı (yalnız bayrak). Seçili = parlak + büyük; diğerleri soluk. Basınca dili değiştir + yenile.
+    void LangFlag(Transform parent, float x, float y, Language lang, string flagRes)
+    {
+        bool sel = Loc.Current == lang;
+        var go = new GameObject("Lang_" + lang, typeof(RectTransform), typeof(Image), typeof(Button));
+        var rt = (RectTransform)go.transform; rt.SetParent(parent, false);
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 1f); rt.pivot = new Vector2(0.5f, 1f);
+        rt.anchoredPosition = new Vector2(x, y); rt.sizeDelta = sel ? new Vector2(112, 112) : new Vector2(90, 90);
+        var img = go.GetComponent<Image>(); img.sprite = FlagSprite(flagRes); img.preserveAspect = true;
+        img.color = sel ? Color.white : new Color(1f, 1f, 1f, 0.55f);
+        var btn = go.GetComponent<Button>(); btn.transition = Selectable.Transition.None;
+        btn.onClick.AddListener(() => { Loc.Current = lang; RefreshSettings(); });
+    }
+
+    // Metin sağdan-sola script (İbranice/Arapça) içeriyor mu? Latin ad → false (LTR).
+    static bool ContainsRTL(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return false;
+        foreach (char c in s)
+            if ((c >= 0x0590 && c <= 0x08FF) || (c >= 0xFB1D && c <= 0xFDFF) || (c >= 0xFE70 && c <= 0xFEFF)) return true;
+        return false;
+    }
+
+    static Sprite FlagSprite(string res)
+    {
+        var tex = Resources.Load<Texture2D>(res);
+        return tex == null ? null : Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f), 100f);
+    }
+
+    void DiffButton(Transform parent, float x, float y, Difficulty d, Difficulty cur)
+    {
+        bool sel = d == cur;
+        string key = d == Difficulty.Easy ? "easy" : d == Difficulty.Hard ? "hard" : "normal";
+        var b = UiButtons.Build(parent, new Vector2(0.5f, 1f), new Vector2(x, y), new Vector2(280, 100),
+            Loc.T(key), null, sel ? new Color(0.65f, 1f, 0.65f) : new Color(1f, 1f, 1f, 0.7f), 36);
+        b.onClick.AddListener(() => { DifficultySettings.Current = d; RefreshSettings(); });
+    }
+
+    void MakeToggle(Transform parent, float y, string label, System.Func<bool> get, System.Action<bool> set)
+    {
+        var lbl = NewText("TgL", parent, 36, FontStyles.Bold, TextAlignmentOptions.Left);
+        lbl.color = Color.white; lbl.text = label;
+        Top(lbl.rectTransform, -300, y, 440, 70, 0f);
+        bool on = get();
+        var b = UiButtons.Build(parent, new Vector2(0.5f, 1f), new Vector2(300, y - 6), new Vector2(220, 84),
+            on ? Loc.T("on") : Loc.T("off"), null, on ? new Color(0.7f, 1f, 0.7f) : new Color(1f, 0.75f, 0.7f), 34);
+        b.onClick.AddListener(() => { set(!get()); RefreshSettings(); });
+    }
+
+    // ════════ İSİM GİRME + SATIN AL + TOAST ════════
+    // İlk açılış DİL SEÇİMİ: "Türkçe" (TR bayrağı) + "English" (US bayrağı). Yazı ya da bayrağa basınca dil seçilir,
+    // tüm ekran o dile döner; sonra (isim seçilmemişse) isim ekranı gelir.
+    void ShowLanguagePicker()
+    {
+        var panel = NewPanel("LangPicker");
+        var dim = NewImage("Dim", panel.transform, null); Stretch(dim.rectTransform);
+        dim.color = new Color(0.05f, 0.04f, 0.03f, 0.95f); dim.raycastTarget = true;
+        var safe = new GameObject("LSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(panel.transform, false); Stretch(srt);
+
+        var t = NewText("T", safe.transform, 54, FontStyles.Bold, TextAlignmentOptions.Center);
+        t.text = "Dil / Language"; t.color = new Color(1f, 0.95f, 0.75f);
+        var tr = t.rectTransform; tr.anchorMin = tr.anchorMax = new Vector2(0.5f, 0.5f); tr.pivot = new Vector2(0.5f, 0.5f);
+        tr.anchoredPosition = new Vector2(0, 470); tr.sizeDelta = new Vector2(900, 90);
+
+        float y = 360f;
+        foreach (var L in Langs) { LangPick(safe.transform, y, L.lang, L.flag, L.label, panel); y -= 112f; }
+    }
+
+    void LangPick(Transform parent, float y, Language lang, string flagRes, string label, GameObject panel)
+    {
+        // Bayrak (solda) + yazı; ikisi de aynı butonda → yazıya da bayrağa da basınca seçilir.
+        var b = UiButtons.Build(parent, new Vector2(0.5f, 0.5f), new Vector2(0, y), new Vector2(540, 96),
+            "   " + label, FlagSprite(flagRes), Color.white, 40);
+        b.onClick.AddListener(() =>
+        {
+            Loc.Current = lang;
+            Destroy(panel);
+            RefreshHome();                                   // menü o dile döner
+            if (!PlayerProfile.NameChosen) ShowNameEntry(true);
+        });
+    }
+
+    void ShowNameEntry(bool firstTime)
+    {
+        var panel = NewPanel("NameEntry");
+        var dim = NewImage("Dim", panel.transform, null); Stretch(dim.rectTransform);
+        dim.color = new Color(0.05f, 0.04f, 0.03f, 0.92f); dim.raycastTarget = true;
+        var safe = new GameObject("NSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(panel.transform, false); Stretch(srt);
+
+        var t = NewText("T", safe.transform, 54, FontStyles.Bold, TextAlignmentOptions.Center);
+        t.text = firstTime ? Loc.T("askName") : Loc.T("changeName"); t.color = new Color(1f, 0.95f, 0.75f);
+        var tr = t.rectTransform; tr.anchorMin = tr.anchorMax = new Vector2(0.5f, 0.5f); tr.pivot = new Vector2(0.5f, 0.5f);
+        tr.anchoredPosition = new Vector2(0, 220); tr.sizeDelta = new Vector2(900, 90);
+
+        var input = MakeInputField(safe.transform, PlayerProfile.Name, new Vector2(0, 60), new Vector2(620, 110), center: true);
+
+        var ok = UiButtons.Build(safe.transform, new Vector2(0.5f, 0.5f), new Vector2(0, -120), new Vector2(360, 120),
+            Loc.T("ok"), UiButtons.Play(), new Color(0.85f, 1f, 0.85f), 44);
+        ok.onClick.AddListener(() => { PlayerProfile.Name = input.text; Destroy(panel); RefreshHome(); });
+    }
+
+    // ── REKLAMLARI KALDIR (ayrı ekran: ücret + satın al) ──
+    void ShowNoAds()
+    {
+        var panel = NewPanel("NoAdsPanel");
+        var dim = NewImage("Dim", panel.transform, null); Stretch(dim.rectTransform);
+        dim.color = new Color(0.08f, 0.06f, 0.05f, 0.92f); dim.raycastTarget = true;
+        var safe = new GameObject("NoAdsSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(panel.transform, false); Stretch(srt);
+
+        var title = NewText("Title", safe.transform, 60, FontStyles.Bold, TextAlignmentOptions.Center);
+        title.text = Loc.T("removeAds"); title.color = new Color(1f, 0.95f, 0.75f); Top(title.rectTransform, 0, -70, 800, 90);
+
+        var desc = NewText("Desc", safe.transform, 38, FontStyles.Normal, TextAlignmentOptions.Center);
+        desc.text = Loc.T("noAdsDesc"); desc.color = new Color(1f, 1f, 1f, 0.9f);
+        var dr = desc.rectTransform; dr.anchorMin = dr.anchorMax = new Vector2(0.5f, 0.5f); dr.pivot = new Vector2(0.5f, 0.5f);
+        dr.anchoredPosition = new Vector2(0, 160); dr.sizeDelta = new Vector2(840, 160);
+
+        var price = NewText("Price", safe.transform, 72, FontStyles.Bold, TextAlignmentOptions.Center);
+        price.text = "₺49,99"; price.color = new Color(1f, 0.9f, 0.35f);
+        var pr = price.rectTransform; pr.anchorMin = pr.anchorMax = new Vector2(0.5f, 0.5f); pr.pivot = new Vector2(0.5f, 0.5f);
+        pr.anchoredPosition = new Vector2(0, 20); pr.sizeDelta = new Vector2(600, 100);
+
+        var buy = UiButtons.Build(safe.transform, new Vector2(0.5f, 0.5f), new Vector2(0, -150), new Vector2(520, 130),
+            Loc.T("buy"), UiButtons.Power(), new Color(0.85f, 1f, 0.85f), 46);
+        buy.onClick.AddListener(() =>
+        {
+            Toast(Loc.T("redirectPay"));
+            Store.RemoveAds(ok => { if (ok) { Toast(Loc.T("adsRemoved")); Destroy(panel); RefreshHome(); } });
+        });
+
+        var x = UiButtons.Build(safe.transform, new Vector2(1f, 1f), new Vector2(-24, -30), new Vector2(92, 92), "X", null, new Color(1f, 0.8f, 0.75f), 44);
+        x.onClick.AddListener(() => Destroy(panel));
+    }
+
+    // ── MAĞAZA (paketler: coin + güç-up karışımı, fiyatlı; seç → ödeme) ──
+    void ShowStore()
+    {
+        var panel = NewPanel("StorePanel");
+        var dim = NewImage("Dim", panel.transform, null); Stretch(dim.rectTransform);
+        dim.color = new Color(0.08f, 0.06f, 0.05f, 0.92f); dim.raycastTarget = true;
+        var safe = new GameObject("StoreSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(panel.transform, false); Stretch(srt);
+
+        var title = NewText("Title", safe.transform, 58, FontStyles.Bold, TextAlignmentOptions.Center);
+        title.text = Loc.T("store"); title.color = new Color(1f, 0.95f, 0.75f); Top(title.rectTransform, 0, -40, 600, 84);
+        var coins = NewText("Coins", safe.transform, 34, FontStyles.Bold, TextAlignmentOptions.Center);
+        coins.color = new Color(1f, 0.9f, 0.4f); coins.text = Loc.T("coins") + " " + PlayerProfile.Coins; Top(coins.rectTransform, 0, -130, 600, 50);
+        System.Action refresh = () => coins.text = Loc.T("coins") + " " + PlayerProfile.Coins;
+
+        string coin = Loc.En ? "Coins" : "Coin";
+        string PU(PowerUpType t) => Loc.PowerName(t);
+        float y = -200f;
+        StoreCard(safe.transform, Loc.T("pkStarter"), $"500 {coin} + 2 {PU(PowerUpType.Speed)}", "₺9,99", ref y,
+            () => Buy(Loc.T("pkStarter"), 500, new[] { (PowerUpType.Speed, 2) }, refresh));
+        StoreCard(safe.transform, Loc.T("pkCoinBag"), $"1500 {coin}", "₺14,99", ref y,
+            () => Buy(Loc.T("pkCoinBag"), 1500, null, refresh));
+        StoreCard(safe.transform, Loc.T("pkMagnet"), $"1000 {coin} + 5 {PU(PowerUpType.Magnet)}", "₺19,99", ref y,
+            () => Buy(Loc.T("pkMagnet"), 1000, new[] { (PowerUpType.Magnet, 5) }, refresh));
+        StoreCard(safe.transform, Loc.T("pkSuper"), $"2500 {coin} + 3 {PU(PowerUpType.SizeBurst)} + 1 {PU(PowerUpType.Super)}", "₺29,99", ref y,
+            () => Buy(Loc.T("pkSuper"), 2500, new[] { (PowerUpType.SizeBurst, 3), (PowerUpType.Super, 1) }, refresh));
+        StoreCard(safe.transform, Loc.T("pkSuper3"), $"3 {PU(PowerUpType.Super)}", "₺24,99", ref y,
+            () => Buy(Loc.T("pkSuper3"), 0, new[] { (PowerUpType.Super, 3) }, refresh));
+
+        var x = UiButtons.Build(safe.transform, new Vector2(1f, 1f), new Vector2(-24, -30), new Vector2(92, 92), "X", null, new Color(1f, 0.8f, 0.75f), 44);
+        x.onClick.AddListener(() => Destroy(panel));
+    }
+
+    void StoreCard(Transform parent, string name, string contents, string price, ref float y, System.Action onBuy)
+    {
+        var go = new GameObject("Pack_" + name, typeof(RectTransform), typeof(Image), typeof(Button));
+        var rt = (RectTransform)go.transform; rt.SetParent(parent, false); Top(rt, 0, y, 760, 150);
+        var img = go.GetComponent<Image>(); img.sprite = UiButtons.Rect(); img.type = Image.Type.Simple; img.color = new Color(1f, 0.97f, 0.85f);
+
+        var nameT = NewText("N", rt, 40, FontStyles.Bold, TextAlignmentOptions.Left);
+        nameT.color = new Color(0.2f, 0.14f, 0.07f); nameT.text = name;
+        var nr = nameT.rectTransform; nr.anchorMin = new Vector2(0, 0.5f); nr.anchorMax = new Vector2(0.62f, 1f); nr.offsetMin = new Vector2(28, 0); nr.offsetMax = new Vector2(0, -8);
+        var contT = NewText("C", rt, 28, FontStyles.Normal, TextAlignmentOptions.Left);
+        contT.color = new Color(0.35f, 0.28f, 0.18f); contT.text = contents;
+        var cr = contT.rectTransform; cr.anchorMin = new Vector2(0, 0f); cr.anchorMax = new Vector2(0.72f, 0.5f); cr.offsetMin = new Vector2(28, 10); cr.offsetMax = new Vector2(0, 0);
+        var priceT = NewText("P", rt, 44, FontStyles.Bold, TextAlignmentOptions.Right);
+        priceT.color = new Color(0.15f, 0.55f, 0.2f); priceT.text = price;
+        var pr = priceT.rectTransform; pr.anchorMin = new Vector2(0.6f, 0f); pr.anchorMax = new Vector2(1f, 1f); pr.offsetMin = new Vector2(0, 0); pr.offsetMax = new Vector2(-28, 0);
+
+        var btn = go.GetComponent<Button>(); btn.transition = Selectable.Transition.None;
+        btn.onClick.AddListener(() => { AudioManager.Instance?.PlayUiClick(); onBuy(); });
+        y -= 172f;
+    }
+
+    void Buy(string name, int coins, (PowerUpType, int)[] powers, System.Action refresh)
+    {
+        Toast(Loc.T("redirectPay"));
+        Store.Purchase(coins, powers, ok =>
+        {
+            if (!ok) return;
+            Toast(Loc.T("purchased") + " " + name);
+            refresh?.Invoke();
+        });
+    }
+
+    void Toast(string msg)
+    {
+        var go = new GameObject("Toast", typeof(RectTransform), typeof(Image), typeof(CanvasGroup));
+        var rt = (RectTransform)go.transform; rt.SetParent(canvas.transform, false);
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(0, -520); rt.sizeDelta = new Vector2(760, 96);
+        var img = go.GetComponent<Image>(); img.sprite = UiButtons.Rect(); img.type = Image.Type.Simple; img.color = new Color(0.12f, 0.1f, 0.08f, 0.96f); img.raycastTarget = false;
+        var t = NewText("T", rt, 36, FontStyles.Bold, TextAlignmentOptions.Center); t.color = new Color(1f, 0.95f, 0.8f); t.text = msg; Stretch(t.rectTransform);
+        StartCoroutine(ToastRoutine(go.GetComponent<CanvasGroup>(), go));
+    }
+
+    IEnumerator ToastRoutine(CanvasGroup cg, GameObject go)
+    {
+        cg.alpha = 0f;
+        float t = 0f; while (t < 0.2f) { t += Time.deltaTime; cg.alpha = t / 0.2f; yield return null; }
+        cg.alpha = 1f; yield return new WaitForSeconds(1.4f);
+        t = 0f; while (t < 0.4f) { t += Time.deltaTime; cg.alpha = 1f - t / 0.4f; yield return null; }
+        Destroy(go);
+    }
+
+    // Üst-ankraj yerleştirme kısayolu (pivot varsayılan üst-orta; px=0 → sol-hizalı pivot).
+    static void Top(RectTransform rt, float x, float y, float w, float h, float px = 0.5f)
+    {
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 1f); rt.pivot = new Vector2(px, 1f);
+        rt.anchoredPosition = new Vector2(x, y); rt.sizeDelta = new Vector2(w, h);
+    }
+
+    TMP_InputField MakeInputField(Transform parent, string initial, Vector2 pos, Vector2 size, bool center = false)
+    {
+        var go = new GameObject("Input", typeof(RectTransform), typeof(Image));
+        go.SetActive(false);   // ⚠️ referanslar atanana kadar PASİF → TMP_InputField.OnEnable doğru başlar (yoksa tıklama/klavye ölü)
+        var rt = (RectTransform)go.transform; rt.SetParent(parent, false);
+        rt.anchorMin = rt.anchorMax = center ? new Vector2(0.5f, 0.5f) : new Vector2(0.5f, 1f);
+        rt.pivot = center ? new Vector2(0.5f, 0.5f) : new Vector2(0.5f, 1f);
+        rt.anchoredPosition = pos; rt.sizeDelta = size;
+        var bg = go.GetComponent<Image>(); bg.sprite = UiButtons.Rect(); bg.type = Image.Type.Simple; bg.color = Color.white; bg.raycastTarget = true;
+
+        var input = go.AddComponent<TMP_InputField>();
+        var ta = new GameObject("TextArea", typeof(RectTransform), typeof(RectMask2D));
+        var tart = (RectTransform)ta.transform; tart.SetParent(rt, false);
+        tart.anchorMin = Vector2.zero; tart.anchorMax = Vector2.one; tart.offsetMin = new Vector2(22, 8); tart.offsetMax = new Vector2(-22, -8);
+
+        var ph = NewText("Placeholder", tart, 40, FontStyles.Italic, TextAlignmentOptions.Center);
+        ph.color = new Color(0.4f, 0.35f, 0.3f, 0.6f); ph.text = Loc.T("name"); Stretch(ph.rectTransform);
+        var txt = NewText("Text", tart, 40, FontStyles.Bold, TextAlignmentOptions.Center);
+        txt.color = new Color(0.15f, 0.1f, 0.05f); Stretch(txt.rectTransform);
+
+        input.textViewport = tart; input.textComponent = txt; input.placeholder = ph;
+        input.characterLimit = 16; input.lineType = TMP_InputField.LineType.SingleLine;
+        input.text = initial;
+        go.SetActive(true);    // referanslar hazır → şimdi OnEnable düzgün çalışır, tıkla-yaz aktif
+        return input;
+    }
 
     // Panel açılış animasyonu: fade (CanvasGroup alpha 0→1) + hafif scale (0.95→1), ~0.22s.
     void PlayIntro(GameObject panel)
@@ -408,7 +863,7 @@ public class MainMenuController : MonoBehaviour
         cg.alpha = to;
     }
 
-    // DÜNYA GEÇİŞ ANİMASYONU: "[X] Tamamlandı! / Yeni dünya açıldı" → sonraki dünya ikonu pop + isim → "Devam Et"
+    // DÜNYA GEÇİŞ ANİMASYONU: "[X] Tamamlandı! / Yeni dünya açıldı" → sonraki dünya ikonu pop + isim → Loc.T("continue")
     // butonuna basınca yeni dünyanın patikasına geçer. Bir dünyanın son level'ı kazanılınca (Start'ta) tetiklenir.
     IEnumerator WorldTransitionRoutine(int fw, int nextW)
     {
@@ -423,13 +878,13 @@ public class MainMenuController : MonoBehaviour
         dim.color = new Color(0.08f, 0.06f, 0.05f, 0.92f); dim.raycastTarget = true;
 
         var title = NewText("Title", panel.transform, 64, FontStyles.Bold, TextAlignmentOptions.Center);
-        title.text = WorldCatalog.Names[fw] + " Tamamlandı!"; title.color = new Color(1f, 0.9f, 0.35f);
+        title.text = WorldCatalog.LocalizedName(fw) + " " + Loc.T("worldDone"); title.color = new Color(1f, 0.9f, 0.35f);
         title.enableAutoSizing = true; title.fontSizeMin = 34; title.fontSizeMax = 64;
         var tr = title.rectTransform; tr.anchorMin = tr.anchorMax = new Vector2(0.5f, 0.5f); tr.pivot = new Vector2(0.5f, 0.5f);
         tr.anchoredPosition = new Vector2(0, 470); tr.sizeDelta = new Vector2(1000, 130);
 
         var sub = NewText("Sub", panel.transform, 38, FontStyles.Bold, TextAlignmentOptions.Center);
-        sub.text = "Yeni dünya açıldı!"; sub.color = new Color(1f, 1f, 1f, 0.85f);
+        sub.text = Loc.T("newWorld"); sub.color = new Color(1f, 1f, 1f, 0.85f);
         var sr = sub.rectTransform; sr.anchorMin = sr.anchorMax = new Vector2(0.5f, 0.5f); sr.pivot = new Vector2(0.5f, 0.5f);
         sr.anchoredPosition = new Vector2(0, 320); sr.sizeDelta = new Vector2(900, 60);
 
@@ -448,13 +903,13 @@ public class MainMenuController : MonoBehaviour
         ir.anchoredPosition = new Vector2(0, 30); ir.sizeDelta = new Vector2(420, 420); ir.localScale = Vector3.zero;
 
         var nm = NewText("NextName", panel.transform, 58, FontStyles.Bold, TextAlignmentOptions.Center);
-        nm.text = WorldCatalog.Names[nextW]; nm.color = new Color(1f, 0.95f, 0.75f);
+        nm.text = WorldCatalog.LocalizedName(nextW); nm.color = new Color(1f, 0.95f, 0.75f);
         var nr = nm.rectTransform; nr.anchorMin = nr.anchorMax = new Vector2(0.5f, 0.5f); nr.pivot = new Vector2(0.5f, 0.5f);
         nr.anchoredPosition = new Vector2(0, -280); nr.sizeDelta = new Vector2(900, 80);
 
         bool go = false;
         var btn = UiButtons.Build(panel.transform, new Vector2(0.5f, 0.5f), new Vector2(0, -470),
-            new Vector2(460, 124), "Devam Et", UiButtons.Play(), new Color(0.88f, 1f, 0.88f), 44);
+            new Vector2(460, 124), Loc.T("continue"), UiButtons.Play(), new Color(0.88f, 1f, 0.88f), 44);
         btn.onClick.AddListener(() => { AudioManager.Instance?.PlayUiClick(); go = true; });
         var btnCg = btn.gameObject.AddComponent<CanvasGroup>(); btnCg.alpha = 0f;
 
@@ -500,7 +955,7 @@ public class MainMenuController : MonoBehaviour
         if (gifts != null && gifts.Count > 0)
         {
             var gt = NewText("Gift", panel.transform, 40, FontStyles.Bold, TextAlignmentOptions.Center);
-            gt.text = "HEDİYE: " + string.Join(" + ", gifts); gt.color = new Color(1f, 0.78f, 0.2f);
+            gt.text = Loc.T("reward") + " " + string.Join(" + ", gifts); gt.color = new Color(1f, 0.78f, 0.2f);
             var r = gt.rectTransform; r.anchorMin = r.anchorMax = new Vector2(0.5f, 0.5f); r.pivot = new Vector2(0.5f, 0.5f);
             r.anchoredPosition = new Vector2(0, cy - size * 0.5f - 60f); r.sizeDelta = new Vector2(940, 60);
         }
@@ -583,7 +1038,7 @@ public class MainMenuController : MonoBehaviour
     {
         var icon = (worldIcons != null && worldIcons.Length > 17) ? worldIcons[17] : null;
         var b = UiButtons.Build(levelContent.transform, new Vector2(0f, 1f), new Vector2(26, -110),
-            new Vector2(300, 104), "Dünyalar", icon, Color.white, 32);
+            new Vector2(300, 104), Loc.T("worlds"), icon, Color.white, 32);
         b.onClick.AddListener(ShowWorlds);
     }
 
@@ -617,6 +1072,7 @@ public class MainMenuController : MonoBehaviour
         go.transform.SetParent(parent, false);
         var t = go.AddComponent<TextMeshProUGUI>();
         t.fontSize = size; t.fontStyle = style; t.alignment = align; t.raycastTarget = false;
+        t.isRightToLeftText = Loc.Current == Language.Arabic;   // Arapça sağdan-sola
         return t;
     }
 

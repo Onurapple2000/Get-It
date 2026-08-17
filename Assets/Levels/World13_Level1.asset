@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 13
   levelIndex: 0
-  levelTime: 185
+  levelTime: 100
   spawns:
   - prefab: {fileID: 858559310279243409, guid: 2940bd4676dac45c88863ee2709de853, type: 3}
     count: 1
@@ -68,6 +68,98 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
+  - prefab: {fileID: 5203271476907136235, guid: 7a2b5323456044318b74aef49b0d55bf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 7532156098899508364, guid: dec9bad5a9ced4a93810605325daa62c, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2037092527533782074, guid: 56a93cc1bafc44fcead6ce02989b0b4b, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 919523164931897789, guid: 7dca5c79f8480482abb515d503e84296, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8225055749861202516, guid: c5bebee08888d4afc943ffcd06b9cccd, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5642630945697132872, guid: b2093321a9d7e44f381472e0782a46d3, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1000970891625323658, guid: c6c45ca6eca2f4ca6b0c76f59ce0749f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1429674166830393697, guid: 7e2db676edb6344d6989ee0c6674f5a8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4970792380108796873, guid: 2498d124f5469475a87f39e31cdec1d8, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3956338804282562079, guid: 6b8e05e4902b64672b605a16a7c845e7, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1177494495509013420, guid: 4232ea1cf8fe54ed5a530d9e54e0b00d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 833006704561356522, guid: 377b4c9c7b7d747e79f19bdc09ed9270, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3370475361277024042, guid: 80392c3e7e96c4018ba7db905986465f, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5085506140879449931, guid: 3902da81f1dd8439daedf0650e7c9e9e, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 5424075023437660202, guid: bb02ed2a8772d4e39b3f1958d1cb2beb, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2921793954582490070, guid: 28c2232e62b9844fe924fe4a193cafbf, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 3562525552619785122, guid: 0e20215f2f8044dfea66694ca06287a1, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1771774510921233748, guid: 74e3d3d8649db467098cd390d19de6c6, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 1901060066038236511, guid: 24580acad0d2543ccb5efee921401fc0, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4661747188127450422, guid: 139b49d2d91794504bd39cb3219e1d03, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 2351188546157496692, guid: 5450e88b36a8e4b21a95f6815e8927d2, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 4155584699902921973, guid: 255bffe0abd014b44b6b06c88aacd025, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
+  - prefab: {fileID: 8569804634124579205, guid: 6aed5992ee68b4475802997e86a49d3d, type: 3}
+    count: 1
+    stack: 1
+    scale: 1
   - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
     count: 1
     stack: 1
@@ -80,20 +172,12 @@ MonoBehaviour:
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 9105619691916950157, guid: 7b209073c202c4c17b8b04a3330df5ae, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
-  - prefab: {fileID: 527888310630149103, guid: f557f5501fdb24ee1b5bf68160e93a47, type: 3}
-    count: 1
-    stack: 1
-    scale: 1
   objectives:
-  - objectType: BackpackFortune
-    required: 12
+  - objectType: GoldCoinR
+    required: 18
     icon: {fileID: 0}
-  - objectType: BackpackFortune2
-    required: 8
+  - objectType: BankMoneySack2
+    required: 13
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

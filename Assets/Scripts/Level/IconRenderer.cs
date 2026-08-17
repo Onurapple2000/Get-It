@@ -12,15 +12,16 @@ public static class IconRenderer
     const int   IconLayer = 31;
     static readonly Vector3 Stage = new Vector3(7777f, 7777f, 7777f);
 
-    public static Sprite Render(GameObject source, int size = 160)
+    public static Sprite Render(GameObject source, int size = 160, float yaw = 0f)
     {
         if (source == null) return null;
 
-        // Görsel-only kopya
+        // Görsel-only kopya. yaw: nesnenin SAHNEDEKİ spawn dönüşü (kameraya-yüz dünyalarında faceCameraYaw) → tabela
+        // resmi oyundaki görünümle eşleşir (kedi sırtı değil, yüzü). Diğer dünyalarda 0 = eski davranış.
         var copy = Object.Instantiate(source);
         StripNonVisual(copy);
         copy.transform.position = Stage;
-        copy.transform.rotation = Quaternion.identity;
+        copy.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         copy.transform.localScale = source.transform.lossyScale;
         SetLayer(copy, IconLayer);
 

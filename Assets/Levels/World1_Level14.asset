@@ -90,16 +90,16 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: Kebab
-    required: 88
+    required: 110
     icon: {fileID: 0}
   - objectType: HotDog
-    required: 72
+    required: 90
     icon: {fileID: 0}
   - objectType: Popcorn
-    required: 62
+    required: 78
     icon: {fileID: 0}
   - objectType: Sausage
-    required: 68
+    required: 85
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

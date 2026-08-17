@@ -78,13 +78,16 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: MacaronYellow
-    required: 150
+    required: 188
     icon: {fileID: 0}
   - objectType: MacaronPink
-    required: 120
+    required: 150
     icon: {fileID: 0}
   - objectType: IceCream
-    required: 55
+    required: 69
+    icon: {fileID: 0}
+  - objectType: MacaronBlue
+    required: 59
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}

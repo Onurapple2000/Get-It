@@ -78,9 +78,20 @@ public class PauseMenu : MonoBehaviour
     }
 
     // ── PAUSE OVERLAY (şaşkın maskot + Devam) ──────────────────────────────────
+    // Overlay'i KENDİ yüksek-sortingOrder canvas'ına al → HardLevelIntro (kurukafa, sortingOrder 6000) ve HUD dahil
+    // HER ŞEYİN ÜSTÜNDE çizilir. Pause/Exit menüsü basıldığında daima en üstte olmalı (kullanıcı 2026-08-05).
+    static void Overlayify(GameObject panel)
+    {
+        var cv = panel.AddComponent<Canvas>();
+        cv.overrideSorting = true;
+        cv.sortingOrder = 7000;
+        panel.AddComponent<GraphicRaycaster>();   // yüksek canvas'ta butonlar tıklanabilir kalsın
+    }
+
     void BuildPauseOverlay()
     {
         pauseOverlay = FullPanel("PauseOverlay", new Color(0.10f, 0.08f, 0.06f, 0.97f));
+        Overlayify(pauseOverlay);
 
         // Maskot: YUKARI + BÜYÜK (2026-07-25 kullanıcı: ~3x). 380→860 (ekran genişliği 1080 → 3x=1140 taşardı; 860≈2.3x
         // ekrana sığar, responsive canvas ScaleWithScreenSize 1080x1920 ile oranlı). Yukarı: y +60→+470 (üst yarıyı doldurur).
@@ -90,16 +101,16 @@ public class PauseMenu : MonoBehaviour
         mr.anchoredPosition = new Vector2(0, 470); mr.sizeDelta = new Vector2(860, 860);   // spans +40..+900 (üst kenar 960'ın altında)
 
         var label = NewText("Paused", pauseOverlay.transform, 48, FontStyles.Bold, TextAlignmentOptions.Center);
-        label.text = "Durduruldu"; label.color = new Color(1f, 0.95f, 0.75f);
+        label.text = Loc.T("paused"); label.color = new Color(1f, 0.95f, 0.75f);
         var lr = label.rectTransform; lr.anchorMin = lr.anchorMax = new Vector2(0.5f, 0.5f); lr.pivot = new Vector2(0.5f, 0.5f);
         lr.anchoredPosition = new Vector2(0, -30); lr.sizeDelta = new Vector2(700, 70);   // maskot altı (maskot bottom +40, label top -5 → çakışmaz)
 
         // ── Ayarlar toggle'ları (Ses / Müzik / Titreşim) — PlayerPrefs kalıcı ──
-        AddToggle(pauseOverlay.transform, -175, "Ses Efektleri",
+        AddToggle(pauseOverlay.transform, -175, Loc.T("sfx"),
             () => AudioManager.SfxOn, v => AudioManager.SfxOn = v);
-        AddToggle(pauseOverlay.transform, -285, "Müzik",
+        AddToggle(pauseOverlay.transform, -285, Loc.T("music"),
             () => AudioManager.MusicOn, v => AudioManager.MusicOn = v);
-        AddToggle(pauseOverlay.transform, -395, "Titreşim",
+        AddToggle(pauseOverlay.transform, -395, Loc.T("vibration"),
             () => AudioManager.HapticOn, v =>
             {
                 AudioManager.HapticOn = v;
@@ -108,7 +119,7 @@ public class PauseMenu : MonoBehaviour
             });
 
         var resume = UiButtons.Build(pauseOverlay.transform, new Vector2(0.5f, 0.5f), new Vector2(0, -540),
-            new Vector2(460, 122), "Devam", UiButtons.Play(), new Color(0.88f, 1f, 0.88f), 44);
+            new Vector2(460, 122), Loc.T("resume"), UiButtons.Play(), new Color(0.88f, 1f, 0.88f), 44);
         resume.onClick.AddListener(ClosePause);
 
         pauseOverlay.SetActive(false);
@@ -171,13 +182,14 @@ public class PauseMenu : MonoBehaviour
     void BuildXOverlay()
     {
         xOverlay = FullPanel("XOverlay", new Color(0f, 0f, 0f, 0.7f));
+        Overlayify(xOverlay);
 
         var a = new Vector2(0.5f, 0.5f); var size = new Vector2(480, 128);
-        var q = UiButtons.Build(xOverlay.transform, a, new Vector2(0, 175), size, "Çıkış", UiButtons.Power(), new Color(1f, 0.82f, 0.8f));
+        var q = UiButtons.Build(xOverlay.transform, a, new Vector2(0, 175), size, Loc.T("quit"), UiButtons.Power(), new Color(1f, 0.82f, 0.8f));
         q.onClick.AddListener(Quit);
-        var r = UiButtons.Build(xOverlay.transform, a, new Vector2(0, 30), size, "Tekrar Oyna", UiButtons.Refresh(), Color.white);
+        var r = UiButtons.Build(xOverlay.transform, a, new Vector2(0, 30), size, Loc.T("retry"), UiButtons.Refresh(), Color.white);
         r.onClick.AddListener(Retry);
-        var c = UiButtons.Build(xOverlay.transform, a, new Vector2(0, -115), size, "Devam Et", UiButtons.Play(), new Color(0.88f, 1f, 0.88f));
+        var c = UiButtons.Build(xOverlay.transform, a, new Vector2(0, -115), size, Loc.T("resume"), UiButtons.Play(), new Color(0.88f, 1f, 0.88f));
         c.onClick.AddListener(CloseX);
 
         xOverlay.SetActive(false);

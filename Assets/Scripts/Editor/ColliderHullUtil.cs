@@ -11,11 +11,11 @@ using UnityEngine;
 ///   - Drinks: MeshSimplifier hedef 180 tri — ama çok-parçalı setlerde (çay seti) component koruyup ~1000
 ///     tri'de KALABİLİYOR → yine >256.
 ///
-/// ÇÖZÜM: VERTEX CLUSTERING (voxel-grid). Vertexler ızgara hücrelerine kümelenir, hücre temsilcisi =
-/// ortalama. Izgara çözünürlüğü binary search ile "≤ maxVerts benzersiz hücre" olacak şekilde seçilir →
+/// ÇÖZÜM: VERTEX CLUSTERING (voxel-grid). Vertexler ızgara hücrelerine kümelenir, hücre temsilcisi = hücrede
+/// MERKEZDEN EN UZAK (yüzeydeki) vertex (2026-08-03: eski ortalama YÜZEYİ İÇE gömüyordu → rim görseli kesiyordu).
+/// Izgara çözünürlüğü binary search ile "≤ maxVerts benzersiz hücre" olacak şekilde seçilir →
 /// MATEMATİKSEL GARANTİ: convex hull üçgen sayısı ≤ 2V-4 (V=100 → ≤196 < 256). MeshSimplifier gibi
-/// takılmaz; tek başına kalan sivri tepe (apex) kendi hücresinde yalnızdır → ortalama = kendisi → külah/
-/// kule sivri ucu korunur (ters düşünce devrilme davranışı bozulmaz).
+/// takılmaz; sivri tepe (apex) kendi hücresinde yalnızdır → temsilci = kendisi → külah/kule sivri ucu korunur.
 ///
 /// Akış: tüm alt mesh'ler meshRoot-yerel uzayda BİRLEŞTİRİLİR (çok-parçalı setler kapsanır) → XZ daraltma
 /// (yuvarlak deliğe girsin; apex merkezde kalır) → clustering. Dönen mesh'i meshRoot'a MeshCollider
@@ -68,6 +68,45 @@ public static class ColliderHullUtil
         else
         {
             Cluster(verts, tris, maxVerts, out outVerts, out outTris);
+            // ⚠️ KÜMELEME TELAFİSİ (2026-08-03): hücre ORTALAMASI temsilcileri yüzeyin İÇİNE çeker → hull ayak izi
+            // ~%10-15 küçülür (collider görselden küçük → nesneler yan yana İÇ İÇE + delikten büyük olsa da GEÇER,
+            // kullanıcı). XZ'yi kümeleme-ÖNCESİ extent'e geri ölçekle → footprint = xzShrink×görsel (DÜRÜST).
+            // Merkez c etrafında; Y'ye DOKUNMA (yükseklik/apex korunur). Sadece BÜYÜT (telafi), asla küçültme.
+            float sMinX = 1e9f, sMaxX = -1e9f, sMinZ = 1e9f, sMaxZ = -1e9f;
+            for (int i = 0; i < verts.Length; i++) { var p = verts[i]; if (p.x < sMinX) sMinX = p.x; if (p.x > sMaxX) sMaxX = p.x; if (p.z < sMinZ) sMinZ = p.z; if (p.z > sMaxZ) sMaxZ = p.z; }
+            float oMinX = 1e9f, oMaxX = -1e9f, oMinZ = 1e9f, oMaxZ = -1e9f;
+            for (int i = 0; i < outVerts.Length; i++) { var p = outVerts[i]; if (p.x < oMinX) oMinX = p.x; if (p.x > oMaxX) oMaxX = p.x; if (p.z < oMinZ) oMinZ = p.z; if (p.z > oMaxZ) oMaxZ = p.z; }
+            float fx = (oMaxX - oMinX) > 1e-4f ? Mathf.Clamp((sMaxX - sMinX) / (oMaxX - oMinX), 1f, 1.6f) : 1f;
+            float fz = (oMaxZ - oMinZ) > 1e-4f ? Mathf.Clamp((sMaxZ - sMinZ) / (oMaxZ - oMinZ), 1f, 1.6f) : 1f;
+            for (int i = 0; i < outVerts.Length; i++) { outVerts[i].x = c.x + (outVerts[i].x - c.x) * fx; outVerts[i].z = c.z + (outVerts[i].z - c.z) * fz; }
+        }
+
+        // ⚠️ DÜZ TABAN (2026-07-31): clustering hücre ORTALAMASI hull dibini (a) gerçek tabandan yukarı kaçırıyor
+        // (uyanınca GÖRSEL BATMA) (b) tek NOKTAYA indiriyor (bina kısmi oyulunca see-saw gibi eğik/batık KALIYOR,
+        // düzelemiyor — kullanıcı). Çözüm: gerçek tabanda (trueMinY) AYAK-İZİ dörtgeni ekle → hull DÜZ TABANLI:
+        // dip=görsel taban (batma yok), delik yeterince oyunca deliğe DEVRİLİR (kullanıcı seviyor), delik çekilince
+        // kalan zeminde KENDİNİ DÜZLER (eğik/batık kalmaz).
+        {
+            float tMinY = float.PositiveInfinity, tMaxY = float.NegativeInfinity;
+            for (int i = 0; i < verts.Length; i++) { if (verts[i].y < tMinY) tMinY = verts[i].y; if (verts[i].y > tMaxY) tMaxY = verts[i].y; }
+            float band = tMinY + 0.12f * Mathf.Max(1e-4f, tMaxY - tMinY);
+            float xMin = 1e9f, xMax = -1e9f, zMin = 1e9f, zMax = -1e9f;
+            for (int i = 0; i < verts.Length; i++)
+                if (verts[i].y <= band)
+                { var p = verts[i]; if (p.x < xMin) xMin = p.x; if (p.x > xMax) xMax = p.x; if (p.z < zMin) zMin = p.z; if (p.z > zMax) zMax = p.z; }
+            if (xMax > xMin && zMax > zMin)
+            {
+                int b0 = outVerts.Length;
+                System.Array.Resize(ref outVerts, b0 + 4);
+                outVerts[b0]     = new Vector3(xMin, tMinY, zMin);
+                outVerts[b0 + 1] = new Vector3(xMax, tMinY, zMin);
+                outVerts[b0 + 2] = new Vector3(xMax, tMinY, zMax);
+                outVerts[b0 + 3] = new Vector3(xMin, tMinY, zMax);
+                int t0 = outTris.Length;
+                System.Array.Resize(ref outTris, t0 + 6);
+                outTris[t0] = b0; outTris[t0 + 1] = b0 + 1; outTris[t0 + 2] = b0 + 2;
+                outTris[t0 + 3] = b0; outTris[t0 + 4] = b0 + 2; outTris[t0 + 5] = b0 + 3;
+            }
         }
 
         Object.DestroyImmediate(combined);
@@ -83,8 +122,11 @@ public static class ColliderHullUtil
     }
 
     /// <summary>
-    /// Vertex clustering: bounds'u R×R×R ızgaraya böl, hücre temsilcisi = hücredeki vertexlerin ortalaması.
-    /// En büyük R (en çok detay) öyle seçilir ki benzersiz hücre sayısı ≤ maxVerts (binary search 1..64).
+    /// Vertex clustering: bounds'u R×R×R ızgaraya böl, hücre temsilcisi = hücrede MERKEZDEN EN UZAK (yüzeydeki) vertex.
+    /// ⚠️ 2026-08-03 (kullanıcı: bazı nesnelerde delik ağzı bıçak gibi kesiyor): eskiden temsilci = hücre ORTALAMASIYDI →
+    /// ortalama noktalar YÜZEYİN İÇİNDE kalır → hull görsel meshin İÇİNE gömülür (her Y seviyesinde) → nesne yarı-delikte
+    /// hızlı sürüklenince rim, hull'un DIŞINA taşan görsel meshi keser. EN UZAK vertex = yüzeyde → hull görseli SARAR
+    /// (kesme yok). Hull yine ≤ maxVerts vertex (cook güvenli). En büyük R binary search ile ≤ maxVerts hücre.
     /// </summary>
     static void Cluster(Vector3[] verts, int[] tris, int maxVerts, out Vector3[] outVerts, out int[] outTris)
     {
@@ -102,28 +144,28 @@ public static class ColliderHullUtil
             else hi = mid - 1;
         }
 
-        // best çözünürlükte temsilcileri üret.
+        // best çözünürlükte temsilcileri üret: her hücrede merkezden EN UZAK vertex (yüzeyi sarar, içe gömmez).
         int r = best;
+        Vector3 ctr = b.center;
         var cellIndex = new Dictionary<long, int>();          // hücre anahtarı → çıkış vertex index'i
-        var sums = new List<Vector3>();
-        var counts = new List<int>();
+        var reps = new List<Vector3>();                        // hücre temsilcisi (merkezden en uzak)
+        var repD = new List<float>();                          // temsilcinin merkeze uzaklık² (daha uzağı gelirse değişir)
         var vertMap = new int[verts.Length];                  // eski vertex → çıkış index
         for (int i = 0; i < verts.Length; i++)
         {
             long key = CellKey(verts[i], min, size, r);
+            float d = (verts[i] - ctr).sqrMagnitude;
             if (!cellIndex.TryGetValue(key, out int idx))
             {
-                idx = sums.Count;
+                idx = reps.Count;
                 cellIndex.Add(key, idx);
-                sums.Add(Vector3.zero);
-                counts.Add(0);
+                reps.Add(verts[i]);
+                repD.Add(d);
             }
-            sums[idx] += verts[i];
-            counts[idx]++;
+            else if (d > repD[idx]) { reps[idx] = verts[i]; repD[idx] = d; }
             vertMap[i] = idx;
         }
-        outVerts = new Vector3[sums.Count];
-        for (int i = 0; i < sums.Count; i++) outVerts[i] = sums[i] / counts[i];
+        outVerts = reps.ToArray();
 
         // Üçgenleri yeniden eşle; dejenere olanları at. (Convex cook vertexlerden hull üretir —
         // üçgenler yalnız mesh geçerliliği için; azalmaları sorun değil.)
@@ -157,3 +199,5 @@ public static class ColliderHullUtil
         return (x << 42) | (y << 21) | z;
     }
 }
+
+// (touch 1785504154 to force Unity asset re-scan)

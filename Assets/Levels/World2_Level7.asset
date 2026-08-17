@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 2
   levelIndex: 6
-  levelTime: 175
+  levelTime: 100
   spawns:
   - prefab: {fileID: 5086431303970235073, guid: f7cab2fcdb5484eadb218ff22f367d7e, type: 3}
     count: 1
@@ -198,13 +198,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: LandCruiser
-    required: 22
+    required: 28
     icon: {fileID: 0}
   - objectType: AzureOffRoad
-    required: 20
+    required: 25
     icon: {fileID: 0}
   - objectType: CreamTRXCloudy
-    required: 14
+    required: 18
     icon: {fileID: 0}
   bombsEnabled: 0
   bombPrefab: {fileID: 0}

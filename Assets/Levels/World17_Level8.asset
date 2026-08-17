@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
   worldId: 17
   levelIndex: 7
-  levelTime: 167.5
+  levelTime: 100
   spawns:
   - prefab: {fileID: 426822812352358956, guid: 6efee3ec3d6c3422c9f0df6c4ae1dba2, type: 3}
     count: 1
@@ -94,13 +94,13 @@ MonoBehaviour:
     scale: 1
   objectives:
   - objectType: MacaronGreen
-    required: 20
+    required: 29
     icon: {fileID: 0}
-  - objectType: GildedVelocity
-    required: 14
+  - objectType: MonedaDeOro2
+    required: 21
     icon: {fileID: 0}
-  - objectType: FantacticLivingBuil
-    required: 11
+  - objectType: GiantOneEngined
+    required: 16
     icon: {fileID: 0}
   bombsEnabled: 1
   bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
