@@ -17,9 +17,41 @@ public static class Loc
 
     public static Language Current
     {
-        get => (Language)Mathf.Clamp(PlayerPrefs.GetInt(KEY, 0), 0, 6);
+        get => Chosen ? (Language)Mathf.Clamp(PlayerPrefs.GetInt(KEY, 0), 0, 6) : SystemDefault();
         set { PlayerPrefs.SetInt(KEY, (int)value); PlayerPrefs.SetInt(KEY_SET, 1); PlayerPrefs.Save(); }
     }
+
+    /// <summary>
+    /// Metin sağdan-sola script (Arapça/İbranice) içeriyor mu? Yön kararı DİLE değil METNE bakmalı:
+    /// Arapça arayüzde bile Latin harfli bir oyuncu adı ("Onur") soldan-sağa yazılmalı
+    /// (kullanıcı 2026-08-23: "Arapça'da Latin isim ters dönüyor").
+    /// </summary>
+    public static bool ContainsRtl(string s)
+    {
+        if (string.IsNullOrEmpty(s)) return false;
+        foreach (char c in s)
+            if ((c >= 0x0590 && c <= 0x08FF) || (c >= 0xFB1D && c <= 0xFDFF) || (c >= 0xFE70 && c <= 0xFEFF)) return true;
+        return false;
+    }
+
+    /// <summary>TMP metninin yazım yönünü İÇERİĞİNE göre ayarlar. Metni atadıktan SONRA çağır.</summary>
+    public static void ApplyDir(TMPro.TMP_Text t)
+    {
+        if (t != null) t.isRightToLeftText = ContainsRtl(t.text);
+    }
+
+    /// <summary>Cihaz/sistem dilini 7 dilimizden birine eşler; desteklenmiyorsa İngilizce (en geniş taban).</summary>
+    public static Language SystemDefault() => Application.systemLanguage switch
+    {
+        SystemLanguage.Turkish => Language.Turkish,
+        SystemLanguage.English => Language.English,
+        SystemLanguage.Spanish => Language.Spanish,
+        SystemLanguage.German  => Language.German,
+        SystemLanguage.Arabic  => Language.Arabic,
+        SystemLanguage.Korean  => Language.Korean,
+        SystemLanguage.Russian => Language.Russian,
+        _ => Language.English,
+    };
 
     public static bool En => Current == Language.English;
 
@@ -49,6 +81,38 @@ public static class Loc
         ["coins"]       = new[] { "Coin:", "Coins:", "Monedas:", "Münzen:", "العملات:", "코인:", "Монеты:" },
         ["linkReady"]   = new[] { "Bağlantı paylaşıma hazır", "Link ready to share", "Enlace listo para compartir", "Link zum Teilen bereit", "الرابط جاهز للمشاركة", "공유 링크 준비됨", "Ссылка готова" },
         ["noLives"]     = new[] { "Can yok! Yenilenmeyi bekle.", "No lives! Wait to refill.", "¡Sin vidas! Espera.", "Keine Leben! Warte.", "لا حياة! انتظر التجديد.", "생명 없음! 기다리세요.", "Нет жизней! Подождите." },
+        ["noLivesTitle"] = new[] { "Canın Bitti!", "Out of Lives!", "¡Sin vidas!", "Keine Leben mehr!", "نفدت حياتك!", "생명이 없습니다!", "Жизни закончились!" },
+        ["noLivesBody"] = new[] {
+            "Oynamak için can gerekiyor. Hemen can al ya da yenilenmesini bekle.",
+            "You need a life to play. Get one now or wait for it to refill.",
+            "Necesitas una vida para jugar. Consigue una o espera a que se recargue.",
+            "Zum Spielen brauchst du ein Leben. Hol dir eins oder warte auf die Auffüllung.",
+            "تحتاج إلى حياة للعب. احصل على واحدة الآن أو انتظر التجديد.",
+            "플레이하려면 생명이 필요합니다. 지금 얻거나 충전을 기다리세요.",
+            "Для игры нужна жизнь. Получите её сейчас или дождитесь восстановления." },
+        ["nextLifeIn"]  = new[] { "Sonraki can:", "Next life in:", "Próxima vida:", "Nächstes Leben:", "الحياة التالية:", "다음 생명:", "Следующая жизнь:" },
+        ["lifeGained"]  = new[] { "+1 CAN", "+1 LIFE", "+1 VIDA", "+1 LEBEN", "+1 حياة", "+1 생명", "+1 ЖИЗНЬ" },
+        ["extraReward"] = new[] { "EKSTRA KAZANÇ", "EXTRA REWARD", "RECOMPENSA EXTRA", "EXTRA-BELOHNUNG", "مكافأة إضافية", "추가 보상", "ДОПОЛНИТЕЛЬНАЯ НАГРАДА" },
+        ["watchAdLife"] = new[] { "Reklam izle → +1 Can", "Watch ad → +1 Life", "Ver anuncio → +1 vida", "Werbung → +1 Leben", "شاهد إعلانًا ← +1 حياة", "광고 시청 → +1 생명", "Реклама → +1 жизнь" },
+        ["watchAdTime"] = new[] { "İzle → +20sn Devam", "Watch → +20s Continue", "Ver → +20s continuar", "Werbung → +20s weiter", "شاهد ← +20ث متابعة", "광고 → +20초 계속", "Реклама → +20с" },
+        ["watchAdContinue"] = new[] { "İzle → Devam Et", "Watch → Continue", "Ver → Continuar", "Werbung → Weiter", "شاهد ← متابعة", "광고 → 계속", "Реклама → Продолжить" },
+        ["skipAdTitle"] = new[] { "Reklamı geç?", "Skip ad?", "¿Saltar anuncio?", "Werbung überspringen?", "تخطي الإعلان؟", "광고 건너뛰기?", "Пропустить рекламу?" },
+        ["adLoading"]   = new[] { "Reklam yükleniyor…", "Loading ad…", "Cargando anuncio…", "Werbung lädt…", "جارٍ تحميل الإعلان…", "광고 로딩 중…", "Загрузка рекламы…" },
+        ["adFailed"]    = new[] { "Reklam bulunamadı", "No ad available", "Sin anuncio", "Keine Werbung", "لا يوجد إعلان", "광고 없음", "Нет рекламы" },
+        ["watchAd"]     = new[] { "Reklam İzle", "Watch Ad", "Ver anuncio", "Werbung", "شاهد إعلانًا", "광고 시청", "Смотреть рекламу" },
+        ["watch"]       = new[] { "İzle", "Watch", "Ver", "Ansehen", "شاهد", "시청", "Смотреть" },
+        ["secShort"]    = new[] { "sn", "s", "s", "s", "ث", "초", "с" },
+        ["freeCoins"]   = new[] { "Bedava Coin", "Free Coins", "Monedas gratis", "Gratis-Münzen", "عملات مجانية", "무료 코인", "Бесплатные монеты" },
+        ["free"]        = new[] { "Bedava", "Free", "Gratis", "Gratis", "مجاني", "무료", "Бесплатно" },
+        ["coinWord"]    = new[] { "Coin", "Coins", "Monedas", "Münzen", "عملات", "코인", "Монеты" },
+        ["powerupsTitle"] = new[] { "Güçler", "Power-Ups", "Potenciadores", "Power-Ups", "القوى", "파워업", "Усиления" },
+        ["packagesTitle"] = new[] { "Paketler", "Packages", "Paquetes", "Pakete", "الحزم", "패키지", "Наборы" },
+        ["notEnoughCoins"] = new[] { "Yetersiz coin!", "Not enough coins!", "¡Monedas insuficientes!", "Zu wenig Münzen!", "عملات غير كافية!", "코인 부족!", "Недостаточно монет!" },
+        ["bought"]      = new[] { "Alındı!", "Purchased!", "¡Comprado!", "Gekauft!", "تم الشراء!", "구매됨!", "Куплено!" },
+        ["storeUnavailable"] = new[] { "Mağaza şu an kullanılamıyor", "Store is unavailable right now", "La tienda no está disponible", "Shop derzeit nicht verfügbar", "المتجر غير متاح حاليًا", "상점을 사용할 수 없습니다", "Магазин сейчас недоступен" },
+        ["refillLife"]  = new[] { "Can Yenile", "Refill Life", "Rellenar vida", "Leben auffüllen", "تجديد الحياة", "생명 충전", "Восполнить жизнь" },
+        ["continueGame"] = new[] { "Devam Et", "Continue", "Continuar", "Weiter", "متابعة", "계속하기", "Продолжить" },
+        ["doubleReward"] = new[] { "2X Ödül", "2X Reward", "2X Recompensa", "2X Belohnung", "2X مكافأة", "2X 보상", "2X Награда" },
 
         ["sfx"]         = new[] { "Ses Efektleri", "Sound Effects", "Efectos", "Soundeffekte", "المؤثرات الصوتية", "효과음", "Звуки" },
         ["music"]       = new[] { "Müzik", "Music", "Música", "Musik", "الموسيقى", "음악", "Музыка" },
@@ -60,6 +124,23 @@ public static class Loc
         ["normal"]      = new[] { "Normal", "Normal", "Normal", "Normal", "عادي", "보통", "Средне" },
         ["hard"]        = new[] { "Zor", "Hard", "Difícil", "Schwer", "صعب", "어려움", "Сложно" },
         ["language"]    = new[] { "Dil", "Language", "Idioma", "Sprache", "اللغة", "언어", "Язык" },
+        ["account"]     = new[] { "Hesap", "Account", "Cuenta", "Konto", "الحساب", "계정", "Аккаунт" },
+        ["save_progress"] = new[] { "İlerlemeyi Kaydet", "Save Progress", "Guardar progreso", "Fortschritt sichern", "حفظ التقدم", "진행 상황 저장", "Сохранить прогресс" },
+        ["account_linked"] = new[] { "✓ Bağlı", "✓ Linked", "✓ Vinculado", "✓ Verbunden", "✓ مرتبط", "✓ 연결됨", "✓ Связан" },
+        ["deleteAccount"] = new[] { "Hesabı ve Verileri Sil", "Delete Account & Data", "Eliminar cuenta y datos", "Konto & Daten löschen", "حذف الحساب والبيانات", "계정 및 데이터 삭제", "Удалить аккаунт и данные" },
+        ["deleteSure"]  = new[] { "Emin misin?", "Are you sure?", "¿Estás seguro?", "Bist du sicher?", "هل أنت متأكد؟", "정말 삭제할까요?", "Вы уверены?" },
+        ["deleteWarn"]  = new[] {
+            "Hesabın, bulut kaydın ve tüm ilerlemen (coin, yıldız, güç-up'lar) kalıcı olarak silinir. Bu işlem GERİ ALINAMAZ.",
+            "Your account, cloud save and all progress (coins, stars, power-ups) will be permanently deleted. This CANNOT be undone.",
+            "Tu cuenta, tu guardado en la nube y todo tu progreso (monedas, estrellas, potenciadores) se eliminarán de forma permanente. NO se puede deshacer.",
+            "Dein Konto, dein Cloud-Speicher und dein gesamter Fortschritt (Münzen, Sterne, Power-Ups) werden dauerhaft gelöscht. Dies kann NICHT rückgängig gemacht werden.",
+            "سيتم حذف حسابك ونسختك السحابية وكل تقدمك (العملات، النجوم، القوى) نهائيًا. لا يمكن التراجع عن هذا الإجراء.",
+            "계정, 클라우드 저장 데이터, 모든 진행 상황(코인, 별, 파워업)이 영구 삭제됩니다. 되돌릴 수 없습니다.",
+            "Ваш аккаунт, облачное сохранение и весь прогресс (монеты, звёзды, усиления) будут удалены навсегда. Это НЕЛЬЗЯ отменить." },
+        ["deleteYes"]   = new[] { "Evet, Sil", "Yes, Delete", "Sí, eliminar", "Ja, löschen", "نعم، احذف", "네, 삭제", "Да, удалить" },
+        ["cancel"]      = new[] { "Vazgeç", "Cancel", "Cancelar", "Abbrechen", "إلغاء", "취소", "Отмена" },
+        ["deleteDone"]  = new[] { "Hesap ve veriler silindi", "Account and data deleted", "Cuenta y datos eliminados", "Konto und Daten gelöscht", "تم حذف الحساب والبيانات", "계정과 데이터가 삭제되었습니다", "Аккаунт и данные удалены" },
+        ["deleteFail"]  = new[] { "Silme başarısız — bağlantını kontrol et", "Deletion failed — check your connection", "Error al eliminar — revisa tu conexión", "Löschen fehlgeschlagen — Verbindung prüfen", "فشل الحذف — تحقق من اتصالك", "삭제 실패 — 연결을 확인하세요", "Не удалось удалить — проверьте соединение" },
 
         ["askName"]     = new[] { "Adın nedir?", "What's your name?", "¿Cómo te llamas?", "Wie heißt du?", "ما اسمك؟", "이름이 뭐예요?", "Как тебя зовут?" },
         ["changeName"]  = new[] { "İsmini değiştir", "Change your name", "Cambiar nombre", "Namen ändern", "غيّر اسمك", "이름 변경", "Изменить имя" },
@@ -73,7 +154,7 @@ public static class Loc
         ["pkCoinBag"]   = new[] { "Coin Kesesi", "Coin Bag", "Bolsa de monedas", "Münzbeutel", "كيس عملات", "코인 주머니", "Мешок монет" },
         ["pkMagnet"]    = new[] { "Mıknatıs Paketi", "Magnet Pack", "Pack imán", "Magnet-Paket", "حزمة المغناطيس", "자석 팩", "Набор магнитов" },
         ["pkSuper"]     = new[] { "Süper Paket", "Super Pack", "Súper pack", "Super-Paket", "الحزمة الخارقة", "슈퍼 팩", "Супер-набор" },
-        ["pkSuper3"]    = new[] { "Süper Güç ×3", "Super Power ×3", "Súper poder ×3", "Superkraft ×3", "قوة خارقة ×3", "슈퍼 파워 ×3", "Супер-сила ×3" },
+        ["pkSuper3"]    = new[] { "Süper Güç ×6", "Super Power ×6", "Súper poder ×6", "Superkraft ×6", "قوة خارقة ×6", "슈퍼 파워 ×6", "Супер-сила ×6" },
 
         ["puSpeed"]     = new[] { "Hız", "Speed", "Velocidad", "Tempo", "سرعة", "스피드", "Скорость" },
         ["puMagnet"]    = new[] { "Mıknatıs", "Magnet", "Imán", "Magnet", "مغناطيس", "자석", "Магнит" },
@@ -89,6 +170,11 @@ public static class Loc
         ["nextWorld"]   = new[] { "Sonraki Dünya", "Next World", "Siguiente mundo", "Nächste Welt", "العالم التالي", "다음 월드", "След. мир" },
         ["mainMenu"]    = new[] { "Ana Menü", "Main Menu", "Menú", "Hauptmenü", "القائمة", "메인 메뉴", "Меню" },
         ["reward"]      = new[] { "HEDİYE:", "REWARD:", "PREMIO:", "BELOHNUNG:", "مكافأة:", "보상:", "НАГРАДА:" },
+        ["gained"]      = new[] { "Kazanılan:", "Earned:", "Ganado:", "Erhalten:", "المكتسب:", "획득:", "Получено:" },
+        ["pwSpeed"]     = new[] { "Hız", "Speed", "Velocidad", "Tempo", "سرعة", "속도", "Скорость" },
+        ["pwMagnet"]    = new[] { "Mıknatıs", "Magnet", "Imán", "Magnet", "مغناطيس", "자석", "Магнит" },
+        ["pwSize"]      = new[] { "Büyütme", "Grow", "Agrandar", "Vergrößern", "تكبير", "확대", "Увеличение" },
+        ["pwSuper"]     = new[] { "SÜPER", "SUPER", "SÚPER", "SUPER", "سوبر", "슈퍼", "СУПЕР" },
         ["worldDone"]   = new[] { "Tamamlandı!", "Complete!", "¡Completado!", "Geschafft!", "اكتمل!", "완료!", "Готово!" },
         ["newWorld"]    = new[] { "Yeni dünya açıldı!", "New world unlocked!", "¡Nuevo mundo!", "Neue Welt!", "عالم جديد!", "새 월드 열림!", "Новый мир!" },
         ["timeUp"]      = new[] { "Süre doldu!", "Time's up!", "¡Se acabó el tiempo!", "Zeit abgelaufen!", "انتهى الوقت!", "시간 종료!", "Время вышло!" },
@@ -141,4 +227,20 @@ public static class Loc
         PowerUpType.Speed => T("puSpeed"), PowerUpType.Magnet => T("puMagnet"),
         PowerUpType.SizeBurst => T("puSize"), PowerUpType.Super => T("puSuper"), _ => "",
     };
+
+    // Mağaza yer-tutucu fiyatları BÖLGEYE göre (gerçek IAP fiyatları store'dan gelene kadar). Font'ta olmayan
+    // ₺ sembolü yerine bölgeye uygun sembol/kod: TR→TL, EN/AR/KO→$, ES/DE→€, RU→₽ (font Latin+Kiril+€ destekler).
+    // tier: 0=başlangıç 1=coin torbası 2=mıknatıs 3=süper 4=süper3.
+    public static string Price(int tier)
+    {
+        tier = Mathf.Clamp(tier, 0, 4);
+        switch (Current)
+        {
+            case Language.Turkish: return new[] { "9,99 TL", "14,99 TL", "19,99 TL", "29,99 TL", "24,99 TL" }[tier];
+            case Language.Russian: return new[] { "99 ₽", "149 ₽", "199 ₽", "299 ₽", "249 ₽" }[tier];
+            case Language.German:
+            case Language.Spanish: return new[] { "0,99 €", "1,49 €", "1,99 €", "2,99 €", "2,49 €" }[tier];
+            default:               return new[] { "$0.99", "$1.49", "$1.99", "$2.99", "$2.49" }[tier];   // en, ar, ko → $
+        }
+    }
 }

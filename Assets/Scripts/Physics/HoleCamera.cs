@@ -38,6 +38,21 @@ public class HoleCamera : MonoBehaviour
     float distVel;
     float introStart;
 
+    // ── Sprint 7: kamera shake (büyük yutmada hafif sarsıntı) ─────────────────
+    static HoleCamera _instance;
+    float shakeAmp;     // tepe kayma (dünya birimi)
+    float shakeDecay;   // sönüm hızı (1/sn)
+
+    void Awake() { _instance = this; }
+    void OnDestroy() { if (_instance == this) _instance = null; }
+
+    /// <summary>Kamerayı sars. amplitude = tepe kayma (dünya birimi), decay = sönüm.</summary>
+    public static void Shake(float amplitude, float decay = 8f)
+    {
+        if (_instance == null) return;
+        if (amplitude > _instance.shakeAmp) { _instance.shakeAmp = amplitude; _instance.shakeDecay = decay; }
+    }
+
     void Start()
     {
         if (hole == null) hole = FindFirstObjectByType<HoleController>();
@@ -78,5 +93,16 @@ public class HoleCamera : MonoBehaviour
         Vector3 offset = new Vector3(0f, Mathf.Sin(rad), -Mathf.Cos(rad)) * currentDist;
         transform.position = look + offset;
         transform.rotation = Quaternion.Euler(angle, 0f, 0f);
+
+        // Shake: konum yazıldıktan SONRA additive Perlin sarsıntı (takip mantığını bozmaz).
+        if (shakeAmp > 0.0005f)
+        {
+            float tt = Time.unscaledTime * 32f;
+            float ox = (Mathf.PerlinNoise(tt, 0.3f) - 0.5f) * 2f;
+            float oy = (Mathf.PerlinNoise(0.7f, tt) - 0.5f) * 2f;
+            // Kamera eğik baktığından yatay+dikey ekran kaymasını dünya-uzayında X ve Y'ye uygula.
+            transform.position += new Vector3(ox, oy, 0f) * shakeAmp;
+            shakeAmp = Mathf.Max(0f, shakeAmp - shakeDecay * shakeAmp * Time.unscaledDeltaTime - 0.002f);
+        }
     }
 }

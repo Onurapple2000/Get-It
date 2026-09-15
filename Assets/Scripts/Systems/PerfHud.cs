@@ -25,6 +25,8 @@ public class PerfHud : MonoBehaviour
         DontDestroyOnLoad(go);
     }
 
+    // Performans testine kadar tamamen gizli (kullanıcı 2026-08-18). Perf testi zamanı: Enabled=true yap.
+    public static bool Enabled = false;
     static bool show = true;
     float dt;                 // yumuşatılmış frame süresi (s)
     float fps, accum; int frames;
@@ -32,8 +34,26 @@ public class PerfHud : MonoBehaviour
     GUIStyle label, btn;
     readonly FrameTiming[] timings = new FrameTiming[1];
 
+    // ── GİZLİ AÇMA HAREKETİ ───────────────────────────────────────────────────
+    // Release build'de de performans ölçebilmek için: ekranın SOL-ALT köşesine (küçük kutu)
+    // 2.5 sn içinde 6 kez arka arkaya dokun → HUD açılır/kapanır. Oyuncunun kazara bulması pratikte imkânsız;
+    // "test için true yapıp sonra false yapmayı unutma" riski de ortadan kalkar.
+    int tapCount; float lastTap;
+
+    void CheckSecretGesture()
+    {
+        if (!Input.GetMouseButtonDown(0)) return;
+        Vector2 p = Input.mousePosition;
+        bool inCorner = p.x < Screen.width * 0.13f && p.y < Screen.height * 0.09f;
+        float now = Time.unscaledTime;
+        if (!inCorner || now - lastTap > 2.5f) { tapCount = inCorner ? 1 : 0; lastTap = now; return; }
+        lastTap = now;
+        if (++tapCount >= 6) { tapCount = 0; Enabled = !Enabled; show = true; }
+    }
+
     void Update()
     {
+        CheckSecretGesture();
         float d = Time.unscaledDeltaTime;
         dt += (d - dt) * 0.1f;
         accum += d; frames++;
@@ -45,6 +65,7 @@ public class PerfHud : MonoBehaviour
 
     void OnGUI()
     {
+        if (!Enabled) return;   // perf testine kadar gizli (buton+panel)
         if (label == null)
         {
             int fs = Mathf.Max(12, Mathf.RoundToInt(Screen.height * 0.026f));
@@ -87,5 +108,46 @@ public class PerfHud : MonoBehaviour
         GUI.DrawTexture(new Rect(6f, 6f, sz.x + 20f, sz.y + 14f), Texture2D.whiteTexture);
         GUI.color = Color.white;
         GUI.Label(new Rect(16f, 12f, sz.x, sz.y), content, label);
+
+        // ── TEST KISAYOLLARI ──────────────────────────────────────────────────
+        // Yalnız HUD açıkken görünür → gizli hareketin (6 dokunuş) arkasında ikinci kat koruma.
+        // ⚠️ YAYIN ÖNCESİ: bu blok ya silinmeli ya #if DEVELOPMENT_BUILD'e alınmalı (bkz. sprints/test-plan.md).
+        float by = sz.y + 26f, bw2 = Mathf.Max(210f, w * 0.30f), bh2 = Mathf.Max(46f, h * 0.052f);
+        if (GUI.Button(new Rect(16f, by, bw2, bh2), "Tüm Dünyaları Aç", btn)) UnlockAllWorlds();
+        if (GUI.Button(new Rect(16f, by + bh2 + 8f, bw2, bh2), "Güç-Up ×100", btn)) GrantPowerUps(100);
+        if (GUI.Button(new Rect(16f, by + (bh2 + 8f) * 2f, bw2, bh2), "İlerlemeyi SIFIRLA", btn)) ResetProgress();
+    }
+
+    // Tüm dünyaların tüm levellarını açar (Arabalar/Binalar gibi geç dünyalara test için hızlı ulaşım).
+    static void UnlockAllWorlds()
+    {
+        for (int w = 0; w < WorldCatalog.Count; w++)
+        {
+            int n = WorldCatalog.PlayableLevels(w);
+            if (n > 0) PlayerPrefs.SetInt(LevelManager.UnlockKey(w), n);
+        }
+        PlayerPrefs.Save();
+        CloudSyncService.Instance?.FlushNow();
+        Debug.Log("[PerfHud] TEST: tüm dünyalar açıldı. (Dünyalar ekranından çıkıp tekrar gir)");
+    }
+
+    static void GrantPowerUps(int n)
+    {
+        foreach (PowerUpType t in System.Enum.GetValues(typeof(PowerUpType)))
+            if (t != PowerUpType.None) PowerUpInventory.Add(t, n);
+        PlayerPrefs.Save();
+        CloudSyncService.Instance?.FlushNow();
+        Debug.Log($"[PerfHud] TEST: her güç-up'tan +{n} verildi.");
+    }
+
+    // Test turunu baştan almak için: kilitler + güç-up'lar sıfırlanır (coin/isim/dil korunur).
+    static void ResetProgress()
+    {
+        for (int w = 0; w < WorldCatalog.Count; w++) PlayerPrefs.DeleteKey(LevelManager.UnlockKey(w));
+        foreach (PowerUpType t in System.Enum.GetValues(typeof(PowerUpType)))
+            if (t != PowerUpType.None) PlayerPrefs.DeleteKey($"PowerInv_{t}");
+        PlayerPrefs.Save();
+        CloudSyncService.Instance?.FlushNow();
+        Debug.Log("[PerfHud] TEST: level kilitleri ve güç-up envanteri sıfırlandı.");
     }
 }

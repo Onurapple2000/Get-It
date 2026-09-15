@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
     int   burstScore;                 // son gösterimden beri biriken puan (baloncuk bunu gösterir)
     Vector3 lastSwallowPos;
     bool  scoreDirty, labelDirty;     // metinleri karede bir güncelle (rebuild flood önle)
+    float scorePunch;                 // skor yazısı zıplama animasyonu (0..1, sönümlenir)
     // Oyun-içi can göstergesi (sol üst, pause altında): kalp + sayı (∞ = sınırsız).
     Image livesHeart;
     TMP_Text livesCountText;
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
     {
         successPanel.SetActive(false);
         failPanel.SetActive(false);
+        AdManager.Instance?.HideBanner();   // Sprint 8: oynanışta banner yok (menüde açılır)
         if (objectives == null) objectives = FindAnyObjectByType<ObjectiveTracker>();
         hole = FindAnyObjectByType<HoleController>();
 
@@ -207,7 +209,13 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // Yutma geri-bildirimi coalesce: metinleri karede BİR güncelle (yoğun yutmada N rebuild yerine 1).
-        if (scoreDirty && scoreText != null) { scoreText.text = Loc.T("hudScore") + " " + score; scoreDirty = false; }
+        if (scoreDirty && scoreText != null) { scoreText.text = Loc.T("hudScore") + " " + score; scoreDirty = false; scorePunch = 1f; }
+        // Skor punch: değişince kısa bir ölçek zıplaması (1.18→1). Ucuz, karede bir localScale.
+        if (scorePunch > 0f && scoreText != null)
+        {
+            scorePunch = Mathf.Max(0f, scorePunch - Time.unscaledDeltaTime * 5.5f);
+            scoreText.rectTransform.localScale = Vector3.one * (1f + 0.18f * scorePunch);
+        }
         if (labelDirty) { UpdateSwallowLabel(); labelDirty = false; }
         // Yoğun giriş bitince (kısa boşluk) grupta kalan puanı tek baloncukta göster (kuyruk flush → puan görsel kaybolmaz).
         if (burstCount > 0 && Time.unscaledTime - lastSwallowTime > FB_BURSTGAP)
@@ -260,7 +268,7 @@ public class GameManager : MonoBehaviour
 
         if (s.isBomb) { OnBombSwallowed(worldPos); return; }
 
-        AudioManager.Instance?.PlaySwallow(s.SwallowSize);   // gerçek boyuta göre (sahne dağılımı) küçük/orta/büyük + haptik
+        AudioManager.Instance?.PlaySwallow(s.scoreValue);   // PUAN kademesine göre küçük/orta/büyük ses + haptik (collider çapı güvenilmez)
 
         // PUAN + SAYAÇ: HER ZAMAN tam işlenir (arka planda). Metin karede bir güncellenir (coalesce → rebuild flood yok).
         score += s.scoreValue; scoreDirty = true;
@@ -283,6 +291,15 @@ public class GameManager : MonoBehaviour
             objectives.ReportSwallow(s.ResolvedType, worldPos, show);   // hedef sayacı hep işler; ghost sadece show'da uçar
         }
 
+        // ── Sprint 7 cila: yutma partikülü + kamera shake (throttle'a saygılı) ──
+        if (show)
+            SwallowVFX.Play(worldPos, s.SwallowSize);              // toz+parıltı: yalnız görsel-gösterim karesinde (yoğun yutmada tavanlı)
+        // Kamera shake: SADECE PUAN kuralı → 60 PUANIN ÜZERİNDE puan getiren nesneler titretir (≤60 titretmez).
+        // Her dünyada çalışır (eski SizeFactor≥2 şartı kalktı; kitaplar/hediyeler gibi dev spawn'ı olmayan dünyalarda
+        // çalışmıyordu). Aktif kamera HoleCamera (CameraController kapalı).
+        if (s.scoreValue > 60)
+            HoleCamera.Shake(Mathf.Clamp(0.25f + (s.scoreValue - 60) * 0.0025f, 0.25f, 0.5f));
+
         // Güç-Up: özel nesneyse otomatik geçici güç ver (Sprint 4)
         if (s.powerUp != PowerUpType.None && PowerUpManager.Instance != null)
             PowerUpManager.Instance.Activate(s.powerUp, worldPos);
@@ -298,13 +315,161 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ObjectSwallowed() { }
 
+    // Level-sonu 2× ödül (reklam izle → o levelde kazanılan yıldız+puan bir kez daha eklenir)
+    int successStars, successScore;
+    bool doubledThisLevel;
+    Button doubleButton;
+    TMP_Text doubleLabel;
+
+    void BuildDoubleButton()
+    {
+        if (doubleButton != null) return;
+        // YERLEŞİM NOTU: yıldız satırı 300px yüksekliğinde ve merkezi -320 → ALT KENARI -470'te biter.
+        // Buton -500'deyken üst kenarı -445 oluyordu, yani yıldızlarla ÜST ÜSTE biniyordu (kullanıcı: "yapışık").
+        // -620 → buton üst kenarı -565, yıldızlarla arada ~95px nefes payı kalır.
+        doubleButton = UiButtons.Build(successPanel.transform, new Vector2(0.5f, 0.5f), new Vector2(0, -620),
+                                       new Vector2(560, 110), Loc.T("doubleReward"), UiButtons.Video(), new Color(1f, 0.88f, 0.4f), 40, true);
+        doubleLabel = doubleButton.GetComponentInChildren<TMP_Text>();
+        doubleButton.onClick.AddListener(OnWatchAdForDouble);
+    }
+
+    void OnWatchAdForDouble()
+    {
+        var am = AdManager.Instance; if (am == null || doubledThisLevel) return;
+        doubleButton.interactable = false; doubleLabel.text = Loc.T("adLoading");
+        am.ShowRewarded("double_reward",
+            onReward: () =>
+            {
+                PlayerProfile.AddScore(successScore);            // puanı bir kez daha ekle → 2×
+                PlayerProfile.AddEarnedStars(successStars);      // birikimli yıldızı bir kez daha ekle → 2×
+                StarRewards.CheckAndGrant();                     // ekstra yıldızdan powerup gelebilir
+                CloudSyncService.Instance?.FlushNow();
+                doubledThisLevel = true;
+                doubleButton.gameObject.SetActive(false);
+
+                // Her İKİ skor göstergesi de katlanmış değeri "2X" etiketiyle göstersin (kullanıcı 2026-08-23:
+                // ortadaki 25844 iken sol üstteki 12922'de kalıyordu → katlandığı anlaşılmıyordu).
+                int dbl = successScore * 2;
+                if (successScoreText != null) successScoreText.text = "2X " + Loc.T("score") + " " + dbl;
+                if (scoreText != null) scoreText.text = "2X " + Loc.T("hudScore") + " " + dbl;
+                // Reklamdan dönünce ödülün katlandığı ANLAŞILMIYORDU → önce "EKSTRA KAZANÇ" paneli,
+                // ardından bölüm sonundaki gibi yıldızlar rozete UÇARAK sayacı artırır (kullanıcı 2026-08-23).
+                StartCoroutine(ExtraRewardSequence(successStars, successScore));
+            },
+            onUnavailable: () => { doubleLabel.text = Loc.T("adFailed"); });
+    }
+
+    /// <summary>2× ödülü: önce "EKSTRA KAZANÇ" paneli, sonra ekstra yıldızlar rozete uçar.</summary>
+    IEnumerator ExtraRewardSequence(int extraStars, int extraScore)
+    {
+        yield return ExtraRewardAnim(extraStars, extraScore);
+        yield return ExtraStarsToBadge(extraStars);
+    }
+
+    /// <summary>
+    /// 2× ile kazanılan EKSTRA yıldızlar, bölüm sonundaki animasyonun aynısıyla sol üst rozete uçar ve
+    /// sayaç her yıldızda bir artar (kullanıcı 2026-08-23: "sayı öyle artsın").
+    /// </summary>
+    IEnumerator ExtraStarsToBadge(int count)
+    {
+        yield return null;   // reklam dönüş karesindeki delta sıçramasını yut
+        int target = PlayerProfile.EarnedStars;
+        int running = Mathf.Max(0, target - count);
+        if (sStarBadgeText != null) sStarBadgeText.text = running.ToString();
+
+        int flyCount = Mathf.Clamp(count, 0, 3);
+        if (flyCount > 0 && sStarBadgeIcon != null)
+        {
+            float[] xs = { -330f, 0f, 330f };
+            for (int k = 0; k < flyCount; k++)
+            {
+                int idx = Mathf.Clamp(flyCount - 1 - k, 0, 2);
+                var flyer = MakeFlyerStar(new Vector2(xs[idx], -320f));
+                yield return FlyStarToBadge(flyer);
+                running++;
+                if (sStarBadgeText != null) sStarBadgeText.text = running.ToString();
+                yield return BadgePulse();
+            }
+        }
+        if (sStarBadgeText != null) sStarBadgeText.text = target.ToString();   // 3'ten fazlaysa son değere sabitle
+    }
+
+    /// <summary>
+    /// 2× reklamı bitince: "EKSTRA KAZANÇ" + kazanılan yıldız/puan, ekranın ortasında büyüyerek belirir,
+    /// kısa süre durur, yukarı süzülüp kaybolur. Oyuncu ödülün gerçekten katlandığını görür.
+    /// </summary>
+    IEnumerator ExtraRewardAnim(int extraStars, int extraScore)
+    {
+        var go = new GameObject("ExtraReward", typeof(RectTransform), typeof(CanvasGroup));
+        var rt = (RectTransform)go.transform; rt.SetParent(successPanel.transform, false);
+        rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(0, -60); rt.sizeDelta = new Vector2(900, 320);
+        rt.SetAsLastSibling();
+        var cg = go.GetComponent<CanvasGroup>(); cg.blocksRaycasts = false;
+
+        // Arka fon — yazı sahnenin üstünde okunaklı kalsın
+        var bg = new GameObject("Bg", typeof(RectTransform), typeof(Image));
+        var brt = (RectTransform)bg.transform; brt.SetParent(rt, false);
+        brt.anchorMin = Vector2.zero; brt.anchorMax = Vector2.one; brt.offsetMin = brt.offsetMax = Vector2.zero;
+        var bimg = bg.GetComponent<Image>();
+        UiButtons.ApplyFrame(bimg, rt.sizeDelta.y);   // 9-slice, bozulmasız çerçeve
+        bimg.color = new Color(0.10f, 0.07f, 0.03f, 0.92f); bimg.raycastTarget = false;
+
+        TMP_Text Line(string s, float y, float size, Color c)
+        {
+            var t = new GameObject("L", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            var r = t.rectTransform; r.SetParent(rt, false);
+            r.anchorMin = r.anchorMax = r.pivot = new Vector2(0.5f, 0.5f);
+            r.anchoredPosition = new Vector2(0, y); r.sizeDelta = new Vector2(860, size + 26);
+            t.fontSize = size; t.fontStyle = FontStyles.Bold; t.alignment = TextAlignmentOptions.Center;
+            t.color = c; t.raycastTarget = false; t.text = s;
+            return t;
+        }
+
+        Line(Loc.T("extraReward"), 96, 52, new Color(1f, 0.85f, 0.3f));
+        if (extraStars > 0) Line($"+{extraStars} ★", 14, 62, new Color(1f, 0.95f, 0.5f));
+        Line($"+{extraScore}  {Loc.T("score").TrimEnd(':')}", extraStars > 0 ? -74f : -10f, 50, Color.white);
+
+        AudioManager.Instance?.PlaySuccess();
+
+        // ⚠️ Tam ekran reklamdan DÖNERKEN ilk karenin unscaledDeltaTime'ı devasa olur (uygulama duraklamıştı;
+        // 15 sn'lik reklam → 15 sn'lik "kare"). Sınırlamazsak animasyon tek karede biter ve HİÇ GÖRÜNMEZ
+        // (kullanıcı 2026-08-23: "ödül 2 katına çıkmış ama animasyon yok"). Kare başına tavan koy.
+        yield return null;                       // dönüş karesindeki sıçramayı yut
+        float t0 = 0f;
+        while (t0 < 2.1f)
+        {
+            t0 += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            float pop = t0 < 0.3f ? Mathf.SmoothStep(0.5f, 1.12f, t0 / 0.3f)
+                      : t0 < 0.45f ? Mathf.Lerp(1.12f, 1f, (t0 - 0.3f) / 0.15f) : 1f;
+            rt.localScale = Vector3.one * pop;
+            rt.anchoredPosition = new Vector2(0, -60 + Mathf.Max(0f, t0 - 1.4f) * 190f);   // sonda yukarı süzül
+            cg.alpha = t0 < 1.6f ? 1f : Mathf.Clamp01(1f - (t0 - 1.6f) / 0.5f);
+            yield return null;
+        }
+        if (go != null) Destroy(go);
+    }
+
     public void TriggerSuccess()
     {
         if (!gameActive) return;
         gameActive = false;
         successScoreText.text = Loc.T("score") + " " + score;
         successPanel.SetActive(true);
+        StartCoroutine(PanelIntro(successPanel, "MoleMascot"));   // Sprint 7: köstebek zıplaması + buton pop
         SetPanelTitle(successPanel, Loc.T("congrats"));   // baked "TEBRİKLER!" → dile göre
+        // Görsel cila (2026-09-15): skor = gradient+kontur; TEBRİKLER = logo stili + kalp gibi atan nabız.
+        if (successScoreText.GetComponent<TitleFx>() == null)
+        {
+            successScoreText.fontStyle = FontStyles.Bold; successScoreText.fontSize += 6f;
+            var fx = successScoreText.gameObject.AddComponent<TitleFx>(); fx.tiltDeg = 0f; fx.bobAmp = 0f; fx.outlineWidth = 0.34f;
+        }
+        var titleTr = successPanel.transform.Find("Title");
+        if (titleTr != null && titleTr.GetComponent<TitleFx>() == null)
+        {
+            var tt = titleTr.GetComponent<TMP_Text>(); if (tt != null) { tt.fontStyle = FontStyles.Bold; tt.fontSize += 8f; }
+            var fx = titleTr.gameObject.AddComponent<TitleFx>(); fx.tiltDeg = 5f; fx.bobAmp = 3f; fx.heartbeat = true; fx.outlineWidth = 0.36f;
+        }
         AudioManager.Instance?.PlaySuccess();
         // İlerleme: sonraki level'ı kalıcı aç (PlayerPrefs)
         if (LevelManager.Instance != null) LevelManager.Instance.SaveProgressOnSuccess();
@@ -317,15 +482,33 @@ public class GameManager : MonoBehaviour
         PlayerProfile.AddScore(score);                           // ömür boyu toplam skora ekle (ana sayfada gösterilir)
         int stars = StarManager.Evaluate(score, maxScore);
         int oldBest = StarManager.Best(world, level);
-        int newBest = StarManager.Record(world, level, stars);   // en iyi yıldızı sakla
-        int delta = Mathf.Max(0, newBest - oldBest);             // toplam yıldıza net eklenen
+        int newBest = StarManager.Record(world, level, stars);   // en iyi yıldızı sakla (bölüm gösterimi)
+        int delta = Mathf.Max(0, newBest - oldBest);             // patika/dünya rozetine net eklenen (en-iyi farkı)
+        PlayerProfile.AddEarnedStars(stars);                     // BİRİKİMLİ ödül yıldızı (tekrar oynayınca da artar)
         var earned = StarRewards.CheckAndGrant();                // (tür,adet) — kazanılan güç-up'lar
-        var giftStrs = StarRewards.Format(earned);
+        CloudSyncService.Instance?.FlushNow();                    // Sprint 10: ilerlemeyi buluta yaz
         StarRow.Build(successPanel.transform, stars, new Vector2(0, -320));   // 3 yıldız (skor ile buton ARASINDA; skordan uzak)
-        if (giftStrs.Count > 0) ShowGiftText(giftStrs);
+        if (earned != null && earned.Count > 0) ShowGiftRow(earned);   // "Kazanılan: 1× [ikon] + 1× [ikon]" (yazı yerine ikon)
+
+        // Level-sonu "Reklam izle → yıldız+puan 2×" ödülü
+        successStars = stars; successScore = score; doubledThisLevel = false;
+        BuildDoubleButton();
+        bool canDouble = AdManager.Instance != null && AdManager.Instance.RewardedReady && (stars > 0 || score > 0);
+        doubleButton.gameObject.SetActive(canDouble);
+        if (canDouble) { doubleButton.interactable = true; doubleLabel.text = Loc.T("doubleReward"); }
+
+        // 2× ve Sonraki butonlarını ALT ALTA, boşlukla diz (2× yoksa Sonraki yukarı gelir).
+        var nextBtnRT = successPanel.transform.Find("NextLevelButton") as RectTransform;
+        if (nextBtnRT != null)
+        {
+            nextBtnRT.anchorMin = nextBtnRT.anchorMax = new Vector2(0.5f, 0.5f); nextBtnRT.pivot = new Vector2(0.5f, 0.5f);
+            // ⚠️ Bu butonun RECT'i 440×375 (görsel kısmı daha küçük, bolca şeffaf pay var) → merkez konumunu
+            // rect'e göre değil GÖRSEL boşluğa göre seç. -765'te 2X ile yapışık görünüyordu (kullanıcı 2026-08-23).
+            nextBtnRT.anchoredPosition = new Vector2(0f, canDouble ? -800f : -600f);
+        }
 
         // Patika ekranında (dünya reveal için) gösterilecek ödül özetini taşı.
-        LevelResult.Set(world, level, stars, delta, giftStrs);
+        LevelResult.Set(world, level, stars, delta, StarRewards.Format(earned));   // patika ekranı hâlâ metin listesi kullanıyor
         LevelResult.StarsAnimated = true;   // ⭐ yıldız/ödül animasyonu ARTIK success ekranında → patika oynamasın (kullanıcı 2026-08-17)
 
         rewardEarned = stars;
@@ -335,7 +518,10 @@ public class GameManager : MonoBehaviour
         bool nextWorldExists = nextW >= 0 && WorldCatalog.HasContent(nextW);
         rewardLastOfWorld = !hasNextLevel;   // dünyanın son level'ı → MainMenu'ye (dünya reveal veya menü)
         nextPressed = false;
-        BuildSuccessStarBadge(Mathf.Max(0, StarManager.Total() - delta));
+        // Rozet ANA SAYFAYLA aynı metriği göstersin: PlayerProfile.EarnedStars (birikimli ödül yıldızı).
+        // Eskiden StarManager.Total() (level başına EN İYİ toplamı) gösteriliyordu → ana sayfada 96, burada 46
+        // gibi kafa karıştırıcı fark çıkıyordu ve 2X ödülü rozete YANSIMIYORDU (kullanıcı 2026-08-23).
+        BuildSuccessStarBadge(Mathf.Max(0, PlayerProfile.EarnedStars - stars));
         // Etiket: sonraki bölüm var → "Sonraki Bölüm"; son level + sonraki dünya içerikli → "Sonraki Dünya"; yoksa "Ana Menü".
         SetNextButtonLabel(hasNextLevel ? Loc.T("nextLevel") : (nextWorldExists ? Loc.T("nextWorld") : Loc.T("mainMenu")));
 
@@ -396,18 +582,55 @@ public class GameManager : MonoBehaviour
         if (tr != null) { var t = tr.GetComponent<TMP_Text>(); if (t != null) t.text = text; }
     }
 
-    // Yeni kazanılan yıldız hediyelerini başarı ekranında göster.
-    void ShowGiftText(System.Collections.Generic.List<string> gifts)
+    // Yeni kazanılan yıldız hediyeleri: "Kazanılan:  1× [Hız ikonu]  +  1× [Büyüme ikonu]" — yazı yerine İKON
+    // (kullanıcı 2026-09-15). Yatay layout, içerik ortalı; ikonlar hafifçe "pop" yaparak belirir.
+    void ShowGiftRow(System.Collections.Generic.List<(PowerUpType type, int count)> earned)
     {
-        var go = new GameObject("GiftText", typeof(RectTransform));
-        go.transform.SetParent(successPanel.transform, false);
-        var t = go.AddComponent<TextMeshProUGUI>();
-        t.fontSize = 34; t.fontStyle = FontStyles.Bold; t.alignment = TextAlignmentOptions.Center;
-        t.color = new Color(1f, 0.85f, 0.3f); t.raycastTarget = false;
-        t.text = Loc.T("reward") + " " + string.Join(" + ", gifts);
-        var rt = t.rectTransform;
+        var row = new GameObject("GiftRow", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+        var rt = (RectTransform)row.transform; rt.SetParent(successPanel.transform, false);
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = new Vector2(0, -880); rt.sizeDelta = new Vector2(940, 60);   // buton altında (2026-07-24 -740→-880, büyük buton)
+        rt.anchoredPosition = new Vector2(0, -910); rt.sizeDelta = new Vector2(980, 72);   // buton altında
+        var h = row.GetComponent<HorizontalLayoutGroup>();
+        h.childAlignment = TextAnchor.MiddleCenter; h.spacing = 18f;   // '+' yok → boşluk biraz daha geniş
+        h.childControlWidth = true; h.childControlHeight = true; h.childForceExpandWidth = false; h.childForceExpandHeight = false;
+
+        TMP_Text Lbl(string txt, float size, Color c)
+        {
+            var t = new GameObject("T", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            t.transform.SetParent(rt, false);
+            t.text = txt; t.fontSize = size; t.fontStyle = FontStyles.Bold; t.color = c; t.raycastTarget = false;
+            t.alignment = TextAlignmentOptions.Center; t.enableWordWrapping = false;
+            t.gameObject.AddComponent<LayoutElement>().flexibleWidth = 0f;
+            return t;
+        }
+
+        var head = Lbl(Loc.T("gained"), 34, new Color(1f, 0.85f, 0.3f));
+        Loc.ApplyDir(head);
+        for (int i = 0; i < earned.Count; i++)
+        {
+            Lbl($"{earned[i].count}×", 36, Color.white);
+            var ig = new GameObject("Icon", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
+            ig.transform.SetParent(rt, false);
+            var img = ig.GetComponent<Image>(); img.sprite = PowerUpIcons.Get(earned[i].type); img.preserveAspect = true; img.raycastTarget = false;
+            var le = ig.GetComponent<LayoutElement>(); le.preferredWidth = 64f; le.preferredHeight = 64f;
+            StartCoroutine(PopIn(ig.transform, 0.25f + i * 0.12f));
+        }
+    }
+
+    // Küçük "pop" belirme: 0 → 1.25 → 1 (unscaled; success ekranında timeScale 0 olabilir).
+    IEnumerator PopIn(Transform tr, float delay)
+    {
+        tr.localScale = Vector3.zero;
+        float w = 0f; while (w < delay) { w += Time.unscaledDeltaTime; yield return null; }
+        float t = 0f;
+        while (t < 0.32f)
+        {
+            t += Mathf.Min(Time.unscaledDeltaTime, 0.05f); float k = t / 0.32f;
+            float sc = k < 0.7f ? Mathf.Lerp(0f, 1.25f, k / 0.7f) : Mathf.Lerp(1.25f, 1f, (k - 0.7f) / 0.3f);
+            if (tr != null) tr.localScale = Vector3.one * sc;
+            yield return null;
+        }
+        if (tr != null) tr.localScale = Vector3.one;
     }
 
     string failReason = "";
@@ -419,10 +642,22 @@ public class GameManager : MonoBehaviour
     Button retryButton;
     int failLivesShown = -1;   // animasyon için son gösterilen can
 
+    // Sprint 8/10: fail panelinde teklifler — her biri REKLAM (izle) + COIN (öde) ikilisi
+    Button failAdLifeButton;   TMP_Text failAdLifeLabel;    // reklamla +1 can
+    Button failAdTimeButton;   TMP_Text failAdTimeLabel;    // reklamla devam (+20sn süre-fail'inde)
+    Button failCoinLifeButton; TMP_Text failCoinLifeLabel;  // coinle +1 can (80)
+    Button failCoinTimeButton; TMP_Text failCoinTimeLabel;  // coinle devam (100)
+    TMP_Text failLifeAction, failTimeAction;   // teklif eylem etiketi (satır solu): "Can Yenile" / "Devam Et"
+
+    bool lastFailWasTimeUp;   // Sprint 8: süre-uzatma teklifini yalnız süre-doldu fail'inde göster
+    bool failResumable;       // "reklam izle → kaldığın yerden devam" teklifi (süre-doldu VEYA bomba)
+
     public void TriggerFail(string reason = null)
     {
         if (!gameActive) return;
         gameActive = false;
+        lastFailWasTimeUp = reason == null;   // Update'ten süre bitince arg'sız çağrılır
+        failResumable = reason == null;       // süre-doldu → devam edilebilir
         failReason = reason ?? Loc.T("timeUp");
         ShowFailPanel();
     }
@@ -432,6 +667,8 @@ public class GameManager : MonoBehaviour
     {
         if (!gameActive) return;
         gameActive = false;
+        lastFailWasTimeUp = false;
+        failResumable = true;        // bomba → reklamla kaldığın yerden devam edilebilir
         failReason = Loc.T("bombExploded");
         AudioManager.Instance?.PlayBomb();
         ExplosionEffect.Spawn(pos);
@@ -444,10 +681,40 @@ public class GameManager : MonoBehaviour
         ShowFailPanel();
     }
 
+    // Devam sonrası (fail'den dönünce): ekran ortasında büyük şeffaf beyaz 3-2-1 geri sayımı (oyun donuk).
+    // Bitince gameActive=true; süre timerStarted=false olduğu için OYUNCU DELİĞİ HAREKET ETTİRİNCE kaldığı yerden azalır.
+    IEnumerator ResumeCountdown()
+    {
+        var canvas = FindAnyObjectByType<Canvas>();
+        Transform parent = canvas != null ? canvas.transform : null;
+        for (int n = 3; n >= 1; n--)
+        {
+            var go = new GameObject("ResumeCount", typeof(RectTransform));
+            var t = go.AddComponent<TextMeshProUGUI>();
+            var rt = t.rectTransform; if (parent != null) rt.SetParent(parent, false);
+            rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = Vector2.zero; rt.sizeDelta = new Vector2(500, 500);
+            t.fontSize = 340; t.fontStyle = FontStyles.Bold; t.alignment = TextAlignmentOptions.Center;
+            t.raycastTarget = false; t.text = n.ToString();
+            float dur = 0.7f, e = 0f;
+            while (e < dur)
+            {
+                e += Time.unscaledDeltaTime; float k = e / dur;
+                rt.localScale = Vector3.one * Mathf.Lerp(0.7f, 1.5f, k);
+                t.color = new Color(1f, 1f, 1f, 0.65f * (1f - k));   // büyüyüp kaybolan şeffaf beyaz rakam
+                yield return null;
+            }
+            Destroy(go);
+        }
+        gameActive = true;   // geri sayım bitti → oyun aktif (süre delik hareketiyle başlar)
+    }
+
     void ShowFailPanel()
     {
         if (LivesManager.Instance != null) LivesManager.Instance.LoseLife();   // kalıcı can -1 (sınırsız aktifse eksilmez)
+        CloudSyncService.Instance?.FlushNow();                                  // Sprint 10: can kaybını buluta yaz
         failPanel.SetActive(true);
+        StartCoroutine(PanelIntro(failPanel, "SadMole"));   // Sprint 7: üzgün köstebek + buton pop
         SetPanelTitle(failPanel, Loc.T("failTitle"));   // baked "OLMADI!" → dile göre
         AudioManager.Instance?.PlayFail();
         ShowFailReason();
@@ -472,7 +739,7 @@ public class GameManager : MonoBehaviour
             var go = new GameObject("FailHeart" + i, typeof(RectTransform), typeof(Image));
             var rt = (RectTransform)go.transform; rt.SetParent(failPanel.transform, false);
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.anchoredPosition = new Vector2(x0 + i * (sz + gap), -110f); rt.sizeDelta = new Vector2(sz, sz);   // 200px aşağı
+            rt.anchoredPosition = new Vector2(x0 + i * (sz + gap), -100f); rt.sizeDelta = new Vector2(sz, sz);
             var img = go.GetComponent<Image>(); img.preserveAspect = true; img.raycastTarget = false; img.sprite = HeartArt.Full();
             failHearts[i] = img;
         }
@@ -483,9 +750,125 @@ public class GameManager : MonoBehaviour
         failLivesText.fontSize = 56; failLivesText.fontStyle = FontStyles.Bold; failLivesText.alignment = TextAlignmentOptions.Center;   // 34→56
         failLivesText.color = new Color(1f, 0.85f, 0.6f); failLivesText.raycastTarget = false;
         srt.anchorMin = srt.anchorMax = new Vector2(0.5f, 0.5f); srt.pivot = new Vector2(0.5f, 0.5f);
-        srt.anchoredPosition = new Vector2(0, -250f); srt.sizeDelta = new Vector2(1000, 84);   // 200px aşağı
+        srt.anchoredPosition = new Vector2(0, -230f); srt.sizeDelta = new Vector2(1000, 84);
 
         retryButton = failPanel.transform.Find("RetryButton")?.GetComponent<Button>();
+
+        // Sprint 8: ödüllü reklam butonları (durum yazısı ile Retry butonu arasında).
+        (failAdLifeButton, failAdLifeLabel) = MakeFailAdButton("FailAdLife", new Color(1f, 0.74f, 0.76f), Loc.T("watch"), OnWatchAdForLife);
+        (failAdTimeButton, failAdTimeLabel) = MakeFailAdButton("FailAdTime", new Color(0.72f, 0.86f, 1f), Loc.T("watch"), OnWatchAdForTime);
+        (failCoinLifeButton, failCoinLifeLabel) = MakeFailCoinButton("FailCoinLife", Economy.RefillLifeCost, OnCoinForLife);
+        (failCoinTimeButton, failCoinTimeLabel) = MakeFailCoinButton("FailCoinTime", Economy.ContinueCost, OnCoinForTime);
+        failLifeAction = MakeFailActionLabel("FailLifeAction");   // "Can Yenile" (satır solu)
+        failTimeAction = MakeFailActionLabel("FailTimeAction");   // "Devam Et" (satır solu)
+
+        // Coin bakiyesi (sol-üst) — coinle öderken görünür (CoinHud ile otomatik güncellenir)
+        var cbGo = new GameObject("FailCoinBadge", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+        var cbrt = (RectTransform)cbGo.transform; cbrt.SetParent(failPanel.transform, false);
+        cbrt.anchorMin = cbrt.anchorMax = new Vector2(0f, 1f); cbrt.pivot = new Vector2(0f, 1f);
+        cbrt.anchoredPosition = new Vector2(28, -28); cbrt.sizeDelta = new Vector2(200, 60);
+        var cbhlg = cbGo.GetComponent<HorizontalLayoutGroup>();
+        cbhlg.childAlignment = TextAnchor.MiddleLeft; cbhlg.spacing = 8f;
+        cbhlg.childControlWidth = cbhlg.childControlHeight = false; cbhlg.childForceExpandWidth = cbhlg.childForceExpandHeight = false;
+        var cbIc = new GameObject("Ic", typeof(RectTransform), typeof(Image), typeof(LayoutElement)); cbIc.transform.SetParent(cbrt, false);
+        ((RectTransform)cbIc.transform).sizeDelta = new Vector2(56, 56);
+        var cble = cbIc.GetComponent<LayoutElement>(); cble.preferredWidth = 56; cble.preferredHeight = 56;
+        var cbImg = cbIc.GetComponent<Image>(); cbImg.sprite = UiButtons.Coin(); cbImg.preserveAspect = true; cbImg.raycastTarget = false;
+        var cbTg = new GameObject("V", typeof(RectTransform), typeof(LayoutElement)); cbTg.transform.SetParent(cbrt, false);
+        var cbT = cbTg.AddComponent<TextMeshProUGUI>();
+        cbT.fontSize = 40; cbT.fontStyle = FontStyles.Bold; cbT.alignment = TextAlignmentOptions.Left;
+        cbT.color = new Color(1f, 0.92f, 0.5f); cbT.raycastTarget = false; cbT.text = PlayerProfile.Coins.ToString();
+        ((RectTransform)cbTg.transform).sizeDelta = new Vector2(130, 56);
+        var cbtle = cbTg.GetComponent<LayoutElement>(); cbtle.preferredWidth = 130; cbtle.preferredHeight = 56;
+        cbT.gameObject.AddComponent<CoinHud>();
+    }
+
+    // Fail teklifi — REKLAM butonu: video ikonu + "İzle" (izleyerek yap). Konum LayoutFailButtons'ta.
+    (Button, TMP_Text) MakeFailAdButton(string name, Color col, string label, UnityEngine.Events.UnityAction onClick)
+    {
+        var btn = UiButtons.Build(failPanel.transform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                                  new Vector2(210, 100), label, UiButtons.Video(), col, 36, true);
+        btn.name = name;
+        btn.onClick.AddListener(onClick);
+        var lbl = btn.GetComponentInChildren<TMP_Text>();
+        btn.gameObject.SetActive(false);
+        return (btn, lbl);
+    }
+
+    // Fail teklifi — COIN butonu: altın coin ikonu + fiyat ("coinle öde" alternatifi).
+    (Button, TMP_Text) MakeFailCoinButton(string name, int price, UnityEngine.Events.UnityAction onClick)
+    {
+        var btn = UiButtons.Build(failPanel.transform, new Vector2(0.5f, 0.5f), Vector2.zero,
+                                  new Vector2(210, 100), price.ToString(), UiButtons.Coin(), new Color(1f, 0.9f, 0.5f), 40, true);
+        btn.name = name;
+        btn.onClick.AddListener(onClick);
+        var lbl = btn.GetComponentInChildren<TMP_Text>();
+        btn.gameObject.SetActive(false);
+        return (btn, lbl);
+    }
+
+    // Fail teklifi — EYLEM etiketi (satırın solunda, sağa yaslı): "Can Yenile" / "Devam Et".
+    TMP_Text MakeFailActionLabel(string name)
+    {
+        var go = new GameObject(name, typeof(RectTransform));
+        var t = go.AddComponent<TextMeshProUGUI>();
+        var rt = t.rectTransform; rt.SetParent(failPanel.transform, false);
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.sizeDelta = new Vector2(280, 92);
+        t.fontSize = 42; t.fontStyle = FontStyles.Bold; t.alignment = TextAlignmentOptions.MidlineRight;
+        t.color = new Color(1f, 0.95f, 0.82f); t.raycastTarget = false;
+        t.enableAutoSizing = true; t.fontSizeMin = 22f; t.fontSizeMax = 42f; t.enableWordWrapping = false; t.overflowMode = TextOverflowModes.Ellipsis;
+        go.SetActive(false);
+        return t;
+    }
+
+    // Coinle +1 can (fail'de can bitince). Yeterli coin varsa harca → can ekle → paneli yenile.
+    void OnCoinForLife()
+    {
+        if (!PlayerProfile.TrySpendCoins(Economy.RefillLifeCost)) return;
+        LivesManager.Instance?.AddLife(1);
+        RefreshFailLives(false);
+    }
+
+    // Coinle devam (fail'de). Yeterli coin varsa harca → kaldığın yerden devam (süre-fail'inde +20sn).
+    void OnCoinForTime()
+    {
+        if (!PlayerProfile.TrySpendCoins(Economy.ContinueCost)) return;
+        ResumeWithBonusTime();
+    }
+
+    // "Reklam izle → +1 Can": ödül gelirse can ekle, panel canlarını yenile (Retry açılır).
+    void OnWatchAdForLife()
+    {
+        var am = AdManager.Instance; if (am == null) return;
+        failAdLifeButton.interactable = false;
+        failAdLifeLabel.text = Loc.T("adLoading");
+        am.ShowRewarded("fail_life",
+            onReward: () => { LivesManager.Instance?.AddLife(1); RefreshFailLives(false); },
+            onUnavailable: () => { failAdLifeLabel.text = Loc.T("adFailed"); RefreshFailLives(false); });
+    }
+
+    // "İzle → +20sn Devam": ödül gelirse aynı bölümü yeniden başlatmadan sürdür (+süre, can iadesi).
+    void OnWatchAdForTime()
+    {
+        var am = AdManager.Instance; if (am == null) return;
+        failAdTimeButton.interactable = false;
+        failAdTimeLabel.text = Loc.T("adLoading");
+        am.ShowRewarded("fail_time",
+            onReward: ResumeWithBonusTime,
+            onUnavailable: () => { failAdTimeLabel.text = Loc.T("adFailed"); RefreshFailLives(false); });
+    }
+
+    // Süre-doldu fail'inden ödüllü ile geri dön: kaybedilen canı iade et, paneli kapat, süreyi uzat, oyunu sürdür.
+    void ResumeWithBonusTime()
+    {
+        var lm = LivesManager.Instance;
+        if (lm != null && !lm.UnlimitedActive) lm.AddLife(1);   // ShowFailPanel'de düşen canı iade et (sınırsızsa zaten düşmedi)
+        failPanel.SetActive(false);
+        if (lastFailWasTimeUp) timeLeft += Economy.ContinueBonusSeconds;   // süre-doldu → +20sn; bomba → kalan süreyle devam (ekleme yok)
+        if (timerText != null) timerText.text = Loc.T("hudTime") + " " + Mathf.CeilToInt(timeLeft);   // güncel süreyi hemen göster
+        timerStarted = false;   // süre HEMEN azalmasın: geri sayım + delik hareketine kadar beklesin
+        StartCoroutine(ResumeCountdown());   // 3-2-1 → gameActive=true (süre delik hareketiyle başlar)
     }
 
     // Kalpleri + durum yazısını güncelle; can bitince Retry'yi engelle. animateLoss=true ise kaybedilen kalbi pulse'la.
@@ -517,13 +900,123 @@ public class GameManager : MonoBehaviour
             if (img != null) img.color = canPlay ? Color.white : new Color(1f, 1f, 1f, 0.4f);
         }
 
+        // Sprint 10: fail teklifleri — her biri REKLAM (izle) + COIN (öde). Reklam yoksa coin butonu yine görünür.
+        var am = AdManager.Instance;
+        bool adReady = am != null && am.RewardedReady;
+        bool lifeOffer = !unlimited && lives <= 0;                 // can bitti → +1 can teklifi
+        bool contOffer = failResumable;    // süre-doldu VEYA bomba → devam teklifi (HER fail'de, sınırsız)
+
+        SetFailOffer(failAdLifeButton, failAdLifeLabel, lifeOffer && adReady, Loc.T("watch"), true);
+        SetFailOffer(failCoinLifeButton, failCoinLifeLabel, lifeOffer, Economy.RefillLifeCost.ToString(), PlayerProfile.CanAfford(Economy.RefillLifeCost));
+        SetFailOffer(failAdTimeButton, failAdTimeLabel, contOffer && adReady, Loc.T("watch"), true);
+        SetFailOffer(failCoinTimeButton, failCoinTimeLabel, contOffer, Economy.ContinueCost.ToString(), PlayerProfile.CanAfford(Economy.ContinueCost));
+        if (failLifeAction != null) { failLifeAction.gameObject.SetActive(lifeOffer); if (lifeOffer) failLifeAction.text = Loc.T("refillLife"); }
+        if (failTimeAction != null) { failTimeAction.gameObject.SetActive(contOffer); if (contOffer) failTimeAction.text = lastFailWasTimeUp ? Loc.T("continueGame") + " +" + (int)Economy.ContinueBonusSeconds + Loc.T("secShort") : Loc.T("continueGame"); }
+
+        LayoutFailButtons();   // reklam + Tekrar + Çıkış butonlarını çakışmasız, alttan-hizalı diz
+
         // Kaybedilen kalbi (ilk boş) animasyonla vurgula.
         if (animateLoss && !unlimited && lives < failHearts.Length && lives >= 0)
             StartCoroutine(PulseHeart(failHearts[lives].rectTransform));
         failLivesShown = lives;
     }
 
+    // Fail panelinin alt aksiyon butonlarını ALTTAN hizalı, çakışmasız dizer (responsive; hangi reklam butonu
+    // görünürse ona göre otomatik ayarlanır). Alttan üste: Çıkış, Tekrar, [+can], [devam].
+    // Bir teklif butonunu göster/gizle + etiketle + karşılanabilirliğe göre soluklaştır (harcanamıyorsa pasif).
+    void SetFailOffer(Button btn, TMP_Text lbl, bool show, string label, bool affordable)
+    {
+        if (btn == null) return;
+        btn.gameObject.SetActive(show);
+        if (!show) return;
+        btn.interactable = affordable;
+        if (lbl != null) lbl.text = label;
+        var img = btn.GetComponent<Image>();
+        if (img != null) { var c = img.color; c.a = affordable ? 1f : 0.4f; img.color = c; }
+    }
+
+    // Fail teklifleri: SEBEP yazısının ALTINA, çakışmasız satırlar [eylem etiketi + İzle + coin]; en altta Retry/Cancel
+    // satırı (yan yana, X korunur). Top-down → sebeple araya garantili boşluk; kaç teklif varsa Retry ona göre iner.
+    void LayoutFailButtons()
+    {
+        if (retryButton == null) return;
+        Canvas.ForceUpdateCanvases();
+        float y = -480f; const float step = 122f;   // ilk teklif satırı (sebep -330 altında, boşlukla)
+        bool any = false;
+        if (PlaceFailRow(failTimeAction, failAdTimeButton, failCoinTimeButton, y)) { y -= step; any = true; }   // Devam üstte
+        if (PlaceFailRow(failLifeAction, failAdLifeButton, failCoinLifeButton, y)) { y -= step; any = true; }   // +Can altta
+
+        float btnY = any ? y - 4f : -500f;   // Retry/Cancel satırı: son teklifin altında (teklif yoksa sabit)
+        SetFailCenter((RectTransform)retryButton.transform, retryButton.transform.localPosition.x, btnY);
+        var cancel = failPanel.transform.Find("CancelButton") as RectTransform;
+        if (cancel != null) SetFailCenter(cancel, cancel.localPosition.x, btnY);
+    }
+
+    // Bir teklif satırı: eylem etiketi (sol, sağa yaslı) + reklam butonu (orta) + coin butonu (sağ). Yerleştirdiyse true.
+    bool PlaceFailRow(TMP_Text action, Button ad, Button coin, float y)
+    {
+        bool aAd = ad != null && ad.gameObject.activeSelf;
+        bool aCoin = coin != null && coin.gameObject.activeSelf;
+        if (!aAd && !aCoin) return false;
+        if (action != null && action.gameObject.activeSelf) SetFailCenter((RectTransform)action.transform, -230f, y);
+        if (aAd) SetFailCenter((RectTransform)ad.transform, 30f, y);
+        if (aCoin) SetFailCenter((RectTransform)coin.transform, 255f, y);
+        return true;
+    }
+
+    static void SetFailCenter(RectTransform rt, float x, float y)
+    {
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(x, y);
+    }
+
     static string Fmt(int s) => $"{s / 60:00}:{s % 60:00}";
+
+    // ── Sprint 7: sonuç ekranı açılış animasyonu (maskot zıplaması + başlık/buton pop) ──
+    // Yalnız İSİMLİ ÇOCUKLARIN localScale'ini canlandırır (panel root'una/konumlara dokunmaz) →
+    // yıldız/ödül uçuş animasyonları ve fail-kalp pulse'ı ile ÇAKIŞMAZ. Ölçek 1'e yerleşir.
+    IEnumerator PanelIntro(GameObject panel, string mascotName)
+    {
+        var mascot = panel.transform.Find(mascotName) as RectTransform;
+        var title  = panel.transform.Find("Title") as RectTransform;
+        var bNext  = panel.transform.Find("NextLevelButton") as RectTransform;
+        var bRetry = panel.transform.Find("RetryButton") as RectTransform;
+        var bCancel= panel.transform.Find("CancelButton") as RectTransform;
+
+        if (mascot) mascot.localScale = Vector3.zero;
+        if (title)  title.localScale  = Vector3.zero;
+        if (bNext)  bNext.localScale  = Vector3.zero;
+        if (bRetry) bRetry.localScale = Vector3.zero;
+        if (bCancel)bCancel.localScale= Vector3.zero;
+
+        if (mascot)  StartCoroutine(PopIn(mascot, 0.00f, 0.50f, 1.7f));   // köstebek: güçlü overshoot (zıplama)
+        if (title)   StartCoroutine(PopIn(title,  0.12f, 0.40f, 1.4f));
+        if (bNext)   StartCoroutine(PopIn(bNext,  0.26f, 0.38f, 1.5f));
+        if (bRetry)  StartCoroutine(PopIn(bRetry, 0.26f, 0.38f, 1.5f));
+        if (bCancel) StartCoroutine(PopIn(bCancel,0.34f, 0.38f, 1.5f));
+        yield break;
+    }
+
+    IEnumerator PopIn(RectTransform rt, float delay, float dur, float overshoot)
+    {
+        float t = -delay;
+        while (t < dur)
+        {
+            t += Time.unscaledDeltaTime;
+            float k = Mathf.Clamp01(t / dur);
+            if (rt == null) yield break;
+            rt.localScale = Vector3.one * EaseOutBack(k, overshoot);
+            yield return null;
+        }
+        if (rt != null) rt.localScale = Vector3.one;
+    }
+
+    // Geriye zıplayarak yerleşen ölçek eğrisi (easeOutBack): 0→1, sona doğru 1'i aşıp geri gelir.
+    static float EaseOutBack(float x, float s)
+    {
+        x -= 1f;
+        return 1f + (s + 1f) * x * x * x + s * x * x;
+    }
 
     IEnumerator PulseHeart(RectTransform rt)
     {
@@ -551,7 +1044,7 @@ public class GameManager : MonoBehaviour
             failReasonText.color = new Color(1f, 0.78f, 0.5f); failReasonText.raycastTarget = false;
             var rt = failReasonText.rectTransform;
             rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
-            rt.anchoredPosition = new Vector2(0, -390); rt.sizeDelta = new Vector2(1000, 100);   // durum altı, butonlar üstü (200px aşağı)
+            rt.anchoredPosition = new Vector2(0, -330); rt.sizeDelta = new Vector2(1000, 100);   // durum altı; reklam butonlarından uzak
         }
         failReasonText.text = failReason;
     }
@@ -578,7 +1071,41 @@ public class GameManager : MonoBehaviour
         {
             LevelResult.Clear();
             LevelManager.Instance?.AdvanceIndex();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);   // GameScene reload → sonraki bölüm
+            // Sprint 8: her 3 levelda bir geçiş reklamı — SORU SORULMAZ, doğrudan gösterilir
+            // (kullanıcı 2026-08-22: "coinle geçme olmasın, direk izlesin").
+            var am = AdManager.Instance;
+            if (am == null) { LoadNextLevelScene(); return; }
+            StartCoroutine(InterstitialThenLoad(am));
+        }
+    }
+
+    // Sahne yüklemeyi TEK noktadan yap → reklam callback'i + zaman aşımı ikisi birden tetiklense bile iki kez yüklenmez.
+    bool sceneLoadStarted;
+    void LoadNextLevelScene()
+    {
+        if (sceneLoadStarted) return;
+        sceneLoadStarted = true;
+        Time.timeScale = 1f;   // güvenlik: herhangi bir overlay donuk bıraktıysa yeni sahne donuk açılmasın
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    /// <summary>
+    /// Geçiş reklamını göster, kapanınca sonraki levela geç.
+    /// GÜVENLİK AĞI: reklam SDK'sı callback'i hiç çağırmazsa (gösterim hatası, yutulan olay vb.) oyun
+    /// KİLİTLENMESİN — zaman aşımında yine de devam edilir. Reklam ekranda iken uygulama duraklatıldığı
+    /// için sayaç ilerlemez; süre yalnız oyuna dönülünce işler.
+    /// </summary>
+    IEnumerator InterstitialThenLoad(AdManager am)
+    {
+        bool done = false;
+        am.NotifyLevelEndAndMaybeInterstitial(() => { done = true; LoadNextLevelScene(); });
+
+        float t = 0f;
+        while (!done && t < 10f) { t += Time.unscaledDeltaTime; yield return null; }
+        if (!done)
+        {
+            Debug.LogWarning("[Ads] Geçiş reklamı geri bildirimi gelmedi (10 sn) — sahne yine de yükleniyor.");
+            LoadNextLevelScene();
         }
     }
 
@@ -750,12 +1277,14 @@ public class GameManager : MonoBehaviour
     IEnumerator AnimateStarsToBadge()
     {
         Canvas.ForceUpdateCanvases();
-        int running = Mathf.Max(0, StarManager.Total() - rewardDelta);
+        int running = Mathf.Max(0, PlayerProfile.EarnedStars - rewardEarned);
         if (sStarBadgeText != null) sStarBadgeText.text = running.ToString();
         int flyCount = Mathf.Clamp(rewardEarned, 0, 3);
         if (flyCount <= 0 || sStarBadgeIcon == null) { yield return new WaitForSeconds(0.12f); yield break; }
 
-        int incLeft = Mathf.Clamp(rewardDelta, 0, flyCount);   // sayaç bu kadar artacak (net yeni yıldız)
+        // Rozet artık birikimli yıldızı gösteriyor → uçan HER yıldız sayacı artırır (eskiden yalnız "net en iyi farkı"
+        // kadar artıyordu; tekrar oynayınca yıldızlar uçup sayaç sabit kalıyordu → tutarsız görünüyordu).
+        int incLeft = flyCount;
         float[] xs = { -330f, 0f, 330f };
         for (int k = 0; k < flyCount; k++)
         {

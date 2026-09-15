@@ -21,12 +21,21 @@ public class PowerUpInventoryHud : MonoBehaviour
     /// <summary>Level bitince (success/fail) envanter HUD'ını gizle.</summary>
     public void Hide() { if (hudRoot) hudRoot.SetActive(false); }
 
-    void Start()
+    void Start() { StartCoroutine(BuildWhenReady()); }
+
+    /// <summary>
+    /// BUG FIX (2026-08-22): Eskiden Start'ta canvas null ise SESSİZCE vazgeçiliyordu → HUD o levelda hiç
+    /// kurulmuyordu ("bazen güç-up'larım görünmüyor, çıkıp girince geliyor"). Canvas sahne kurulurken birkaç
+    /// kare gecikebiliyor; artık hazır olana kadar BEKLİYORUZ (yarış koşulu kapandı).
+    /// </summary>
+    System.Collections.IEnumerator BuildWhenReady()
     {
+        Canvas canvas = null;
+        float waited = 0f;
+        while ((canvas = UiRoot.GameCanvas()) == null && waited < 5f) { waited += Time.unscaledDeltaTime; yield return null; }
+        if (canvas == null) { Debug.LogWarning("[PowerInvHud] Ana canvas bulunamadı — envanter HUD'ı kurulamadı."); yield break; }
+
         hole = FindAnyObjectByType<HoleController>();
-        var canvas = FindAnyObjectByType<Canvas>();
-        if (canvas == null) return;
-        canvas = canvas.rootCanvas;   // GraphicRaycaster'lı KÖK canvas (nested alt-canvas'a takılıp raycast kaçmasın)
 
         var root = new GameObject("PowerInvHud", typeof(RectTransform), typeof(SafeArea));
         hudRoot = root;
@@ -54,6 +63,25 @@ public class PowerUpInventoryHud : MonoBehaviour
             y -= step;
         }
         Refresh();
+
+        // TEŞHİS (2026-08-22): "bazen güç-up'larım görünmüyor" bug'ı — HUD mu kurulmadı, yoksa envanter mi boş?
+        // logcat: adb logcat -s Unity | grep PowerInvHud
+        Debug.Log($"[PowerInvHud] kuruldu ({waited:0.00}s bekledi) — envanter: " +
+                  $"Hız={PowerUpInventory.Count(PowerUpType.Speed)} " +
+                  $"Mıknatıs={PowerUpInventory.Count(PowerUpType.Magnet)} " +
+                  $"Büyüme={PowerUpInventory.Count(PowerUpType.SizeBurst)} " +
+                  $"Süper={PowerUpInventory.Count(PowerUpType.Super)}");
+
+        // İKİNCİ YARIŞ: bulut senkronu HUD kurulduktan SONRA tamamlanırsa adetler eski kalırdı.
+        // Senkron bitince kendini tazele (çevrimdışıysa/servis yoksa zararsızca atlanır).
+        var cs = CloudSyncService.Instance;
+        if (cs != null) { cs.OnSynced -= Refresh; cs.OnSynced += Refresh; }
+    }
+
+    void OnDestroy()
+    {
+        var cs = CloudSyncService.Instance;
+        if (cs != null) cs.OnSynced -= Refresh;
     }
 
     void OnEnable() { if (counts.Count > 0) Refresh(); }

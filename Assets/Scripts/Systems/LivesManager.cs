@@ -12,7 +12,13 @@ using UnityEngine;
 public class LivesManager : MonoBehaviour
 {
     public const int MaxLives = 5;
-    public const int RegenSeconds = 30;   // TEST: 30sn (gerçek değer 1800 = 30dk; onay sonrası geri al)
+    // Can yenilenme süresi. Dev/editör'de hızlı (test kolaylığı), RELEASE'de gerçek değer —
+    // LevelManager.UnlockedIndex ile aynı desen: dev değerinin yayına sızması imkânsız.
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
+    public const int RegenSeconds = 30;     // dev/test: 30 sn
+#else
+    public const int RegenSeconds = 1800;   // release: 30 dk
+#endif
 
     const string KEY_LIVES  = "Lives_Count";
     const string KEY_ANCHOR = "Lives_AnchorTicks";

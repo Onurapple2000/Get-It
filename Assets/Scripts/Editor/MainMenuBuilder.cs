@@ -45,6 +45,7 @@ public static class MainMenuBuilder
         mc.gameScene = "GameScene";
         mc.bgSprite     = LoadSprite("Assets/Art/burrow_bg_warm.png");
         mc.moleSprite   = LoadSprite("Assets/Art/mole_mascot_warm.png");
+        mc.proudMoleSprite = LoadSprite("Assets/Art/mole_mascot_proud.png");   // ana sayfa büyük maskotu
         mc.buttonSprite = LoadSprite("Assets/Resources/burrow_button_empty_rect.png");
 
         // 18 dünya ikonu — WorldCatalog sırasıyla

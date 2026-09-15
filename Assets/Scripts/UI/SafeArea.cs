@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Bir tam-ekran RectTransform'u cihazın GÜVENLİ ALANINA (Screen.safeArea — çentik, punch-hole, gesture/home barı,
@@ -28,8 +29,22 @@ public class SafeArea : MonoBehaviour
         if (Screen.width <= 0 || Screen.height <= 0) return;
 
         Rect sa = Screen.safeArea;
-        Vector2 min = sa.position;
-        Vector2 max = sa.position + sa.size;
+        float xMin = sa.xMin, xMax = sa.xMax, yMin = sa.yMin, yMax = sa.yMax;
+
+        // ÜST kamera cutout'unu (punch-hole/çentik) HER ZAMAN dışarıda bırak. Bazı cihazlar (ör. bazı Xiaomi'ler,
+        // tam-ekran modunda) orta-üstteki punch-hole'u Screen.safeArea'ya DAHİL ETMEZ → başlıklar deliğe girer.
+        // Screen.cutouts ile üst cutout'ların altına çekiyoruz (kamera için ayrılmış üst satır her ekranda korunur).
+        var cutouts = Screen.cutouts;
+        if (cutouts != null)
+        {
+            float h = Screen.height;
+            foreach (var c in cutouts)
+                if (c.yMax >= h - 1f && c.center.y > h * 0.5f)   // yalnız üst kenara değen cutout'lar
+                    yMax = Mathf.Min(yMax, c.yMin);
+        }
+
+        Vector2 min = new Vector2(xMin, yMin);
+        Vector2 max = new Vector2(xMax, yMax);
         min.x /= Screen.width; min.y /= Screen.height;
         max.x /= Screen.width; max.y /= Screen.height;
 
@@ -51,6 +66,34 @@ public class SafeArea : MonoBehaviour
 public static class UiRoot
 {
     public const string NAME = "SafeArea";
+
+    /// <summary>
+    /// Ana oyun/menü canvas'ını GÜVENİLİR bulur: yalnız AKTİF + ScreenSpace + (tercihen) CanvasScaler'lı KÖK canvas.
+    /// FindAnyObjectByType&lt;Canvas&gt; rastgele/yanlış canvas (kapalı PauseMenu overlay'i, HardLevelIntro/Tutorial
+    /// geçici canvas'ları) döndürebiliyor → HUD yanlış canvas'a bağlanıp GÖRÜNMEYEBİLİYORDU (aralıklı bug). Bu, hep
+    /// aynı doğru canvas'ı verir.
+    /// </summary>
+    public static Canvas GameCanvas()
+    {
+        // ⚠️ BUG FIX (2026-08-22): eskiden "ilk bulunan CanvasScaler'lı canvas" döndürülüyordu. Ama
+        // HardLevelIntro ve FoodsL1Tutorial da KENDİ CanvasScaler'lı canvas'larını yaratıyor ve
+        // FindObjectsByType SIRA GARANTİSİ VERMİYOR → HUD bazen bu GEÇİCİ canvas'a bağlanıyor, intro
+        // yok edilince HUD da onunla siliniyordu ("güç-up'larım bazen görünmüyor" bug'ı; hard levellarda
+        // intro olduğu için daha sık).
+        // ÇÖZÜM: geçici overlay'ler bilerek YÜKSEK sortingOrder kullanır (intro 6000, pause 7000); kalıcı
+        // ana canvas 0'dır → adaylar arasında EN DÜŞÜK sortingOrder'lı olanı seç (scaler'lı olan öncelikli).
+        var all = Object.FindObjectsByType<Canvas>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        Canvas best = null; long bestScore = long.MinValue;
+        foreach (var c in all)
+        {
+            var root = c.rootCanvas;
+            if (root == null || !root.isActiveAndEnabled) continue;
+            if (root.renderMode != RenderMode.ScreenSpaceOverlay && root.renderMode != RenderMode.ScreenSpaceCamera) continue;
+            long score = (root.GetComponent<CanvasScaler>() != null ? 1_000_000L : 0L) - root.sortingOrder;
+            if (score > bestScore) { bestScore = score; best = root; }
+        }
+        return best;
+    }
 
     public static RectTransform SafeContent(Canvas canvas)
     {

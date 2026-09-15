@@ -22,8 +22,27 @@
 - [ ] **Sürüm/versiyon yönetimi**, build numaraları
 - [ ] (Karar) Oyun adı kesinleştir — GDD: "GET-IT benzer isim çakışması var"
 
+---
+
+## 🧹 YAYIN ÖNCESİ TEMİZLİK (Dev Kısayollarını Geri Al)
+
+> Geliştirme kolaylığı için konan geçici kısayollar. **Release build'den önce** tek tek geri alınacak.
+> Not: Bazıları zaten build-tipine bağlı (release'de otomatik doğru) — yine de doğrulanacak.
+
+- [ ] **Can yenilenme 30sn → 30dk:** [LivesManager.cs](../Assets/Scripts/Systems/LivesManager.cs) `RegenSeconds = 30` → `1800`. (Dev'de 30 kalması için `#if UNITY_EDITOR || DEVELOPMENT_BUILD` ile ayırılabilir.)
+- [ ] **Level/dünya kilidi doğrula:** `LevelManager.UnlockedIndex` release'de PlayerPrefs ilerlemesi kullanır (dev/editör'de HEPSİ açık — `#if DEVELOPMENT_BUILD || UNITY_EDITOR`). Release build'de sıralı açılmayı test et.
+- [ ] **Kısaltılmış süreler / açık bırakılan levellar:** tüm dev kısayol sabitlerini tara → gerçek değerlere çek.
+- [ ] **Satın alma ekranını güzelleştir** (Store UI — Adım 4/IAP ile birlikte).
+- [ ] **Diagnostik loglar:** `[Ads]`, `[Account]`, `[CloudSync]` Debug.Log'larını release'de sustur (veya `#if DEVELOPMENT_BUILD`).
+- [ ] **PerfHud / dev-unlock / debug menüleri** release'de kapalı.
+- [ ] **AdMob:** `AdManager.UseTestIds = false` + prod reklam id'leri (Sprint 8).
+- [ ] **Reklam/hesap test id'leri → prod:** UGS prod environment, AdMob prod, IAP prod ürünleri.
+
+---
+
 ## Kabul Kriterleri
 - Android (AAB) ve iOS build alınabiliyor, gerçek cihazda çalışıyor
+- Tüm dev kısayolları geri alınmış (can 30dk, sıralı level kilidi, loglar kapalı)
 - İkon/splash/mağaza görselleri hazır
 - Hedef cihazlarda performans kabul edilebilir (stabil FPS)
 - Mağaza gereksinimleri (gizlilik, izinler) karşılanmış

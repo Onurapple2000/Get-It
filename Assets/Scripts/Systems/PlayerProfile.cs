@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -6,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public static class PlayerProfile
 {
+    /// <summary>Coin bakiyesi değişince (kazanç/harcama) tetiklenir — coin HUD/rozetlerini yenilemek için.</summary>
+    public static event Action OnCoinsChanged;
     public const string DefaultName = "Player";
 
     const string KEY_NAME    = "PlayerName";
@@ -56,14 +59,15 @@ public static class PlayerProfile
     public static int Coins
     {
         get => PlayerPrefs.GetInt(KEY_COINS, 0);
-        private set { PlayerPrefs.SetInt(KEY_COINS, Mathf.Max(0, value)); PlayerPrefs.Save(); }
+        private set { PlayerPrefs.SetInt(KEY_COINS, Mathf.Max(0, value)); PlayerPrefs.Save(); OnCoinsChanged?.Invoke(); }
     }
-    public static void AddCoins(int n) { if (n > 0) Coins = Coins + n; }
+    public static void AddCoins(int n) { if (n > 0) { Coins = Coins + n; CloudSyncService.Instance?.FlushNow(); } }
+    public static bool CanAfford(int n) => Coins >= n;
     public static bool TrySpendCoins(int n)
     {
         if (n <= 0) return true;
         if (Coins < n) return false;
-        Coins -= n; return true;
+        Coins -= n; CloudSyncService.Instance?.FlushNow(); return true;
     }
 
     /// <summary>Ömür boyu toplam skor (her başarılı level sonunda o levelın skoru eklenir). Ana sayfada gösterilir.</summary>
@@ -73,6 +77,23 @@ public static class PlayerProfile
         private set { PlayerPrefs.SetInt(KEY_SCORE, Mathf.Max(0, value)); PlayerPrefs.Save(); }
     }
     public static void AddScore(int n) { if (n > 0) TotalScore = TotalScore + n; }
+
+    /// <summary>
+    /// Ödül için BİRİKİMLİ yıldız (2026-08-18): her başarılı level bitişinde kazanılan yıldız buraya EKLENİR
+    /// (tekrar oynayınca da artar → yıldız/powerup ödülünün üst sınırı YOK). Bölüm-bazlı en-iyi yıldız gösterimi
+    /// (dünyalar/patika) ayrıca StarManager'da tutulur. İlk erişimde eski kayıttan (mevcut en-iyilerin toplamı) başlar.
+    /// </summary>
+    const string KEY_EARNED = "EarnedStars";
+    public static int EarnedStars
+    {
+        get
+        {
+            if (!PlayerPrefs.HasKey(KEY_EARNED)) { PlayerPrefs.SetInt(KEY_EARNED, StarManager.Total()); PlayerPrefs.Save(); }
+            return PlayerPrefs.GetInt(KEY_EARNED, 0);
+        }
+        private set { PlayerPrefs.SetInt(KEY_EARNED, Mathf.Max(0, value)); PlayerPrefs.Save(); }
+    }
+    public static void AddEarnedStars(int n) { if (n > 0) EarnedStars = EarnedStars + n; }
 
     public static bool NoAds
     {

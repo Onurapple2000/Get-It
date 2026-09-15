@@ -245,7 +245,7 @@ public class PowerUpManager : MonoBehaviour
     // ── HUD ─────────────────────────────────────────────────────────────────────
     void BuildHud()
     {
-        var canvas = FindAnyObjectByType<Canvas>();
+        var canvas = UiRoot.GameCanvas();   // GÜVENİLİR ana canvas (yanlış canvas yarışı fix)
         if (canvas == null) return;
         var safe = UiRoot.SafeContent(canvas);   // HUD güvenli alana (çentik/kenar dışı)
 

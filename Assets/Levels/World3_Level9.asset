@@ -102,6 +102,6 @@ MonoBehaviour:
   - objectType: Japanese
     required: 36
     icon: {fileID: 0}
-  bombsEnabled: 0
-  bombPrefab: {fileID: 0}
-  bombCount: 0
+  bombsEnabled: 1
+  bombPrefab: {fileID: 6300812103459983989, guid: 0965dcdfc9721469dab701aa1a17ec68, type: 3}
+  bombCount: 6

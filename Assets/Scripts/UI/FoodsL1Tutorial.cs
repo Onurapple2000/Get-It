@@ -18,9 +18,13 @@ public class FoodsL1Tutorial : MonoBehaviour
 {
     const string PrefKey = "FoodsL1Tutorial_Shown_v2";   // v2: eski build'de pref set olduysa yeniden gösterilsin
 
-    // GELİŞTİRME BAYRAĞI (2026-07-25 kullanıcı): true iken Yiyecekler L1'e HER girişte tanıtım gösterilir (pref
-    // kontrolü atlanır). Oyun bitince kullanıcı "sadece kurulumdan sonra 1 kez" diyecek → bunu false yap.
+    // GELİŞTİRME BAYRAĞI: true iken Yiyecekler L1'e HER girişte tanıtım gösterilir (pref kontrolü atlanır).
+    // Dev/editör'de açık (test kolaylığı), RELEASE'de kapalı → oyuncu tanıtımı yalnızca BİR KEZ görür.
+#if DEVELOPMENT_BUILD || UNITY_EDITOR
     const bool AlwaysShowDev = true;
+#else
+    const bool AlwaysShowDev = false;
+#endif
 
     // ⚠️ Self-bootstrap (RuntimeInitializeOnLoadMethod/sceneLoaded) telefonda GÜVENİLMEZ: (a) RuntimeInitialize
     // yalnız açılışta 1 kez çalışır, (b) sınıf referanssız → IL2CPP stripping silebilir. GÜVENLİ ÇÖZÜM: LevelManager.
@@ -38,7 +42,7 @@ public class FoodsL1Tutorial : MonoBehaviour
     RectTransform overlay;
     Image dim, hand, ring;
     TMP_Text text, tapHint;
-    Sprite point1, point2, thumb, ringSprite;
+    Sprite point1, point2, thumb, ringSprite, rectSprite;
 
     void Start() { StartCoroutine(Run()); }
 
@@ -57,19 +61,22 @@ public class FoodsL1Tutorial : MonoBehaviour
         point2 = Load("tutorial_hand_point_02");
         thumb  = Load("tutorial_hand_joystick_thumb");
         ringSprite = MakeRingSprite(160, 0.82f);
+        rectSprite = MakeRectBorderSprite(64, 7);   // "topla" için dikdörtgen çerçeve (halka yerine)
 
         BuildOverlay();
 
         // ADIM 1 — HEDEF TABELALARI
         var barRt = bar != null ? (RectTransform)bar.transform : null;
+        PlaceText(new Vector2(0.5f, 1f), new Vector2(0, -700), new Vector2(900, 160));   // ÜSTTE ama elden ~270px aşağı (el ile çakışmasın)
         yield return Step(
             Loc.T("tutCollect"),
             () => barRt != null ? RectTransformUtility.WorldToScreenPoint(null, barRt.position) : new Vector2(Screen.width * 0.5f, Screen.height * 0.9f),
-            new Vector2(70f, -150f), pointAnim: true, waitDrag: false);
+            new Vector2(70f, -150f), pointAnim: true, waitDrag: false, markerOffset: new Vector2(0f, -85f));   // dörtgen+el biraz aşağı (tabelaların içine)
 
         // ADIM 2 — JOYSTICK (oyuncu gerçekten oynatana kadar bekle). handOffset: başparmak ucu joystick MERKEZİNDE
         // olacak şekilde el yukarı (2026-07-25 kullanıcı). Yatay ofset küçük (merkezde), Y pozitif (yukarı).
         VirtualJoystick.TutorialActive = true;
+        PlaceText(new Vector2(0.5f, 0.5f), new Vector2(0, -480), new Vector2(900, 200));   // ekranın ALT YARISININ ortası
         yield return Step(
             Loc.T("tutDrag"),
             () => VirtualJoystick.BaseScreenPos(),
@@ -91,6 +98,7 @@ public class FoodsL1Tutorial : MonoBehaviour
         hand.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 180f);   // işaret eli başaşağı (Adım 1/3 ile aynı)
         tapHint.gameObject.SetActive(false);
         dim.color = new Color(0f, 0f, 0f, 0.12f);   // powerup'lar net görünsün
+        PlaceText(new Vector2(0.5f, 0.5f), new Vector2(0, -480), new Vector2(900, 240));   // ekranın ALT YARISININ ortası (2 satırlı etiket)
 
         var list = FindPowerUps(3);
         var holeCam = FindAnyObjectByType<HoleCamera>();
@@ -110,8 +118,8 @@ public class FoodsL1Tutorial : MonoBehaviour
         {
             Vector3 sp3 = cam.WorldToScreenPoint(worldPos);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(overlay, new Vector2(sp3.x, sp3.y), null, out Vector2 lp);
-            hand.sprite = (Mathf.FloorToInt(ta * 3f) % 2 == 0) ? point1 : point2;
-            float bob = Mathf.Abs(Mathf.Sin(ta * 5f)) * 26f;
+            hand.sprite = point1;   // point2 (ileri kare) parmak ucu KIRPIK → hep tam-parmak point1
+            float bob = Mathf.Abs(Mathf.Sin(ta * 5f)) * 16f;
             hand.rectTransform.anchoredPosition = lp + handOffset + new Vector2(-bob * 0.4f, bob);
         }
 
@@ -144,7 +152,7 @@ public class FoodsL1Tutorial : MonoBehaviour
     }
 
     // Bir adım: metin + hedefi işaret eden el + halka; koşul sağlanınca döner.
-    IEnumerator Step(string msg, System.Func<Vector2> targetScreen, Vector2 handOffset, bool pointAnim, bool waitDrag)
+    IEnumerator Step(string msg, System.Func<Vector2> targetScreen, Vector2 handOffset, bool pointAnim, bool waitDrag, Vector2 markerOffset = default)
     {
         text.text = msg;
         tapHint.gameObject.SetActive(!waitDrag);
@@ -152,6 +160,10 @@ public class FoodsL1Tutorial : MonoBehaviour
         hand.sprite = pointAnim ? point1 : thumb;
         // İşaret eli 180° çevrili (kullanıcı: resimler ters yönü gösteriyordu → başaşağı); başparmak düz.
         hand.rectTransform.localRotation = Quaternion.Euler(0f, 0f, pointAnim ? 180f : 0f);
+
+        // İşaretleyici: "topla" adımı (pointAnim) → DİKDÖRTGEN çerçeve; joystick → halka.
+        if (pointAnim) { ring.sprite = rectSprite; ring.type = Image.Type.Sliced; ring.rectTransform.sizeDelta = new Vector2(460, 165); }
+        else           { ring.sprite = ringSprite; ring.type = Image.Type.Simple;  ring.rectTransform.sizeDelta = new Vector2(320, 320); }
 
         yield return WaitRelease();   // önceki dokunuş bıraksın (aynı tıkla iki adım atlanmasın)
 
@@ -163,6 +175,7 @@ public class FoodsL1Tutorial : MonoBehaviour
             // Hedefi ekran→overlay-yerel çevir, halka + el konumla.
             Vector2 sp = targetScreen();
             RectTransformUtility.ScreenPointToLocalPointInRectangle(overlay, sp, null, out Vector2 lp);
+            lp += markerOffset;   // işaretleyiciyi (ve eli) hedefe göre kaydır (ör. tabelaların içine)
             ring.rectTransform.anchoredPosition = lp;
             float pulse = 1f + 0.12f * Mathf.Sin(t * 6f);
             ring.rectTransform.localScale = Vector3.one * pulse;
@@ -170,8 +183,8 @@ public class FoodsL1Tutorial : MonoBehaviour
             if (pointAnim)
             {
                 // İki kare arası geçiş (dokunma hissi) + hedefe doğru küçük "vuruş" salınımı
-                hand.sprite = (Mathf.FloorToInt(t * 3f) % 2 == 0) ? point1 : point2;
-                float bob = Mathf.Abs(Mathf.Sin(t * 5f)) * 26f;
+                hand.sprite = point1;   // point2 (ileri kare) resmi PARMAK UCU KIRPIK → hep tam-parmak point1 kullan
+                float bob = Mathf.Abs(Mathf.Sin(t * 5f)) * 16f;   // hareketi bob verir (kare geçişi yok)
                 hand.rectTransform.anchoredPosition = lp + handOffset + new Vector2(-bob * 0.4f, bob);
             }
             else
@@ -222,7 +235,7 @@ public class FoodsL1Tutorial : MonoBehaviour
         Center(ring.rectTransform, new Vector2(320, 320));
 
         hand = NewImg("Hand", overlay, point1); hand.preserveAspect = true; hand.raycastTarget = false;
-        Center(hand.rectTransform, new Vector2(230, 230));
+        Center(hand.rectTransform, new Vector2(240, 240));   // parmağın yukarı erişimi az → ekran üstünü aşıp kesilmesin
 
         text = NewText("Text", overlay, 52, TextAlignmentOptions.Center);
         var trr = text.rectTransform; trr.anchorMin = trr.anchorMax = new Vector2(0.5f, 1f); trr.pivot = new Vector2(0.5f, 1f);
@@ -232,6 +245,16 @@ public class FoodsL1Tutorial : MonoBehaviour
         tapHint.color = new Color(1f, 1f, 1f, 0.8f);
         var thr = tapHint.rectTransform; thr.anchorMin = thr.anchorMax = new Vector2(0.5f, 0f); thr.pivot = new Vector2(0.5f, 0f);
         thr.anchoredPosition = new Vector2(0, 90); thr.sizeDelta = new Vector2(700, 60);
+
+        hand.transform.SetAsLastSibling();   // el EN ÜSTTE render olsun → parmak ucu metin/işaretleyici arkasında kalıp kesilmesin
+    }
+
+    // Tanıtım metnini adım-adım konumlar. Adım 1: üstte ama elden aşağıda; Adım 2/3: ekranın alt-yarısının ortası.
+    void PlaceText(Vector2 anchorPivot, Vector2 pos, Vector2 size)
+    {
+        var rt = text.rectTransform;
+        rt.anchorMin = anchorPivot; rt.anchorMax = anchorPivot; rt.pivot = anchorPivot;
+        rt.anchoredPosition = pos; rt.sizeDelta = size;
     }
 
     // ── YARDIMCILAR ──
@@ -304,6 +327,22 @@ public class FoodsL1Tutorial : MonoBehaviour
             }
         t.SetPixels32(px); t.Apply();
         return Sprite.Create(t, new Rect(0, 0, s, s), new Vector2(0.5f, 0.5f), 100f);
+    }
+
+    // İnce dikdörtgen ÇERÇEVE sprite (9-slice): "topla" vurgusu için halka yerine dörtgen (her boyutta ince kalır).
+    static Sprite MakeRectBorderSprite(int s, int thick)
+    {
+        var t = new Texture2D(s, s, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Bilinear };
+        var px = new Color32[s * s];
+        for (int y = 0; y < s; y++)
+            for (int x = 0; x < s; x++)
+            {
+                bool border = x < thick || x >= s - thick || y < thick || y >= s - thick;
+                px[y * s + x] = new Color32(255, 255, 255, border ? (byte)255 : (byte)0);
+            }
+        t.SetPixels32(px); t.Apply();
+        // border (9-slice) = thick → Image.Type.Sliced ile herhangi bir W×H'de çerçeve kalınlığı sabit kalır.
+        return Sprite.Create(t, new Rect(0, 0, s, s), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect, new Vector4(thick, thick, thick, thick));
     }
 
     static Image NewImg(string n, Transform p, Sprite s)

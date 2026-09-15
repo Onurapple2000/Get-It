@@ -102,6 +102,7 @@ public class ExplosionEffect : MonoBehaviour
         var go = new GameObject(name);
         go.transform.SetParent(transform, false);
         var ps = go.AddComponent<ParticleSystem>();
+        ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);   // AddComponent oto-oynatır → duration set'ten ÖNCE durdur (uyarı fix)
         var main = ps.main;
         main.playOnAwake = false;
         main.maxParticles = 200;

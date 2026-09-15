@@ -159,7 +159,8 @@ public class PauseMenu : MonoBehaviour
         {
             bool on = get();
             bImg.color = on ? new Color(0.30f, 0.75f, 0.35f, 1f) : new Color(0.40f, 0.38f, 0.36f, 1f);
-            stateTxt.text = on ? "AÇIK" : "KAPALI";
+            stateTxt.text = on ? Loc.T("on") : Loc.T("off");   // sabit Türkçe idi → 7 dile çevrildi (kullanıcı 2026-08-23)
+            Loc.ApplyDir(stateTxt);
             stateTxt.color = Color.white;
         };
         refresh();

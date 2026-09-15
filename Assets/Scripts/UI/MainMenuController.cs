@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -19,6 +20,7 @@ public class MainMenuController : MonoBehaviour
     [Header("Görseller (MainMenuBuilder atar)")]
     public Sprite bgSprite;
     public Sprite moleSprite;
+    public Sprite proudMoleSprite;       // ana sayfa büyük maskotu (mole_mascot_proud); boşsa Resources/moleSprite yedeği
     public Sprite buttonSprite;
     public Sprite[] worldIcons;          // 18, WorldCatalog sırasıyla
 
@@ -40,9 +42,11 @@ public class MainMenuController : MonoBehaviour
         if (canvas == null) { Debug.LogWarning("[MainMenu] Canvas yok."); return; }
         lockSprite = Resources.Load<Sprite>("burrow_lock_icon");
 
+        StarRewards.GrantFirstLaunchGift();   // yeni oyuncuya başlangıç hediyesi (her powerup'tan 3, bir kez)
         StarRewards.CheckAndGrant();   // bekleyen yıldız hediyelerini ver (idempotent güvenlik ağı)
         SelectedWorld = Mathf.Clamp(LevelManager.CurrentWorld, 0, WorldCatalog.Count - 1);   // oynanan dünyanın patikası
         AudioManager.Instance?.PlayMenuMusic();   // ana menü müziği (dosya yoksa prosedürel)
+        AdManager.Instance?.ShowBanner();   // Sprint 8: menüde banner (oynanışa girince gizlenir)
 
         BuildBackground();
         BuildHomePanel();
@@ -66,9 +70,24 @@ public class MainMenuController : MonoBehaviour
         else
         {
             ShowHome();
-            if (!Loc.Chosen) ShowLanguagePicker();                 // ilk açılış: ÖNCE dil seç
-            else if (!PlayerProfile.NameChosen) ShowNameEntry(true);   // sonra isim ("Player" ön-dolu)
+            StartCoroutine(FirstRunPromptsAfterSync());   // bulut dil/isim getirebilir → önce kısa süre senkronu bekle
         }
+    }
+
+    // İlk açılış dil/isim sorularını, bulut geri-yüklemesinin dil+ismi getirebilme ihtimaline karşı kısa süre bekletir.
+    // Dönen oyuncuda (reinstall) bulut dil+isim gelir → soru HİÇ çıkmaz; gerçek ilk oyuncuda ~3sn sonra çıkar.
+    System.Collections.IEnumerator FirstRunPromptsAfterSync()
+    {
+        float t = 0f;
+        while ((!Loc.Chosen || !PlayerProfile.NameChosen) && t < 3f)
+        {
+            t += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        // Dil hâlâ seçilmemişse (yeni oyuncu, bulut da getirmedi) → CİHAZ DİLİNİ otomatik seç (dil ekranı yok).
+        if (!Loc.Chosen) Loc.Current = Loc.SystemDefault();
+        RefreshHome();   // bulut/oto dil + isim → Home selamlama & metinleri güncellensin
+        if (!PlayerProfile.NameChosen) ShowNameEntry(true);
     }
 
     // ════════ ARKA PLAN ════════
@@ -77,7 +96,14 @@ public class MainMenuController : MonoBehaviour
         var bg = NewImage("Bg", canvas.transform, bgSprite);
         Stretch(bg.rectTransform);
         bg.raycastTarget = false;
-        if (bgSprite == null) bg.color = new Color(0.22f, 0.15f, 0.11f);
+        if (bgSprite == null) { bg.color = new Color(0.22f, 0.15f, 0.11f); return; }
+
+        // BOZULMASIZ ARKA PLAN (2026-09-15): eskiden Stretch ile tam ekrana geriliyordu → yatay (1536×1024) resim
+        // dikey ekranda 2-3× sıkışıyordu. "Kapla + kırp" (cover): oran korunur, ekranı tamamen doldurur,
+        // taşan kenarlar kırpılır (CSS background-size: cover gibi). Her ekran oranında geçerli.
+        var fit = bg.gameObject.AddComponent<AspectRatioFitter>();
+        fit.aspectMode  = AspectRatioFitter.AspectMode.EnvelopeParent;
+        fit.aspectRatio = bgSprite.rect.width / bgSprite.rect.height;
     }
 
     // ════════ LEVEL MENÜSÜ ════════
@@ -261,8 +287,10 @@ public class MainMenuController : MonoBehaviour
     void Play(int world, int level, RectTransform stopRT, Image stopImg)
     {
         if (loadingLevel) return;
+        // Can yoksa: eskiden altta küçük bir yazı çıkıyordu ve banner reklam onu KAPATIYORDU (kullanıcı 2026-08-22).
+        // Artık ekranın ortasında, can satın alma seçenekleri sunan bir panel açılır.
         if (LivesManager.Instance != null && !LivesManager.Instance.HasLife)
-        { infoText.text = Loc.T("noLives"); return; }
+        { ShowNoLivesPanel(); return; }
         loadingLevel = true;
         LevelManager.CurrentWorld = world;   // dünya-bazlı level seti (Sprint 5)
         LevelManager.CurrentIndex = level;
@@ -321,15 +349,15 @@ public class MainMenuController : MonoBehaviour
     // Dünyalar içeriğini (başlık/geri/ızgara) aktif dile göre YENİDEN kurar (dil değişince eski dilde kalmasın — 2026-08-17).
     void RebuildWorldsContent()
     {
-        foreach (Transform c in worldsContent) Destroy(c.gameObject);
+        ClearChildren(worldsContent);
         var worldsSafe = worldsContent;
 
         var title = NewText("Title", worldsSafe, 64, FontStyles.Bold, TextAlignmentOptions.Center);
         title.text = Loc.T("worlds"); title.color = new Color(1f, 0.95f, 0.75f);
         var tr = title.rectTransform; tr.anchorMin = tr.anchorMax = new Vector2(0.5f, 1f); tr.pivot = new Vector2(0.5f, 1f);
-        tr.anchoredPosition = new Vector2(0, -50); tr.sizeDelta = new Vector2(900, 90);
+        tr.anchoredPosition = new Vector2(0, -68); tr.sizeDelta = new Vector2(900, 90);   // çentikten biraz uzak (grid'e dokunma: topGap 165 sabit)
 
-        var back = UiButtons.Build(worldsSafe, new Vector2(0f, 1f), new Vector2(30, -50),
+        var back = UiButtons.Build(worldsSafe, new Vector2(0f, 1f), new Vector2(30, -68),   // başlıkla aynı hizada aşağı
             new Vector2(230, 84), Loc.T("back"), null, Color.white, 32);
         back.onClick.AddListener(ShowHome);   // Dünyalar → Geri → Ana Sayfa (kullanıcı 2026-08-06)
 
@@ -339,11 +367,17 @@ public class MainMenuController : MonoBehaviour
         grid.SetParent(worldsSafe, false);
         grid.anchorMin = new Vector2(0.5f, 1f); grid.anchorMax = new Vector2(0.5f, 1f); grid.pivot = new Vector2(0.5f, 1f);
 
-        const float topGap = 165f, botGap = 55f, gridW = 1020f, sp = 18f;
+        const float topGap = 165f, gridW = 1020f, sp = 18f;
+        // Alt boşluk: reklam banner'ı en alt dünya sırasının İSİMLERİNİ kapatmasın diye banner yüksekliği kadar boşluk
+        // bırak. Reklamsız (NoAds) kullanıcıda banner yok → boşluk da yok (ekranı tam kaplasın).
+        float botGap = PlayerProfile.NoAds ? 55f : 300f;
         const int cols = 3;
-        Canvas.ForceUpdateCanvases();
-        float safeH = ((RectTransform)worldsSafe).rect.height;
-        if (safeH < 200f) safeH = 1720f;   // ölçüm hazır değilse makul yedek
+        // Güvenli-alan yüksekliğini RectTransform'dan ÖLÇME: bu noktada panel henüz AKTİF değil (ShowWorlds önce
+        // Rebuild, sonra SetActive yapıyor) → ölçüm yanlış (çoğunlukla tam-ekran) → ızgara büyük çıkıp alt sırayı
+        // banner altına taşırıyordu. Bunun yerine Screen.safeArea'yı canvas ölçeğine çevir → aktiflikten bağımsız doğru.
+        var cv = worldsSafe.GetComponentInParent<Canvas>();
+        float safeH = (cv != null && cv.scaleFactor > 0f) ? Screen.safeArea.height / cv.scaleFactor : 1720f;
+        if (safeH < 200f) safeH = 1720f;   // yine de bir yedek
         int count = WorldCatalog.Order.Length;
         int rows = Mathf.CeilToInt(count / (float)cols);
         float gh = safeH - topGap - botGap;
@@ -368,10 +402,10 @@ public class MainMenuController : MonoBehaviour
         if (worldIcons != null && w < worldIcons.Length && worldIcons[w] != null) { img.sprite = worldIcons[w]; img.preserveAspect = true; }
         img.color = unlocked ? Color.white : new Color(1f, 1f, 1f, 0.8f);   // kilitli = soluk (resim görünür)
 
-        var name = NewText("Name", rt, 26, FontStyles.Bold, TextAlignmentOptions.Center);
+        var name = NewText("Name", rt, 34, FontStyles.Bold, TextAlignmentOptions.Center);
         name.text = WorldCatalog.LocalizedName(w); name.color = Color.white;
         var nr = name.rectTransform; nr.anchorMin = new Vector2(0, 0); nr.anchorMax = new Vector2(1, 0); nr.pivot = new Vector2(0.5f, 0);
-        nr.offsetMin = new Vector2(0, 4); nr.offsetMax = new Vector2(0, 40);
+        nr.offsetMin = new Vector2(0, 6); nr.offsetMax = new Vector2(0, 58);
 
         if (!unlocked) Badge(rt, lockSprite, new Color(1, 1, 1, 0.95f), 70);
 
@@ -405,45 +439,160 @@ public class MainMenuController : MonoBehaviour
 
     void RefreshHome()
     {
-        foreach (Transform c in homeContent) Destroy(c.gameObject);
+        ClearChildren(homeContent);
 
-        var title = NewText("Title", homeContent, 88, FontStyles.Bold, TextAlignmentOptions.Center);
-        title.text = "GET IT"; title.color = new Color(1f, 0.92f, 0.55f);
-        title.isRightToLeftText = false;   // Latin marka adı → HER ZAMAN soldan-sağa (Arapça'da "TI TEG" görünmesin, kullanıcı 2026-08-17)
-        Top(title.rectTransform, 0, -140, 900, 120);
-
-        var nm = NewText("PlayerName", homeContent, 46, FontStyles.Bold, TextAlignmentOptions.Center);
-        nm.text = Loc.T("hello") + " " + PlayerProfile.Name; nm.color = Color.white;
-        // Oyuncu adı LATİN ise selamlamayı SOLDAN SAĞA yaz (Arapça'da bile) — Latin ad ters/RTL görünmesin (kullanıcı 2026-08-17).
-        nm.isRightToLeftText = ContainsRTL(PlayerProfile.Name);
-        Top(nm.rectTransform, 0, -270, 900, 64);
-
-        // Settings (sağ üst): çark ikonu + yazı
+        // ══ KÖŞE WİDGET'LARI (sabit): sol üst coin rozeti + Bedava Coin, sağ üst Ayarlar ══
         var setBtn = UiButtons.Build(homeContent, new Vector2(1f, 1f), new Vector2(-24, -34),
             new Vector2(290, 92), Loc.T("settings"), UiButtons.Gear(), Color.white, 34);
         setBtn.onClick.AddListener(ShowSettings);
+        var coinBadge = MakeCoinBadge(homeContent);
+        var freeBtn = MakeFreeCoinsButton(homeContent, new Vector2(0f, 1f), new Vector2(24, -136), new Vector2(240, 116));
+        const float cornerBandBottom = -252f;   // köşe widget'larının alt kenarı (rozet -34..-126, Bedava Coin -136..-252)
 
-        // Skor + Yıldız rozetleri (skor GENİŞ + otomatik-küçülme → büyük değer/uzun dilde taşmaz)
-        MakeStat(homeContent, new Vector2(-260, -380), StarArt.Full(), StarManager.Total().ToString(), 300f);
-        MakeStat(homeContent, new Vector2(240, -380), null, Loc.T("score") + " " + PlayerProfile.TotalScore, 480f);
+        // ══ ANA SÜTUN — TEK AKIŞ, RESPONSIVE (2026-09-15) ══
+        // Yukarıdan aşağı imleçle dizilir: logo → selamlama → istatistik → maskot(ESNEK) → OYNA → aksiyon butonları.
+        // Güvenli alanın yüksekliği ölçülür; maskot boş kalan alana göre büyür/küçülür (min/max), artan boşluk
+        // sütunun üstüne/altına eşit dağıtılır → hiçbir cihazda üst üste binme olmaz, altta banner için pay kalır.
+        Canvas.ForceUpdateCanvases();
+        float safeH = ((RectTransform)homeContent).rect.height; if (safeH < 400f) safeH = 1720f;
+        const float bannerReserve = 170f;                    // alt banner reklamı için pay
+        const float logoW = 760f, nameH = 64f, statH = 92f, playH = 150f, btnH = 104f, btnGap = 14f;
+        const float g1 = 8f, g2 = 12f, g3 = 18f, g4 = 26f;   // logo↔ad, ad↔stat, stat↔maskot, maskot↔OYNA
+        var logoSprite = Resources.Load<Sprite>("logo_getit");
+        float logoH = logoSprite != null ? logoW * logoSprite.rect.height / logoSprite.rect.width : 150f;
+        int btnCount = PlayerProfile.NoAds ? 4 : 5;
+        var mSprite = proudMoleSprite != null ? proudMoleSprite : moleSprite;
 
-        // OYNA (merkez, büyük) → DÜNYALAR ekranı
-        var play = UiButtons.Build(homeContent, new Vector2(0.5f, 0.5f), new Vector2(0, 150),
-            new Vector2(520, 150), Loc.T("play"), UiButtons.Play(), new Color(0.85f, 1f, 0.85f), 60);
+        float fixedH = logoH + g1 + nameH + g2 + statH + g3 + g4 + playH + 22f + btnCount * btnH + (btnCount - 1) * btnGap;
+        float avail = safeH + cornerBandBottom - bannerReserve;   // cornerBandBottom negatif → üst bant düşülür
+        float mascotH = mSprite != null ? Mathf.Clamp(avail - fixedH, 180f, 400f) : 0f;
+        float extra = Mathf.Max(0f, avail - fixedH - mascotH);   // artan boşluk → üst/alt eşit
+        float y = cornerBandBottom - extra * 0.5f;
+
+        // Logo (Meshy görseli; yoksa yazı-logo yedek)
+        if (logoSprite != null)
+        {
+            var logo = NewImage("Title", homeContent, logoSprite);
+            logo.preserveAspect = true; logo.raycastTarget = false;
+            Top(logo.rectTransform, 0, y, logoW, logoH);
+            logo.gameObject.AddComponent<Pulse>().gentle = true;
+        }
+        else
+        {
+            var title = NewText("Title", homeContent, 112, FontStyles.Bold, TextAlignmentOptions.Center);
+            title.text = "GET IT"; title.isRightToLeftText = false;
+            Top(title.rectTransform, 0, y, 900, logoH);
+            title.gameObject.AddComponent<TitleFx>();
+        }
+        y -= logoH + g1;
+
+        // Selamlama
+        var nm = NewText("PlayerName", homeContent, 46, FontStyles.Bold, TextAlignmentOptions.Center);
+        nm.text = Loc.T("hello") + " " + PlayerProfile.Name; nm.color = Color.white;
+        nm.isRightToLeftText = ContainsRTL(PlayerProfile.Name);   // Latin ad Arapça'da bile soldan-sağa
+        Top(nm.rectTransform, 0, y, 900, nameH);
+        y -= nameH + g2;
+
+        // Yıldız + skor rozetleri
+        MakeStat(homeContent, new Vector2(-260, y), StarArt.Full(), PlayerProfile.EarnedStars.ToString(), 300f);
+        MakeStat(homeContent, new Vector2(240, y), null, Loc.T("score") + " " + PlayerProfile.TotalScore, 480f);
+        y -= statH + g3;
+
+        // Maskot (esnek yükseklik; genişlik oranla)
+        if (mSprite != null && mascotH > 0f)
+        {
+            var mascot = NewImage("HomeMascot", homeContent, mSprite);
+            mascot.preserveAspect = true; mascot.raycastTarget = false;
+            float mw = mascotH * mSprite.rect.width / mSprite.rect.height;
+            Top(mascot.rectTransform, 0, y, Mathf.Min(mw, 700f), mascotH);
+            y -= mascotH + g4;
+        }
+
+        // OYNA → DÜNYALAR
+        var play = UiButtons.Build(homeContent, new Vector2(0.5f, 1f), new Vector2(0, y),
+            new Vector2(520, playH), Loc.T("play"), UiButtons.Play(), new Color(0.85f, 1f, 0.85f), 60);
         play.onClick.AddListener(ShowWorlds);
+        y -= playH + 22f;
 
-        // Aksiyon butonları (dikey liste)
-        float y = -60f; const float bh = 104f, gap = 118f, bw = 640f;
-        AddHomeButton(Loc.T("tellFriend"), ref y, gap, bw, bh, Color.white, () => { Social.ShareGame(); Toast(Loc.T("linkReady")); });
-        AddHomeButton(Loc.T("rate"), ref y, gap, bw, bh, Color.white, Social.Rate);
+        // Aksiyon butonları (hepsi aynı renk — kullanıcı 2026-09-15)
+        float bw = 640f, gap = btnH + btnGap;
+        AddHomeButton(Loc.T("powerupsTitle"), ref y, gap, bw, btnH, Color.white, ShowPowerupShop);
+        AddHomeButton(Loc.T("tellFriend"), ref y, gap, bw, btnH, Color.white, () => { Social.ShareGame(); Toast(Loc.T("linkReady")); });
+        AddHomeButton(Loc.T("rate"), ref y, gap, bw, btnH, Color.white, Social.Rate);
         if (!PlayerProfile.NoAds)
-            AddHomeButton(Loc.T("removeAds"), ref y, gap, bw, bh, new Color(1f, 0.9f, 0.8f), ShowNoAds);
-        AddHomeButton(Loc.T("buy"), ref y, gap, bw, bh, new Color(1f, 0.95f, 0.7f), ShowStore);
+            AddHomeButton(Loc.T("removeAds"), ref y, gap, bw, btnH, Color.white, ShowNoAds);
+        AddHomeButton(Loc.T("buy"), ref y, gap, bw, btnH, Color.white, ShowStore);
+    }
+
+    // Coin bakiyesi rozeti: sol-üst köşe pill + altın coin ikonu + değer (otomatik-küçülme). Transform döner (pin için).
+    Transform MakeCoinBadge(Transform parent)
+    {
+        var pill = NewImage("CoinBadge", parent, UiButtons.Rect());
+        UiButtons.ApplyFrame(pill, 92f);
+        pill.color = new Color(1f, 1f, 1f, 0.92f); pill.raycastTarget = false;
+        var rt = pill.rectTransform;
+        rt.anchorMin = rt.anchorMax = new Vector2(0f, 1f); rt.pivot = new Vector2(0f, 1f);
+        rt.anchoredPosition = new Vector2(24, -34); rt.sizeDelta = new Vector2(240, 92);
+        var t = CenteredIconValue(pill.transform, UiButtons.Coin(), PlayerProfile.Coins.ToString(), 60f, 40f, 130f);
+        t.gameObject.AddComponent<CoinHud>();   // coin değişince otomatik güncellenir
+        return pill.transform;
+    }
+
+    // Dikey "bedava coin" butonu: yukarıdan aşağıya Free / ▶(video) / Coins — buton görselinin içinde, çerçeveden uzak.
+    Button MakeFreeCoinsButton(Transform parent, Vector2 anchor, Vector2 pos, Vector2 size)
+    {
+        var go = new GameObject("Btn_FreeCoins", typeof(RectTransform), typeof(Image), typeof(Button));
+        var rt = (RectTransform)go.transform; rt.SetParent(parent, false);
+        rt.anchorMin = rt.anchorMax = anchor; rt.pivot = anchor; rt.anchoredPosition = pos; rt.sizeDelta = size;
+        var im = go.GetComponent<Image>(); UiButtons.ApplyFrame(im, size.y); im.color = new Color(1f, 0.92f, 0.6f);
+        var btn = go.GetComponent<Button>();
+        btn.onClick.AddListener(() => { AudioManager.Instance?.PlayUiClick(); WatchAdForCoins(); });
+
+        // YERLEŞİM (kullanıcı 2026-09-15): SOLDA büyük video ikonu, SAĞDA alt alta iki satır ("Bedava" / "Coin").
+        // Çerçeve kalın olduğu için içerik kenarlardan iyice içeride; grup butonun ortasında.
+        float padX = Mathf.Max(30f, size.x * 0.14f), padY = Mathf.Max(16f, size.y * 0.16f);
+        var row = new GameObject("Content", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+        var rrt = (RectTransform)row.transform; rrt.SetParent(rt, false);
+        rrt.anchorMin = Vector2.zero; rrt.anchorMax = Vector2.one;
+        rrt.offsetMin = new Vector2(padX, padY); rrt.offsetMax = new Vector2(-padX, -padY);
+        var hlg = row.GetComponent<HorizontalLayoutGroup>();
+        hlg.childAlignment = TextAnchor.MiddleCenter; hlg.spacing = 10f;
+        hlg.childControlWidth = true; hlg.childControlHeight = true;
+        hlg.childForceExpandWidth = false; hlg.childForceExpandHeight = false;
+
+        // Sol: ikon — iç yüksekliğin tamamına yakın (büyük)
+        float inner = size.y - padY * 2f;
+        var ig = new GameObject("Icon", typeof(RectTransform), typeof(Image), typeof(LayoutElement)); ig.transform.SetParent(rrt, false);
+        var iimg = ig.GetComponent<Image>(); iimg.sprite = UiButtons.Video(); iimg.preserveAspect = true; iimg.raycastTarget = false;
+        var le = ig.GetComponent<LayoutElement>(); le.preferredWidth = inner * 0.9f; le.preferredHeight = inner * 0.9f;
+
+        // Sağ: iki satır (ilk boşluk/tireden böl → "Bedava"/"Coin", "Free"/"Coins", "Gratis"/"Münzen"; bölünemezse tek satır)
+        var col = new GameObject("Lines", typeof(RectTransform), typeof(VerticalLayoutGroup));
+        var crt = (RectTransform)col.transform; crt.SetParent(rrt, false);
+        var vlg = col.GetComponent<VerticalLayoutGroup>();
+        vlg.childAlignment = TextAnchor.MiddleLeft; vlg.spacing = 0f;
+        vlg.childControlWidth = true; vlg.childControlHeight = true;
+        vlg.childForceExpandWidth = false; vlg.childForceExpandHeight = false;
+        string full = Loc.T("freeCoins");
+        int cut = full.IndexOfAny(new[] { ' ', '-' });
+        if (cut > 0) { AddFreeLine(crt, full.Substring(0, cut)); AddFreeLine(crt, full.Substring(cut + 1)); }
+        else AddFreeLine(crt, full);
+        return btn;
+    }
+
+    void AddFreeLine(Transform parent, string text)
+    {
+        var t = NewText("L", parent, 30, FontStyles.Bold, TextAlignmentOptions.Left);
+        t.color = new Color(0.2f, 0.14f, 0.07f); t.text = text; t.raycastTarget = false;
+        t.enableAutoSizing = true; t.fontSizeMin = 12f; t.fontSizeMax = 30f; t.enableWordWrapping = false; t.overflowMode = TextOverflowModes.Ellipsis;
+        Loc.ApplyDir(t);
+        t.gameObject.AddComponent<LayoutElement>().flexibleHeight = 0f;
     }
 
     void AddHomeButton(string label, ref float y, float gap, float bw, float bh, Color tint, System.Action onClick)
     {
-        var b = UiButtons.Build(homeContent, new Vector2(0.5f, 0.5f), new Vector2(0, y), new Vector2(bw, bh), label, null, tint, 36);
+        // Üst-ankraj: y = butonun ÜST kenarı (akış imleci) — sütun tek akışta dizilir (2026-09-15).
+        var b = UiButtons.Build(homeContent, new Vector2(0.5f, 1f), new Vector2(0, y), new Vector2(bw, bh), label, null, tint, 36);
         b.onClick.AddListener(() => onClick());
         y -= gap;
     }
@@ -452,18 +601,76 @@ public class MainMenuController : MonoBehaviour
     void MakeStat(Transform parent, Vector2 pos, Sprite icon, string value, float width = 320f)
     {
         var pill = NewImage("Stat", parent, UiButtons.Rect());
-        pill.type = Image.Type.Simple; pill.color = new Color(1f, 1f, 1f, 0.92f); pill.raycastTarget = false;
+        UiButtons.ApplyFrame(pill, 92f);
+        pill.color = new Color(1f, 1f, 1f, 0.92f); pill.raycastTarget = false;
         Top(pill.rectTransform, pos.x, pos.y, width, 92);
+        CenteredIconValue(pill.transform, icon, value, 58f, 42f, width - 60f);
+    }
+
+    // Rozet içeriği: [ikon][boşluk][değer] — bitişik ve pill'in ORTASINDA (kullanıcı 2026-09-15: ikonla sayı arası
+    // çok açıktı). Yatay layout, tek karakterlik boşluk; değer oto-küçülür → uzun sayı taşmaz.
+    TMP_Text CenteredIconValue(Transform pill, Sprite icon, string value, float iconSize, float fontSize, float maxTextW)
+    {
+        var row = new GameObject("Row", typeof(RectTransform), typeof(HorizontalLayoutGroup));
+        var rrt = (RectTransform)row.transform; rrt.SetParent(pill, false);
+        rrt.anchorMin = Vector2.zero; rrt.anchorMax = Vector2.one; rrt.offsetMin = new Vector2(16, 0); rrt.offsetMax = new Vector2(-16, 0);
+        var hl = row.GetComponent<HorizontalLayoutGroup>();
+        hl.childAlignment = TextAnchor.MiddleCenter; hl.spacing = 10f;   // ≈ bir karakter
+        hl.childControlWidth = true; hl.childControlHeight = true; hl.childForceExpandWidth = false; hl.childForceExpandHeight = false;
         if (icon != null)
         {
-            var ic = NewImage("Ic", pill.transform, icon); ic.preserveAspect = true; ic.raycastTarget = false;
-            var ir = ic.rectTransform; ir.anchorMin = ir.anchorMax = new Vector2(0f, 0.5f); ir.pivot = new Vector2(0f, 0.5f);
-            ir.anchoredPosition = new Vector2(22, 0); ir.sizeDelta = new Vector2(58, 58);
+            var ic = new GameObject("Ic", typeof(RectTransform), typeof(Image), typeof(LayoutElement)); ic.transform.SetParent(rrt, false);
+            var ii = ic.GetComponent<Image>(); ii.sprite = icon; ii.preserveAspect = true; ii.raycastTarget = false;
+            var le = ic.GetComponent<LayoutElement>(); le.preferredWidth = iconSize; le.preferredHeight = iconSize;
         }
-        var t = NewText("V", pill.transform, 42, FontStyles.Bold, TextAlignmentOptions.Center);
-        t.color = new Color(0.2f, 0.14f, 0.07f); t.text = value;
-        t.enableAutoSizing = true; t.fontSizeMin = 18f; t.fontSizeMax = 42f; t.enableWordWrapping = false; t.overflowMode = TextOverflowModes.Ellipsis;
-        var tr = t.rectTransform; Stretch(tr); tr.offsetMin = new Vector2(icon != null ? 84 : 14, 0); tr.offsetMax = new Vector2(-14, 0);
+        var t = NewText("V", rrt, fontSize, FontStyles.Bold, TextAlignmentOptions.Center);
+        t.color = new Color(0.2f, 0.14f, 0.07f); t.text = value; t.raycastTarget = false;
+        t.enableAutoSizing = true; t.fontSizeMin = 16f; t.fontSizeMax = fontSize; t.enableWordWrapping = false; t.overflowMode = TextOverflowModes.Ellipsis;
+        // Metin DOĞAL genişliğinde kalsın (sabit preferredWidth vermek metni pill'e yayıp ikonu sola itiyordu);
+        // sığmazsa layout daraltır, TMP oto-küçültür.
+        var tle = t.gameObject.AddComponent<LayoutElement>(); tle.flexibleWidth = 0f;
+        return t;
+    }
+
+    // Bir güvenli-alan kökünün DOĞRUDAN çocuklarını (pinli köşe butonları HARİÇ) ekranda DİKEY ORTALAR.
+    // İçerik güvenli alandan uzunsa üstü çentiğe/kameraya SOKMAZ (üstte kalır). Oyun + Dünyalar ekranları çağırmaz.
+    void CenterVertically(Transform safeRoot, params Transform[] pinned)
+    {
+        Canvas.ForceUpdateCanvases();
+        var sr = (RectTransform)safeRoot;
+        var pinnedSet = new HashSet<Transform>(pinned);
+        var kids = new List<RectTransform>();
+        float minY = float.MaxValue, maxY = float.MinValue;
+        var wc = new Vector3[4];
+        foreach (Transform ch in safeRoot)
+        {
+            if (!(ch is RectTransform rt) || pinnedSet.Contains(ch)) continue;
+            kids.Add(rt);
+            rt.GetWorldCorners(wc);
+            for (int i = 0; i < 4; i++)
+            {
+                float ly = sr.InverseTransformPoint(wc[i]).y;
+                if (ly < minY) minY = ly;
+                if (ly > maxY) maxY = ly;
+            }
+        }
+        if (kids.Count == 0 || minY > maxY) return;
+        float dy = -(minY + maxY) * 0.5f;                  // içerik merkezini safe-alan merkezine (y=0) taşı
+        float topLimit = sr.rect.height * 0.5f;            // güvenli alanın üst kenarı (pivot merkez)
+        if (maxY + dy > topLimit) dy = topLimit - maxY;    // uzun içerikte üstü kameraya sokma → üstte kal
+        foreach (var rt in kids) rt.anchoredPosition += new Vector2(0f, dy);
+    }
+
+    // Bir kökün çocuklarını hemen HİYERARŞİDEN AYIRIP siler. Destroy kare sonuna ertelenir; aynı karede yapılan
+    // ölçüm (CenterVertically/GetWorldCorners) eski öğeleri de sayıyordu → her yeniden kurulumda kayma (2026-09-15).
+    static void ClearChildren(Transform root)
+    {
+        for (int i = root.childCount - 1; i >= 0; i--)
+        {
+            var c = root.GetChild(i);
+            c.SetParent(null, false);
+            Destroy(c.gameObject);
+        }
     }
 
     // ════════ AYARLAR ════════
@@ -479,7 +686,7 @@ public class MainMenuController : MonoBehaviour
 
     void RefreshSettings()
     {
-        foreach (Transform c in settingsContent) Destroy(c.gameObject);
+        ClearChildren(settingsContent);   // hemen ayır + sil (Destroy gecikmeli → ölçüm eski öğeleri de sayıyordu, dil değişince kayıyordu)
 
         var title = NewText("Title", settingsContent, 64, FontStyles.Bold, TextAlignmentOptions.Center);
         title.text = Loc.T("settings"); title.color = new Color(1f, 0.95f, 0.75f);
@@ -488,10 +695,10 @@ public class MainMenuController : MonoBehaviour
         var x = UiButtons.Build(settingsContent, new Vector2(1f, 1f), new Vector2(-24, -30), new Vector2(92, 92), "X", null, new Color(1f, 0.8f, 0.75f), 44);
         x.onClick.AddListener(ShowHome);
 
-        var nl = NewText("NL", settingsContent, 34, FontStyles.Bold, TextAlignmentOptions.Left);
-        nl.color = new Color(1f, 1f, 1f, 0.92f); nl.text = Loc.T("name"); Top(nl.rectTransform, -270, -150, 300, 54, 0f);
-        var input = MakeInputField(settingsContent, PlayerProfile.Name, new Vector2(0, -202), new Vector2(560, 92));
-        input.onEndEdit.AddListener(v => { PlayerProfile.Name = v; });
+        // İsim GİRİLMİŞSE title-case ile göster; girilmemişse boş → placeholder ("İsim"/"Name") görünür.
+        string shownName = PlayerProfile.NameChosen ? TitleCaseName(PlayerProfile.Name) : "";
+        var input = MakeInputField(settingsContent, shownName, new Vector2(0, -202), new Vector2(560, 92));
+        input.onEndEdit.AddListener(v => { if (!string.IsNullOrWhiteSpace(v)) PlayerProfile.Name = TitleCaseName(v); });
 
         MakeToggle(settingsContent, -320, Loc.T("sfx"), () => AudioManager.SfxOn, v => AudioManager.SfxOn = v);
         MakeToggle(settingsContent, -420, Loc.T("music"), () => AudioManager.MusicOn, v => AudioManager.MusicOn = v);
@@ -509,6 +716,18 @@ public class MainMenuController : MonoBehaviour
         ll.color = new Color(1f, 1f, 1f, 0.92f); ll.text = Loc.T("language"); Top(ll.rectTransform, 0, -800, 400, 54);
         for (int i = 0; i < Langs.Length; i++)
             LangFlag(settingsContent, (i - 3) * 135f, -900, Langs[i].lang, Langs[i].flag);
+
+#if UNITY_ANDROID
+        // Hesap bağlama (Google Play Games) — ilerlemeyi Google hesabına kaydeder (silip-kurunca/cihaz değişince kaybolmaz).
+        MakeAccountRow(settingsContent, -1080, -1160);   // bayrakların altında, biraz daha aşağı (kullanıcı 2026-09-15)
+        if (AccountManager.Instance != null)   // bağlama bitince butonu otomatik "✓ Bağlı" yap
+        {
+            AccountManager.Instance.OnAccountLinked -= RefreshSettings;
+            AccountManager.Instance.OnAccountLinked += RefreshSettings;
+        }
+#endif
+
+        CenterVertically(settingsContent, x.transform);   // dikey ortala (X köşede kalır)
     }
 
     // Desteklenen diller (bayrak + endonim etiket). Sıra Language enum ile aynı.
@@ -572,6 +791,64 @@ public class MainMenuController : MonoBehaviour
         b.onClick.AddListener(() => { set(!get()); RefreshSettings(); });
     }
 
+#if UNITY_ANDROID
+    // Ayarlar'da hesap satırı: bağlı değilse "İlerlemeyi Kaydet" (tıkla → Google Play Games bağla),
+    // bağlıysa "✓ Bağlı" (pasif). Android'e özel (iOS'ta Apple sign-in henüz yok).
+    void MakeAccountRow(Transform parent, float labelY, float btnY)
+    {
+        var lbl = NewText("AccL", parent, 34, FontStyles.Bold, TextAlignmentOptions.Center);
+        lbl.color = new Color(1f, 1f, 1f, 0.92f); lbl.text = Loc.T("account");
+        Top(lbl.rectTransform, 0, labelY, 500, 54);
+
+        bool linked = AccountManager.Instance != null && AccountManager.Instance.IsLinked;
+        var b = UiButtons.Build(parent, new Vector2(0.5f, 1f), new Vector2(0, btnY), new Vector2(560, 100),
+            linked ? Loc.T("account_linked") : Loc.T("save_progress"), null,
+            linked ? new Color(0.65f, 1f, 0.65f) : Color.white, 34);
+        if (linked) b.interactable = false;
+        else b.onClick.AddListener(() => AccountManager.Instance?.LinkCurrentPlatform());
+
+        // Hesap/veri silme (Google Play zorunluluğu) — kırmızı, çift onaylı.
+        var del = UiButtons.Build(parent, new Vector2(0.5f, 1f), new Vector2(0, btnY - 118f), new Vector2(560, 88),   // kaydet butonunun ALTINDA (eskiden +118 → etiketle üst üste biniyordu)
+            Loc.T("deleteAccount"), null, new Color(1f, 0.62f, 0.55f), 30);
+        del.onClick.AddListener(ShowDeleteAccountConfirm);
+    }
+
+    // "Emin misin?" onayı — yanlışlıkla basılıp ilerlemenin uçmasını engeller.
+    void ShowDeleteAccountConfirm()
+    {
+        var panel = NewPanel("DeleteConfirmPanel");
+        var dim = NewImage("Dim", panel.transform, null); Stretch(dim.rectTransform);
+        dim.color = new Color(0.08f, 0.04f, 0.03f, 0.94f); dim.raycastTarget = true;
+        var safe = new GameObject("DelSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(panel.transform, false); Stretch(srt);
+
+        var title = NewText("T", safe.transform, 56, FontStyles.Bold, TextAlignmentOptions.Center);
+        title.text = Loc.T("deleteSure"); title.color = new Color(1f, 0.8f, 0.72f);
+        var tr = title.rectTransform; tr.anchorMin = tr.anchorMax = new Vector2(0.5f, 0.5f); tr.pivot = new Vector2(0.5f, 0.5f);
+        tr.anchoredPosition = new Vector2(0, 230); tr.sizeDelta = new Vector2(800, 90);
+
+        var body = NewText("B", safe.transform, 34, FontStyles.Normal, TextAlignmentOptions.Center);
+        body.text = Loc.T("deleteWarn"); body.color = new Color(1f, 1f, 1f, 0.92f);
+        var br = body.rectTransform; br.anchorMin = br.anchorMax = new Vector2(0.5f, 0.5f); br.pivot = new Vector2(0.5f, 0.5f);
+        br.anchoredPosition = new Vector2(0, 40); br.sizeDelta = new Vector2(860, 300);
+
+        var yes = UiButtons.Build(safe.transform, new Vector2(0.5f, 0.5f), new Vector2(0, -180), new Vector2(520, 110),
+            Loc.T("deleteYes"), null, new Color(1f, 0.55f, 0.48f), 38);
+        yes.onClick.AddListener(async () =>
+        {
+            yes.interactable = false;
+            bool ok = AccountManager.Instance != null && await AccountManager.Instance.DeleteAccountAndDataAsync();
+            Destroy(panel);
+            Toast(Loc.T(ok ? "deleteDone" : "deleteFail"));
+            if (ok) { RefreshHome(); ShowHome(); }   // temiz başlangıç: Home'a dön, değerler sıfırlanmış
+        });
+
+        var no = UiButtons.Build(safe.transform, new Vector2(0.5f, 0.5f), new Vector2(0, -320), new Vector2(520, 110),
+            Loc.T("cancel"), null, new Color(0.9f, 1f, 0.9f), 38);
+        no.onClick.AddListener(() => Destroy(panel));
+    }
+#endif
+
     // ════════ İSİM GİRME + SATIN AL + TOAST ════════
     // İlk açılış DİL SEÇİMİ: "Türkçe" (TR bayrağı) + "English" (US bayrağı). Yazı ya da bayrağa basınca dil seçilir,
     // tüm ekran o dile döner; sonra (isim seçilmemişse) isim ekranı gelir.
@@ -590,6 +867,8 @@ public class MainMenuController : MonoBehaviour
 
         float y = 360f;
         foreach (var L in Langs) { LangPick(safe.transform, y, L.lang, L.flag, L.label, panel); y -= 112f; }
+
+        CenterVertically(safe.transform);   // dikey ortala
     }
 
     void LangPick(Transform parent, float y, Language lang, string flagRes, string label, GameObject panel)
@@ -624,6 +903,8 @@ public class MainMenuController : MonoBehaviour
         var ok = UiButtons.Build(safe.transform, new Vector2(0.5f, 0.5f), new Vector2(0, -120), new Vector2(360, 120),
             Loc.T("ok"), UiButtons.Play(), new Color(0.85f, 1f, 0.85f), 44);
         ok.onClick.AddListener(() => { PlayerProfile.Name = input.text; Destroy(panel); RefreshHome(); });
+
+        CenterVertically(safe.transform);   // dikey ortala
     }
 
     // ── REKLAMLARI KALDIR (ayrı ekran: ücret + satın al) ──
@@ -644,7 +925,7 @@ public class MainMenuController : MonoBehaviour
         dr.anchoredPosition = new Vector2(0, 160); dr.sizeDelta = new Vector2(840, 160);
 
         var price = NewText("Price", safe.transform, 72, FontStyles.Bold, TextAlignmentOptions.Center);
-        price.text = "₺49,99"; price.color = new Color(1f, 0.9f, 0.35f);
+        price.text = IapService.Instance?.GetPrice(IapService.NoAdsId) ?? "₺49,99"; price.color = new Color(1f, 0.9f, 0.35f);
         var pr = price.rectTransform; pr.anchorMin = pr.anchorMax = new Vector2(0.5f, 0.5f); pr.pivot = new Vector2(0.5f, 0.5f);
         pr.anchoredPosition = new Vector2(0, 20); pr.sizeDelta = new Vector2(600, 100);
 
@@ -652,12 +933,186 @@ public class MainMenuController : MonoBehaviour
             Loc.T("buy"), UiButtons.Power(), new Color(0.85f, 1f, 0.85f), 46);
         buy.onClick.AddListener(() =>
         {
-            Toast(Loc.T("redirectPay"));
-            Store.RemoveAds(ok => { if (ok) { Toast(Loc.T("adsRemoved")); Destroy(panel); RefreshHome(); } });
+            if (IapService.Instance == null || !IapService.Instance.IsReady) { ToastUI.Show(Loc.T("storeUnavailable"), null, ToastUI.Style.Error); return; }
+            Store.RemoveAds(ok => { if (ok) { ToastUI.Show(Loc.T("adsRemoved"), null, ToastUI.Style.Success); Destroy(panel); RefreshHome(); } });
         });
 
         var x = UiButtons.Build(safe.transform, new Vector2(1f, 1f), new Vector2(-24, -30), new Vector2(92, 92), "X", null, new Color(1f, 0.8f, 0.75f), 44);
         x.onClick.AddListener(() => Destroy(panel));
+
+        CenterVertically(safe.transform, x.transform);   // dikey ortala (X köşede kalır)
+    }
+
+    // ════════ CAN YOK PANELİ ════════
+    // Oyuncu cansızken level'a basınca açılır. Fail ekranıyla AYNI fiyat/akış: reklam → +1 can, coin → +1 can.
+    // Coin bakiyesi görünür; kazanım animasyonla gösterilir; Vazgeç ile kapanır.
+    void ShowNoLivesPanel()
+    {
+        var panel = NewPanel("NoLivesPanel");
+        var dim = NewImage("Dim", panel.transform, null); Stretch(dim.rectTransform);
+        dim.color = new Color(0.08f, 0.05f, 0.05f, 0.93f); dim.raycastTarget = true;
+        var safe = new GameObject("NLSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(panel.transform, false); Stretch(srt);
+        var C = safe.transform;
+
+        var title = NewText("T", C, 60, FontStyles.Bold, TextAlignmentOptions.Center);
+        title.text = Loc.T("noLivesTitle"); title.color = new Color(1f, 0.82f, 0.75f);
+        Mid(title.rectTransform, 0, 430, 840, 90);
+
+        // Boş kalpler — durumu tek bakışta anlatır
+        var hearts = new GameObject("Hearts", typeof(RectTransform));
+        var hrt = (RectTransform)hearts.transform; hrt.SetParent(C, false);
+        hrt.anchorMin = hrt.anchorMax = hrt.pivot = new Vector2(0.5f, 0.5f);
+        hrt.anchoredPosition = new Vector2(0, 300); hrt.sizeDelta = new Vector2(560, 90);
+        var heartImgs = new Image[LivesManager.MaxLives];
+        for (int i = 0; i < LivesManager.MaxLives; i++)
+        {
+            var h = NewImage("H" + i, hrt, HeartArt.Empty());
+            h.preserveAspect = true; h.raycastTarget = false;
+            var r = h.rectTransform; r.anchorMin = r.anchorMax = r.pivot = new Vector2(0.5f, 0.5f);
+            r.anchoredPosition = new Vector2((i - (LivesManager.MaxLives - 1) * 0.5f) * 96f, 0);
+            r.sizeDelta = new Vector2(78, 78);
+            heartImgs[i] = h;
+        }
+
+        var body = NewText("B", C, 34, FontStyles.Normal, TextAlignmentOptions.Center);
+        body.text = Loc.T("noLivesBody"); body.color = new Color(1f, 1f, 1f, 0.9f);
+        Mid(body.rectTransform, 0, 170, 860, 130);
+
+        // Geri sayım (sonraki can ne zaman) — canlı güncellenir
+        var timer = NewText("Timer", C, 32, FontStyles.Bold, TextAlignmentOptions.Center);
+        timer.color = new Color(1f, 0.95f, 0.7f, 0.95f);
+        Mid(timer.rectTransform, 0, 70, 700, 56);
+
+        // Coin bakiyesi
+        var coinRow = NewText("Coins", C, 38, FontStyles.Bold, TextAlignmentOptions.Center);
+        coinRow.color = new Color(1f, 0.9f, 0.45f);
+        Mid(coinRow.rectTransform, 0, -10, 700, 60);
+
+        var am = AdManager.Instance;
+        bool adReady = am != null && am.RewardedReady;
+        int cost = Economy.RefillLifeCost;
+
+        // İki buton da AYNI şeyi verir (+1 can); fark yalnızca ÖDEME YOLU. Bu yüzden etiketler simetrik:
+        // sol taraf "nasıl ödediğin" (reklam / coin), sağ taraf hep "+1 CAN" (kullanıcı 2026-08-23: "kafa karıştırıyor").
+        string gain = Loc.T("lifeGained");   // "+1 CAN"
+
+        var adBtn = UiButtons.Build(C, new Vector2(0.5f, 0.5f), new Vector2(0, -140), new Vector2(620, 116),
+            $"{Loc.T("watchAd")}   →   {gain}", UiButtons.Video(), new Color(0.85f, 1f, 0.85f), 34, true);
+        var adLbl = adBtn.GetComponentInChildren<TMP_Text>();
+        adBtn.interactable = adReady;
+        if (!adReady) adLbl.text = Loc.T("adFailed");
+
+        var coinBtn = UiButtons.Build(C, new Vector2(0.5f, 0.5f), new Vector2(0, -290), new Vector2(620, 116),
+            $"{cost}   →   {gain}", UiButtons.Coin(), new Color(1f, 0.9f, 0.5f), 34, true);
+        var coinLbl = coinBtn.GetComponentInChildren<TMP_Text>();
+
+        var cancel = UiButtons.Build(C, new Vector2(0.5f, 0.5f), new Vector2(0, -440), new Vector2(620, 106),
+            Loc.T("cancel"), null, new Color(1f, 1f, 1f, 0.85f), 36);
+        cancel.onClick.AddListener(() => Destroy(panel));
+
+        // Ortak tazeleme: kalpler, coin bakiyesi, buton durumları, geri sayım
+        System.Action refresh = () =>
+        {
+            var lm = LivesManager.Instance;
+            int lives = lm != null ? lm.Lives : 0;
+            for (int i = 0; i < heartImgs.Length; i++)
+                if (heartImgs[i] != null) heartImgs[i].sprite = i < lives ? HeartArt.Full() : HeartArt.Empty();
+            coinRow.text = Loc.T("coins") + " " + PlayerProfile.Coins;
+            bool afford = PlayerProfile.CanAfford(cost);
+            coinBtn.interactable = afford;
+            coinLbl.color = afford ? new Color(0.2f, 0.15f, 0.05f) : new Color(0.45f, 0.4f, 0.35f);
+        };
+        refresh();
+
+        // Can kazanınca: animasyon + tazele; can varsa paneli kapat (oyuncu tekrar basıp oynasın)
+        System.Action<int> onGained = n =>
+        {
+            LivesManager.Instance?.AddLife(n);
+            CloudSyncService.Instance?.FlushNow();
+            refresh();
+            AudioManager.Instance?.PlayUiClick();
+            StartCoroutine(LifeGainedAnim(C, () => { if (panel != null) Destroy(panel); }));
+        };
+
+        adBtn.onClick.AddListener(() =>
+        {
+            var a = AdManager.Instance;
+            if (a == null || !a.RewardedReady) { adLbl.text = Loc.T("adFailed"); adBtn.interactable = false; return; }
+            adBtn.interactable = false; adLbl.text = Loc.T("adLoading");
+            a.ShowRewarded("no_lives_refill",
+                onReward: () => onGained(1),
+                onUnavailable: () => { adLbl.text = Loc.T("adFailed"); });
+        });
+
+        coinBtn.onClick.AddListener(() =>
+        {
+            if (!PlayerProfile.TrySpendCoins(cost)) { ToastUI.Show(Loc.T("notEnoughCoins"), null, ToastUI.Style.Error); refresh(); return; }
+            onGained(1);
+        });
+
+        StartCoroutine(NoLivesTicker(panel, timer, refresh));
+    }
+
+    // Geri sayımı canlı tutar (sonraki can) + panel açıkken bakiye/kalp durumunu tazeler.
+    System.Collections.IEnumerator NoLivesTicker(GameObject panel, TMP_Text timer, System.Action refresh)
+    {
+        while (panel != null)
+        {
+            var lm = LivesManager.Instance;
+            if (lm != null && !lm.IsFull)
+            {
+                int s = Mathf.Max(0, lm.SecondsToNextLife());
+                timer.text = $"{Loc.T("nextLifeIn")} {s / 60:00}:{s % 60:00}";
+            }
+            else timer.text = "";
+            refresh();
+            yield return new WaitForSecondsRealtime(1f);
+        }
+    }
+
+    // "+1 CAN" — merkezden büyüyerek belirir, yukarı süzülüp kaybolur; sonra onDone (paneli kapat).
+    System.Collections.IEnumerator LifeGainedAnim(Transform parent, System.Action onDone)
+    {
+        var go = new GameObject("LifeGained", typeof(RectTransform), typeof(CanvasGroup));
+        var rt = (RectTransform)go.transform; rt.SetParent(parent, false);
+        rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(0, 300); rt.sizeDelta = new Vector2(600, 220);
+        var cg = go.GetComponent<CanvasGroup>();
+
+        var heart = NewImage("H", rt, HeartArt.Full());
+        heart.preserveAspect = true; heart.raycastTarget = false;
+        var hr = heart.rectTransform; hr.anchorMin = hr.anchorMax = hr.pivot = new Vector2(0.5f, 0.5f);
+        hr.anchoredPosition = new Vector2(0, 40); hr.sizeDelta = new Vector2(130, 130);
+
+        var txt = NewText("T", rt, 56, FontStyles.Bold, TextAlignmentOptions.Center);
+        txt.text = Loc.T("lifeGained"); txt.color = new Color(1f, 0.55f, 0.55f);
+        var tr = txt.rectTransform; tr.anchorMin = tr.anchorMax = tr.pivot = new Vector2(0.5f, 0.5f);
+        tr.anchoredPosition = new Vector2(0, -70); tr.sizeDelta = new Vector2(560, 80);
+
+        // ⚠️ Ödüllü reklamdan dönerken ilk karenin unscaledDeltaTime'ı devasa olur (uygulama duraklamıştı) →
+        // sınırlanmazsa animasyon tek karede biter ve hiç görünmez. Kare başına tavan koy + dönüş karesini yut.
+        yield return null;
+        float t = 0f;
+        while (t < 1.15f)
+        {
+            t += Mathf.Min(Time.unscaledDeltaTime, 0.05f);
+            float pop = t < 0.28f ? Mathf.SmoothStep(0.4f, 1.18f, t / 0.28f)
+                      : t < 0.42f ? Mathf.Lerp(1.18f, 1f, (t - 0.28f) / 0.14f) : 1f;
+            rt.localScale = Vector3.one * pop;
+            rt.anchoredPosition = new Vector2(0, 300 + Mathf.Max(0f, t - 0.5f) * 150f);
+            cg.alpha = t < 0.8f ? 1f : 1f - (t - 0.8f) / 0.35f;
+            yield return null;
+        }
+        if (go != null) Destroy(go);
+        onDone?.Invoke();
+    }
+
+    // Ekran ortasına göre konumlandırma yardımcısı (panel içi öğeler).
+    static void Mid(RectTransform rt, float x, float y, float w, float h)
+    {
+        rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = new Vector2(x, y); rt.sizeDelta = new Vector2(w, h);
     }
 
     // ── MAĞAZA (paketler: coin + güç-up karışımı, fiyatlı; seç → ödeme) ──
@@ -671,85 +1126,213 @@ public class MainMenuController : MonoBehaviour
 
         var title = NewText("Title", safe.transform, 58, FontStyles.Bold, TextAlignmentOptions.Center);
         title.text = Loc.T("store"); title.color = new Color(1f, 0.95f, 0.75f); Top(title.rectTransform, 0, -40, 600, 84);
-        var coins = NewText("Coins", safe.transform, 34, FontStyles.Bold, TextAlignmentOptions.Center);
-        coins.color = new Color(1f, 0.9f, 0.4f); coins.text = Loc.T("coins") + " " + PlayerProfile.Coins; Top(coins.rectTransform, 0, -130, 600, 50);
-        System.Action refresh = () => coins.text = Loc.T("coins") + " " + PlayerProfile.Coins;
+
+        var coinBadge = MakeCoinBadge(safe.transform);   // sol-üst coin rozeti (otomatik güncellenir)
+        var free = UiButtons.Build(safe.transform, new Vector2(0.5f, 1f), new Vector2(0, -140), new Vector2(460, 92),
+            Loc.T("freeCoins"), UiButtons.Video(), new Color(1f, 0.92f, 0.6f), 34, true);
+        free.onClick.AddListener(WatchAdForCoins);
 
         string coin = Loc.En ? "Coins" : "Coin";
-        string PU(PowerUpType t) => Loc.PowerName(t);
-        float y = -200f;
-        StoreCard(safe.transform, Loc.T("pkStarter"), $"500 {coin} + 2 {PU(PowerUpType.Speed)}", "₺9,99", ref y,
-            () => Buy(Loc.T("pkStarter"), 500, new[] { (PowerUpType.Speed, 2) }, refresh));
-        StoreCard(safe.transform, Loc.T("pkCoinBag"), $"1500 {coin}", "₺14,99", ref y,
-            () => Buy(Loc.T("pkCoinBag"), 1500, null, refresh));
-        StoreCard(safe.transform, Loc.T("pkMagnet"), $"1000 {coin} + 5 {PU(PowerUpType.Magnet)}", "₺19,99", ref y,
-            () => Buy(Loc.T("pkMagnet"), 1000, new[] { (PowerUpType.Magnet, 5) }, refresh));
-        StoreCard(safe.transform, Loc.T("pkSuper"), $"2500 {coin} + 3 {PU(PowerUpType.SizeBurst)} + 1 {PU(PowerUpType.Super)}", "₺29,99", ref y,
-            () => Buy(Loc.T("pkSuper"), 2500, new[] { (PowerUpType.SizeBurst, 3), (PowerUpType.Super, 1) }, refresh));
-        StoreCard(safe.transform, Loc.T("pkSuper3"), $"3 {PU(PowerUpType.Super)}", "₺24,99", ref y,
-            () => Buy(Loc.T("pkSuper3"), 0, new[] { (PowerUpType.Super, 3) }, refresh));
+        float y = -260f;
+        foreach (var p in IapService.Packs)
+        {
+            if (p.noAds) continue;   // Reklamsız ayrı ekranda (ShowNoAds)
+            var pk = p;   // closure için sabitle
+            string price = IapService.Instance?.GetPrice(pk.id) ?? Loc.Price(pk.priceTier);   // gerçek fiyat yoksa placeholder
+            StoreCard(safe.transform, Loc.T(pk.locKey), PackContents(pk, coin), price, ref y,
+                () => Buy(Loc.T(pk.locKey), pk.id));
+        }
 
         var x = UiButtons.Build(safe.transform, new Vector2(1f, 1f), new Vector2(-24, -30), new Vector2(92, 92), "X", null, new Color(1f, 0.8f, 0.75f), 44);
         x.onClick.AddListener(() => Destroy(panel));
+
+        CenterVertically(safe.transform, x.transform, coinBadge);   // dikey ortala (X + coin rozeti köşede kalır)
     }
 
     void StoreCard(Transform parent, string name, string contents, string price, ref float y, System.Action onBuy)
     {
         var go = new GameObject("Pack_" + name, typeof(RectTransform), typeof(Image), typeof(Button));
-        var rt = (RectTransform)go.transform; rt.SetParent(parent, false); Top(rt, 0, y, 760, 150);
-        var img = go.GetComponent<Image>(); img.sprite = UiButtons.Rect(); img.type = Image.Type.Simple; img.color = new Color(1f, 0.97f, 0.85f);
+        var rt = (RectTransform)go.transform; rt.SetParent(parent, false); Top(rt, 0, y, 780, 196);   // daha yüksek kart
+        var img = go.GetComponent<Image>(); UiButtons.ApplyFrame(img, 196f); img.color = new Color(1f, 0.97f, 0.85f);
 
-        var nameT = NewText("N", rt, 40, FontStyles.Bold, TextAlignmentOptions.Left);
+        // Ad (üst-sol): padding + otomatik küçülme (taşma yok)
+        var nameT = NewText("N", rt, 40, FontStyles.Bold, TextAlignmentOptions.BottomLeft);
         nameT.color = new Color(0.2f, 0.14f, 0.07f); nameT.text = name;
-        var nr = nameT.rectTransform; nr.anchorMin = new Vector2(0, 0.5f); nr.anchorMax = new Vector2(0.62f, 1f); nr.offsetMin = new Vector2(28, 0); nr.offsetMax = new Vector2(0, -8);
-        var contT = NewText("C", rt, 28, FontStyles.Normal, TextAlignmentOptions.Left);
+        nameT.enableAutoSizing = true; nameT.fontSizeMin = 22f; nameT.fontSizeMax = 40f; nameT.enableWordWrapping = false; nameT.overflowMode = TextOverflowModes.Ellipsis;
+        var nr = nameT.rectTransform; nr.anchorMin = new Vector2(0, 0.5f); nr.anchorMax = new Vector2(0.62f, 1f); nr.offsetMin = new Vector2(56, 4); nr.offsetMax = new Vector2(-8, -18);
+        // İçerik (alt-sol): 2 satıra sarabilir + padding
+        var contT = NewText("C", rt, 28, FontStyles.Normal, TextAlignmentOptions.TopLeft);
         contT.color = new Color(0.35f, 0.28f, 0.18f); contT.text = contents;
-        var cr = contT.rectTransform; cr.anchorMin = new Vector2(0, 0f); cr.anchorMax = new Vector2(0.72f, 0.5f); cr.offsetMin = new Vector2(28, 10); cr.offsetMax = new Vector2(0, 0);
+        contT.enableAutoSizing = true; contT.fontSizeMin = 18f; contT.fontSizeMax = 28f; contT.enableWordWrapping = true; contT.overflowMode = TextOverflowModes.Ellipsis;
+        var cr = contT.rectTransform; cr.anchorMin = new Vector2(0, 0f); cr.anchorMax = new Vector2(0.64f, 0.5f); cr.offsetMin = new Vector2(56, 18); cr.offsetMax = new Vector2(-8, -4);
+        // Fiyat (sağ, dikey ortalı): padding + otomatik küçülme
         var priceT = NewText("P", rt, 44, FontStyles.Bold, TextAlignmentOptions.Right);
         priceT.color = new Color(0.15f, 0.55f, 0.2f); priceT.text = price;
-        var pr = priceT.rectTransform; pr.anchorMin = new Vector2(0.6f, 0f); pr.anchorMax = new Vector2(1f, 1f); pr.offsetMin = new Vector2(0, 0); pr.offsetMax = new Vector2(-28, 0);
+        priceT.enableAutoSizing = true; priceT.fontSizeMin = 26f; priceT.fontSizeMax = 44f; priceT.enableWordWrapping = false; priceT.overflowMode = TextOverflowModes.Ellipsis;
+        var pr = priceT.rectTransform; pr.anchorMin = new Vector2(0.64f, 0f); pr.anchorMax = new Vector2(1f, 1f); pr.offsetMin = new Vector2(6, 12); pr.offsetMax = new Vector2(-56, -12);
 
         var btn = go.GetComponent<Button>(); btn.transition = Selectable.Transition.None;
         btn.onClick.AddListener(() => { AudioManager.Instance?.PlayUiClick(); onBuy(); });
-        y -= 172f;
+        y -= 218f;   // kart yüksekliği + boşluk
     }
 
-    void Buy(string name, int coins, (PowerUpType, int)[] powers, System.Action refresh)
+    void Buy(string name, string productId)
     {
-        Toast(Loc.T("redirectPay"));
-        Store.Purchase(coins, powers, ok =>
+        // IAP hazır değilse (ürünler mağazada yok / Play'den kurulmamış / çevrimdışı) SESSİZ kalma — kullanıcıya söyle.
+        if (IapService.Instance == null || !IapService.Instance.IsReady) { ToastUI.Show(Loc.T("storeUnavailable"), null, ToastUI.Style.Error); return; }
+        Store.Buy(productId, ok =>
         {
-            if (!ok) return;
-            Toast(Loc.T("purchased") + " " + name);
-            refresh?.Invoke();
+            if (ok) ToastUI.Show(Loc.T("purchased") + " " + name, null, ToastUI.Style.Success);   // ok=false → kullanıcı iptal etti; sessiz kalmak doğru
         });
     }
 
-    void Toast(string msg)
+    // Paket içeriğini (coin + güç-up'lar) yerelleştirilmiş metne çevirir (katalog = tek kaynak, IapService.Packs).
+    string PackContents(IapService.Pack p, string coin)
     {
-        var go = new GameObject("Toast", typeof(RectTransform), typeof(Image), typeof(CanvasGroup));
-        var rt = (RectTransform)go.transform; rt.SetParent(canvas.transform, false);
-        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f); rt.pivot = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = new Vector2(0, -520); rt.sizeDelta = new Vector2(760, 96);
-        var img = go.GetComponent<Image>(); img.sprite = UiButtons.Rect(); img.type = Image.Type.Simple; img.color = new Color(0.12f, 0.1f, 0.08f, 0.96f); img.raycastTarget = false;
-        var t = NewText("T", rt, 36, FontStyles.Bold, TextAlignmentOptions.Center); t.color = new Color(1f, 0.95f, 0.8f); t.text = msg; Stretch(t.rectTransform);
-        StartCoroutine(ToastRoutine(go.GetComponent<CanvasGroup>(), go));
+        var parts = new System.Collections.Generic.List<string>();
+        if (p.coins > 0) parts.Add($"{p.coins} {coin}");
+        if (p.powers != null) foreach (var (t, a) in p.powers) parts.Add($"{a} {Loc.PowerName(t)}");
+        return string.Join(" + ", parts);
     }
 
-    IEnumerator ToastRoutine(CanvasGroup cg, GameObject go)
+    // ════════ GÜÇLER MAĞAZASI (powerup'ı COIN veya REKLAM ile al) ════════
+    // 4 sütun: üstte powerup ikonu + sahip olunan miktar (×N); altında [coin fiyatı] + [reklam] butonu.
+    // Satın alınca / reklam ödülünde: uçan ikon miktar yazısına gider → sayı artar (pop).
+    static readonly PowerUpType[] ShopPowers = { PowerUpType.Speed, PowerUpType.Magnet, PowerUpType.SizeBurst, PowerUpType.Super };
+    Dictionary<PowerUpType, TMP_Text> _invCounts;
+    Dictionary<PowerUpType, RectTransform> _invSlots;
+
+    void ShowPowerupShop()
     {
-        cg.alpha = 0f;
-        float t = 0f; while (t < 0.2f) { t += Time.deltaTime; cg.alpha = t / 0.2f; yield return null; }
-        cg.alpha = 1f; yield return new WaitForSeconds(1.4f);
-        t = 0f; while (t < 0.4f) { t += Time.deltaTime; cg.alpha = 1f - t / 0.4f; yield return null; }
-        Destroy(go);
+        _invCounts = new Dictionary<PowerUpType, TMP_Text>();
+        _invSlots = new Dictionary<PowerUpType, RectTransform>();
+
+        var panel = NewPanel("PowerupShop");
+        var dim = NewImage("Dim", panel.transform, null); Stretch(dim.rectTransform);
+        dim.color = new Color(0.08f, 0.06f, 0.05f, 0.92f); dim.raycastTarget = true;
+        var safe = new GameObject("PShopSafe", typeof(RectTransform), typeof(SafeArea));
+        var srt = (RectTransform)safe.transform; srt.SetParent(panel.transform, false); Stretch(srt);
+
+        var title = NewText("Title", safe.transform, 58, FontStyles.Bold, TextAlignmentOptions.Center);
+        title.text = Loc.T("powerupsTitle"); title.color = new Color(1f, 0.95f, 0.75f); Top(title.rectTransform, 0, -40, 600, 84);
+
+        var coinBadge = MakeCoinBadge(safe.transform);
+
+        var free = UiButtons.Build(safe.transform, new Vector2(0.5f, 1f), new Vector2(0, -150), new Vector2(460, 92),
+            Loc.T("freeCoins"), UiButtons.Video(), new Color(1f, 0.92f, 0.6f), 34, true);
+        free.onClick.AddListener(WatchAdForCoins);
+
+        float[] xs = { -330f, -110f, 110f, 330f };
+        for (int i = 0; i < ShopPowers.Length; i++) PowerupColumn(safe.transform, ShopPowers[i], xs[i]);
+
+        var x = UiButtons.Build(safe.transform, new Vector2(1f, 1f), new Vector2(-24, -30), new Vector2(92, 92), "X", null, new Color(1f, 0.8f, 0.75f), 44);
+        x.onClick.AddListener(() => Destroy(panel));
+
+        CenterVertically(safe.transform, x.transform, coinBadge);
     }
+
+    // Bir powerup sütunu: ikon + ×miktar + coin-fiyat butonu + reklam butonu.
+    void PowerupColumn(Transform parent, PowerUpType t, float x)
+    {
+        var ic = NewImage("PU_" + t, parent, PowerUpIcons.Get(t)); ic.preserveAspect = true; ic.raycastTarget = false;
+        var ir = ic.rectTransform; ir.anchorMin = ir.anchorMax = new Vector2(0.5f, 1f); ir.pivot = new Vector2(0.5f, 1f);
+        ir.anchoredPosition = new Vector2(x, -250); ir.sizeDelta = new Vector2(130, 130);
+
+        var cnt = NewText("Cnt_" + t, parent, 42, FontStyles.Bold, TextAlignmentOptions.Center);
+        cnt.color = new Color(1f, 0.95f, 0.7f); cnt.text = "×" + PowerUpInventory.Count(t);
+        var cr = cnt.rectTransform; cr.anchorMin = cr.anchorMax = new Vector2(0.5f, 1f); cr.pivot = new Vector2(0.5f, 1f);
+        cr.anchoredPosition = new Vector2(x, -392); cr.sizeDelta = new Vector2(200, 54);
+        _invCounts[t] = cnt; _invSlots[t] = cr;
+
+        var coinBtn = UiButtons.Build(parent, new Vector2(0.5f, 1f), new Vector2(x, -452), new Vector2(200, 88),
+            Economy.PowerupCost(t).ToString(), UiButtons.Coin(), new Color(1f, 0.9f, 0.5f), 34, true);
+        var crt = (RectTransform)coinBtn.transform;
+        coinBtn.onClick.AddListener(() => BuyPowerupWithCoins(t, crt));
+
+        var adBtn = UiButtons.Build(parent, new Vector2(0.5f, 1f), new Vector2(x, -548), new Vector2(200, 88),
+            "", UiButtons.Video(), new Color(0.72f, 0.86f, 1f), 32, true);
+        var art = (RectTransform)adBtn.transform;
+        adBtn.onClick.AddListener(() => WatchAdForPowerup(t, art));
+    }
+
+    // ── Ekonomi aksiyonları (coin / reklam) ──
+    void WatchAdForCoins()
+    {
+        var am = AdManager.Instance;
+        if (am == null || !am.RewardedReady) { ToastUI.Show(Loc.T("adFailed"), null, ToastUI.Style.Error); return; }
+        am.ShowRewarded("free_coins",
+            onReward: () => { PlayerProfile.AddCoins(Economy.FreeCoinsPerAd); ToastUI.Show("+" + Economy.FreeCoinsPerAd, UiButtons.Coin(), ToastUI.Style.Reward); },
+            onUnavailable: () => ToastUI.Show(Loc.T("adFailed"), null, ToastUI.Style.Error));
+    }
+
+    void BuyPowerupWithCoins(PowerUpType t, RectTransform from)
+    {
+        if (!PlayerProfile.TrySpendCoins(Economy.PowerupCost(t))) { ToastUI.Show(Loc.T("notEnoughCoins"), null, ToastUI.Style.Error); return; }
+        PowerUpInventory.Add(t, 1);
+        CloudSyncService.Instance?.FlushNow();
+        StartCoroutine(FlyPowerupToSlot(t, from));
+    }
+
+    void WatchAdForPowerup(PowerUpType t, RectTransform from)
+    {
+        var am = AdManager.Instance;
+        if (am == null || !am.RewardedReady) { ToastUI.Show(Loc.T("adFailed"), null, ToastUI.Style.Error); return; }
+        am.ShowRewarded("pu_" + t,
+            onReward: () => { PowerUpInventory.Add(t, 1); CloudSyncService.Instance?.FlushNow(); StartCoroutine(FlyPowerupToSlot(t, from)); },
+            onUnavailable: () => ToastUI.Show(Loc.T("adFailed"), null, ToastUI.Style.Error));
+    }
+
+    // Kazanılan powerup ikonu 'from' butonundan ×miktar yazısına uçar → sayıyı günceller + pop.
+    IEnumerator FlyPowerupToSlot(PowerUpType t, RectTransform from)
+    {
+        if (_invSlots == null || !_invSlots.TryGetValue(t, out var slot) || slot == null || from == null) { UpdateInvCount(t); yield break; }
+        var go = new GameObject("Fly", typeof(RectTransform), typeof(Image));
+        var fr = (RectTransform)go.transform; fr.SetParent(slot.parent, false);
+        var img = go.GetComponent<Image>(); img.sprite = PowerUpIcons.Get(t); img.preserveAspect = true; img.raycastTarget = false;
+        fr.position = from.position; fr.sizeDelta = new Vector2(110, 110);
+        Vector3 p0 = fr.position, target = slot.position; float dur = 0.5f, tt = 0f;
+        while (tt < dur)
+        {
+            tt += Time.unscaledDeltaTime; float k = Mathf.SmoothStep(0f, 1f, tt / dur);
+            fr.position = Vector3.Lerp(p0, target, k); fr.localScale = Vector3.one * Mathf.Lerp(1.3f, 0.6f, k);
+            yield return null;
+        }
+        Destroy(go);
+        UpdateInvCount(t);
+        yield return PulseRect(slot);
+    }
+
+    void UpdateInvCount(PowerUpType t)
+    {
+        if (_invCounts != null && _invCounts.TryGetValue(t, out var c) && c != null) c.text = "×" + PowerUpInventory.Count(t);
+    }
+
+    IEnumerator PulseRect(RectTransform rt)
+    {
+        float dur = 0.3f, tt = 0f;
+        while (tt < dur) { tt += Time.unscaledDeltaTime; float k = tt / dur; if (rt != null) rt.localScale = Vector3.one * (1f + 0.4f * Mathf.Sin(k * Mathf.PI)); yield return null; }
+        if (rt != null) rt.localScale = Vector3.one;
+    }
+
+    // Bildirimler ortak bileşende (ToastUI) — tüm ekranlarda aynı görünüm/animasyon.
+    void Toast(string msg) => ToastUI.Show(msg);
 
     // Üst-ankraj yerleştirme kısayolu (pivot varsayılan üst-orta; px=0 → sol-hizalı pivot).
     static void Top(RectTransform rt, float x, float y, float w, float h, float px = 0.5f)
     {
         rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 1f); rt.pivot = new Vector2(px, 1f);
         rt.anchoredPosition = new Vector2(x, y); rt.sizeDelta = new Vector2(w, h);
+    }
+
+    // Her kelimenin baş harfi büyük (title-case), kalanı küçük. Türkçe'de i/İ doğru olsun diye tr-TR culture'ı;
+    // diğer dillerde invariant (ALL-CAPS'i de normalleştirmek için önce küçült).
+    static string TitleCaseName(string s)
+    {
+        if (string.IsNullOrWhiteSpace(s)) return "";
+        var ci = Loc.Current == Language.Turkish
+            ? new System.Globalization.CultureInfo("tr-TR")
+            : System.Globalization.CultureInfo.InvariantCulture;
+        return ci.TextInfo.ToTitleCase(s.Trim().ToLower(ci));
     }
 
     TMP_InputField MakeInputField(Transform parent, string initial, Vector2 pos, Vector2 size, bool center = false)
@@ -760,7 +1343,7 @@ public class MainMenuController : MonoBehaviour
         rt.anchorMin = rt.anchorMax = center ? new Vector2(0.5f, 0.5f) : new Vector2(0.5f, 1f);
         rt.pivot = center ? new Vector2(0.5f, 0.5f) : new Vector2(0.5f, 1f);
         rt.anchoredPosition = pos; rt.sizeDelta = size;
-        var bg = go.GetComponent<Image>(); bg.sprite = UiButtons.Rect(); bg.type = Image.Type.Simple; bg.color = Color.white; bg.raycastTarget = true;
+        var bg = go.GetComponent<Image>(); UiButtons.ApplyFrame(bg, size.y); bg.color = Color.white; bg.raycastTarget = true;
 
         var input = go.AddComponent<TMP_InputField>();
         var ta = new GameObject("TextArea", typeof(RectTransform), typeof(RectMask2D));
@@ -775,6 +1358,13 @@ public class MainMenuController : MonoBehaviour
         input.textViewport = tart; input.textComponent = txt; input.placeholder = ph;
         input.characterLimit = 16; input.lineType = TMP_InputField.LineType.SingleLine;
         input.text = initial;
+
+        // İSİM ALANI kullanıcı içeriği taşır: Latin bir ad ("Onur") Arapça arayüzde bile SOLDAN-SAĞA yazılmalı.
+        // Yönü metnin kendisine göre belirle ve yazdıkça güncelle (kullanıcı 2026-08-23).
+        Loc.ApplyDir(txt);
+        Loc.ApplyDir(ph);                                   // placeholder çevrilmiş metin → kendi yönünü alır
+        input.onValueChanged.AddListener(_ => Loc.ApplyDir(txt));
+
         go.SetActive(true);    // referanslar hazır → şimdi OnEnable düzgün çalışır, tıkla-yaz aktif
         return input;
     }
@@ -821,9 +1411,12 @@ public class MainMenuController : MonoBehaviour
         const float left = 28f, top = -18f, gap = 8f;
         float iconCenterY = top - H * 0.5f;
         // Yıldız akışı success ekranında oynandıysa toplam ZATEN artmış → tam toplamı göster; aksi halde eski toplam.
+        // METRİK: ana sayfa ve success ekranıyla AYNI olmalı → PlayerProfile.EarnedStars (birikimli ödül yıldızı).
+        // Eskiden StarManager.Total() (level başına EN İYİ toplamı) kullanılıyordu → ana sayfada 111, burada 49
+        // gibi kafa karıştırıcı fark çıkıyordu (kullanıcı 2026-08-23).
         int shown = LevelResult.StarsAnimated
-            ? StarManager.Total()
-            : Mathf.Max(0, StarManager.Total() - (LevelResult.Pending ? LevelResult.Delta : 0));
+            ? PlayerProfile.EarnedStars
+            : Mathf.Max(0, PlayerProfile.EarnedStars - (LevelResult.Pending ? LevelResult.Stars : 0));
 
         var icon = NewImage("StarTotalIcon", parent, StarArt.Full());
         icon.preserveAspect = true; icon.raycastTarget = false;
@@ -966,11 +1559,12 @@ public class MainMenuController : MonoBehaviour
 
         yield return new WaitForSeconds(0.45f);
 
-        // Dolu yıldızlar uçarak sol üst sayaca girsin; her giriş sayacı 1 artırsın (delta kadar).
+        // Dolu yıldızlar uçarak sol üst sayaca girsin; UÇAN HER yıldız sayacı 1 artırır.
+        // (Rozet artık birikimli EarnedStars gösteriyor → "net en iyi farkı" değil, kazanılanın tamamı sayılır.)
         Canvas.ForceUpdateCanvases();
-        int running = Mathf.Max(0, StarManager.Total() - delta);
+        int running = Mathf.Max(0, PlayerProfile.EarnedStars - earned);
         if (starBadgeText != null) starBadgeText.text = running.ToString();
-        for (int k = 0; k < delta; k++)
+        for (int k = 0; k < earned; k++)
         {
             int idx = earned - 1 - k;   // sağdan sola (yeni kazanılanlar)
             if (idx < 0) break;
@@ -1072,7 +1666,10 @@ public class MainMenuController : MonoBehaviour
         go.transform.SetParent(parent, false);
         var t = go.AddComponent<TextMeshProUGUI>();
         t.fontSize = size; t.fontStyle = style; t.alignment = align; t.raycastTarget = false;
-        t.isRightToLeftText = Loc.Current == Language.Arabic;   // Arapça sağdan-sola
+        // Arayüz metinleri için dil-bazlı varsayılan (Arapça arayüz RTL render edilmeli).
+        // ⚠️ İSTİSNA: içeriği KULLANICIDAN gelen alanlar (oyuncu adı) Latin olabilir → oralarda
+        // Loc.ApplyDir(t) ile yön METNE göre ayarlanır, yoksa "Onur" ters görünür.
+        t.isRightToLeftText = Loc.Current == Language.Arabic;
         return t;
     }
 
@@ -1082,7 +1679,13 @@ public class MainMenuController : MonoBehaviour
 /// <summary>Açık (sıradaki) durağı hafifçe nabız gibi büyütüp küçülten basit efekt.</summary>
 public class Pulse : MonoBehaviour
 {
+    public bool gentle;   // logo: küçük genlik, yavaş "nefes" (varsayılan: patika durağı nabzı)
     RectTransform rt; float t;
     void Start() => rt = (RectTransform)transform;
-    void Update() { t += Time.deltaTime; float s = 1f + 0.08f * Mathf.Sin(t * 4f); rt.localScale = new Vector3(s, s, 1f); }
+    void Update()
+    {
+        t += Time.deltaTime;
+        float s = gentle ? 1f + 0.025f * Mathf.Sin(t * 1.6f) : 1f + 0.08f * Mathf.Sin(t * 4f);
+        rt.localScale = new Vector3(s, s, 1f);
+    }
 }

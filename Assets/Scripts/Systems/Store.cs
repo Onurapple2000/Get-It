@@ -18,38 +18,25 @@ public static class AdsService
 }
 
 /// <summary>
-/// Mağaza / satın alma — STUB (2026-08-06). Gerçek Unity IAP buraya bağlanacak. Şimdilik satın almalar anında
-/// başarılı sayılıp yerel olarak verilir (coin ekler / No-Ads açar / güç-up ekler).
+/// Mağaza / satın alma facade — gerçek akış <see cref="IapService"/> (Unity IAP v5). Ürün→ödül eşlemesi ve
+/// coin/güç-up/noAds verme IapService'te; UI buraya yönlenir. IAP hazır değilse (çevrimdışı) onDone(false).
 /// </summary>
 public static class Store
 {
-    public static void RemoveAds(Action<bool> onDone)
+    /// <summary>Ürün ID ile paket satın al. Başarıda ödül IapService.Grant'ta verilir + buluta yazılır.</summary>
+    public static void Buy(string productId, Action<bool> onDone)
     {
-        PlayerProfile.NoAds = true;
-        Debug.Log("[Store] (stub) reklamlar kaldırıldı.");
-        onDone?.Invoke(true);
+        if (IapService.Instance == null) { Debug.LogWarning("[Store] IAP servisi yok."); onDone?.Invoke(false); return; }
+        IapService.Instance.Buy(productId, onDone);
     }
 
-    public static void BuyCoins(int amount, Action<bool> onDone)
-    {
-        PlayerProfile.AddCoins(amount);
-        Debug.Log($"[Store] (stub) {amount} coin alındı.");
-        onDone?.Invoke(true);
-    }
+    /// <summary>Reklamsız (non-consumable) satın al.</summary>
+    public static void RemoveAds(Action<bool> onDone) => Buy(IapService.NoAdsId, onDone);
 
-    public static void BuyPowerUp(PowerUpType type, int amount, Action<bool> onDone)
+    /// <summary>Önceki satın almaları geri yükle (özellikle iOS Reklamsız; Android otomatik).</summary>
+    public static void Restore(Action<bool> onDone)
     {
-        PowerUpInventory.Add(type, amount);
-        Debug.Log($"[Store] (stub) {amount}x {type} alındı.");
-        onDone?.Invoke(true);
-    }
-
-    /// <summary>Paket satın al: coin + güç-up karışımını verir. Gerçek IAP sonra ödeme akışını buraya bağlayacak.</summary>
-    public static void Purchase(int coins, (PowerUpType type, int amount)[] powers, Action<bool> onDone)
-    {
-        if (coins > 0) PlayerProfile.AddCoins(coins);
-        if (powers != null) foreach (var p in powers) PowerUpInventory.Add(p.type, p.amount);
-        Debug.Log($"[Store] (stub) paket alındı: {coins} coin + {(powers?.Length ?? 0)} güç-up türü.");
-        onDone?.Invoke(true);
+        if (IapService.Instance == null) { onDone?.Invoke(false); return; }
+        IapService.Instance.Restore(onDone);
     }
 }

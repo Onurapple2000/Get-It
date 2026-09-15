@@ -115,43 +115,44 @@ public class AudioManager : MonoBehaviour
     // Yutma sesi = tek "plop" klibi, boyut KADEMESİNE göre AYRIK perdeden çalınır. Kademe boyut ORANINDAN gelir:
     // her kademe ~%45 daha büyük boyut sınıfı. Aynı sınıftaki nesneler (ör. domates/donut) BİREBİR aynı sesi çıkarır;
     // kademeler arası net/geniş perde farkı. Her level ihtiyacı kadar kademe kullanır (dünyadan bağımsız, oran-tabanlı).
-    const float SW_RATIO = 1.45f;                                       // kademe başına boyut oranı (~%45)
+    const float SW_RATIO = 2.0f;                                        // kademe başına PUAN oranı (~2× — puan tipik olarak katlanır)
     // Kademe → perde MAJÖR PENTATONİK gam (küçük→tiz, büyük→pes). Pentatonikte her nota birbiriyle uyumlu →
     // hızlı oynarken ard arda gelen farklı boyut sesleri FALSO YAPMAZ, melodik/hoş bir akış olur.
     // Oranlar: 6'lı(1.682) / 5'li(1.498) / majör3'lü(1.26) / majör2'li(1.122) / kök(1.0).
     static readonly float[] SW_PITCH = { 1.682f, 1.498f, 1.260f, 1.122f, 1.000f };
-    float swRef = 0.4f;   // en küçük nesne referansı (kademe 0)
+    float swRef = 10f;    // en düşük PUAN referansı (kademe 0) — SwallowSize (collider çapı) güvenilmez; scoreValue kesin
     bool swRangeReady;
 
     void EnsureSwallowRange()
     {
         if (swRangeReady) return;
         swRangeReady = true;
-        var sizes = new List<float>();
+        var scores = new List<float>();
         var all = PhysicsSwallowable.All;
         for (int i = 0; i < all.Count; i++)
         {
             var s = all[i];
             if (s == null || s.isBomb) continue;
-            sizes.Add(s.SwallowSize);
+            scores.Add(s.scoreValue);   // PUAN (SizeFactor'la ölçekli → küçük/orta/büyük); collider çapı DEĞİL
         }
-        if (sizes.Count == 0) { swRef = 0.4f; return; }
-        sizes.Sort();
-        swRef = sizes[Mathf.Clamp(Mathf.RoundToInt((sizes.Count - 1) * 0.05f), 0, sizes.Count - 1)];  // ~%5 yüzdelik = en küçük referans
-        if (swRef < 0.05f) swRef = 0.05f;
+        if (scores.Count == 0) { swRef = 10f; return; }
+        scores.Sort();
+        swRef = scores[Mathf.Clamp(Mathf.RoundToInt((scores.Count - 1) * 0.05f), 0, scores.Count - 1)];  // ~%5 yüzdelik = en düşük puan referansı
+        if (swRef < 1f) swRef = 1f;
     }
 
     /// <summary>Yeni level: boyut referansını yeniden ölçtür (AudioManager kalıcı olduğundan eski level'dan taşınmasın).</summary>
     public void ResetSwallowRange() { swRangeReady = false; }
 
-    /// <summary>Nesne yutuldu: boyut KADEMESİNE göre 3 AYRI ses (küçük/orta/büyük). Kademe = round(log(boyut/enKüçük)/
-    /// log(%45)) 0..4 → b0,b1=küçük, b2=orta, b3,b4=büyük. Çok hızlı seride ses hız-sınırlanır; haptik her yutmada.</summary>
-    public void PlaySwallow(float size)
+    /// <summary>Nesne yutuldu: PUAN KADEMESİNE göre 3 AYRI ses (küçük/orta/büyük). Kademe = round(log(puan/enDüşükPuan)/
+    /// log(2×)) 0..4 → b0,b1=küçük, b2=orta, b3,b4=büyük. scoreValue kesin (collider çapı güvenilmez → dev nesneler
+    /// eskiden küçük ses çıkarıyordu). Çok hızlı seride ses hız-sınırlanır; haptik her yutmada.</summary>
+    public void PlaySwallow(float scoreValue)
     {
         EnsureSwallowRange();
         int b = 0;
-        if (size > swRef)
-            b = Mathf.Clamp(Mathf.RoundToInt(Mathf.Log(size / swRef) / Mathf.Log(SW_RATIO)), 0, SW_PITCH.Length - 1);
+        if (scoreValue > swRef)
+            b = Mathf.Clamp(Mathf.RoundToInt(Mathf.Log(scoreValue / swRef) / Mathf.Log(SW_RATIO)), 0, SW_PITCH.Length - 1);
 
         Haptic(b >= 3 ? HapticKind.Medium : HapticKind.Light);        // büyük kademe → daha güçlü haptik
 

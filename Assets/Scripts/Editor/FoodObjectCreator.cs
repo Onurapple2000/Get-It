@@ -39,7 +39,7 @@ public static class FoodObjectCreator
         new Cfg("Ramen",          "Ramen",        1.1f, 40),
         new Cfg("Chicken_Salad",  "ChickenSalad", 1.2f, 50),
         new Cfg("Spaghetti",      "Spaghetti",    1.2f, 50),
-        new Cfg("Whole_Pizza",    "WholePizza",   1.4f, 70),
+        new Cfg("Whole_Pizza",    "WholePizza",   1.4f, 40),   // orta boy → 40 (≤60: kamera titremesin, kullanıcı 2026-08-20)
         // Yeni nesneler (2026-06-29)
         new Cfg("cupcake",        "Cupcake",      0.55f,12),
         new Cfg("icecream",       "IceCream",     0.7f, 18),

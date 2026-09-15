@@ -56,3 +56,12 @@ Thumbs.db
 /Assets/Prefabs/
 /Assets/Models/
 /log.txt
+
+# ── İmza anahtarları & sırlar — ASLA commit etme (private signing material) ──
+keystore/
+*.keystore
+*.jks
+*.p12
+
+# Unity IL2CPP/Gradle temp build dir
+.utmp/

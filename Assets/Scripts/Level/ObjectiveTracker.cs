@@ -339,6 +339,10 @@ public class ObjectiveTracker : MonoBehaviour
             k += Time.deltaTime / dur;
             t.rectTransform.position = baseScreen + new Vector3(0f, k * 75f, 0f);
             var c = t.color; c.a = 1f - Mathf.Clamp01(k); t.color = c;
+            // Pop: ilk %25'te 0.6→1.15 (overshoot), sonra 1'e yerleş → "sıçrayan" his.
+            float s = k < 0.25f ? Mathf.Lerp(0.6f, 1.15f, k / 0.25f)
+                                : Mathf.Lerp(1.15f, 1f, (k - 0.25f) / 0.75f);
+            t.rectTransform.localScale = Vector3.one * s;
             yield return null;
         }
         Destroy(t.gameObject);

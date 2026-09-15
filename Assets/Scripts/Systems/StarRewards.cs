@@ -12,22 +12,35 @@ using UnityEngine;
 /// </summary>
 public static class StarRewards
 {
+    // Yeni eşikler (2026-08-18 kullanıcı): her 20★→Hız, 25★→Mıknatıs, 30★→Büyütme, 50★→Süper.
     static readonly (PowerUpType type, int per, string label)[] Rules =
     {
-        (PowerUpType.Speed,     5,  "Hız"),
-        (PowerUpType.Magnet,    7,  "Mıknatıs"),
-        (PowerUpType.SizeBurst, 10, "Büyütme"),
-        (PowerUpType.Super,     20, "SÜPER"),
+        (PowerUpType.Speed,     20, "Hız"),
+        (PowerUpType.Magnet,    25, "Mıknatıs"),
+        (PowerUpType.SizeBurst, 30, "Büyütme"),
+        (PowerUpType.Super,     50, "SÜPER"),
     };
 
     static string KeyGranted(PowerUpType t) => $"StarGift_{t}_Granted";
+
+    const string KEY_FIRSTGIFT = "FirstGiftGranted";
+    static readonly PowerUpType[] AllPowers = { PowerUpType.Speed, PowerUpType.Magnet, PowerUpType.SizeBurst, PowerUpType.Super };
+
+    /// <summary>Yeni oyuncuya BİR KEZ başlangıç hediyesi: her powerup'tan 3 (idempotent, PlayerPrefs bayrağı).</summary>
+    public static void GrantFirstLaunchGift()
+    {
+        if (PlayerPrefs.GetInt(KEY_FIRSTGIFT, 0) == 1) return;
+        PlayerPrefs.SetInt(KEY_FIRSTGIFT, 1);
+        foreach (var t in AllPowers) PowerUpInventory.Add(t, 3);
+        PlayerPrefs.Save();
+    }
 
     /// <summary>Toplam yıldıza göre hak edilen ama verilmemiş güç-up'ları verir. Yeni verilenleri (tür, adet) döndürür
     /// (success ekranı uçuş animasyonu bunu kullanır).</summary>
     public static List<(PowerUpType type, int count)> CheckAndGrant()
     {
         var granted = new List<(PowerUpType, int)>();
-        int total = StarManager.Total();
+        int total = PlayerProfile.EarnedStars;   // BİRİKİMLİ (tekrar oynayınca artar; üst sınır yok)
         bool any = false;
         foreach (var r in Rules)
         {
@@ -46,10 +59,11 @@ public static class StarRewards
         return granted;
     }
 
+    // Güç-up adı SEÇİLİ DİLE göre (success ödül metni vb.). Türkçe sabitler kaldırıldı → Loc.T.
     public static string Label(PowerUpType t) => t switch
     {
-        PowerUpType.Speed => "Hız", PowerUpType.Magnet => "Mıknatıs",
-        PowerUpType.SizeBurst => "Büyütme", PowerUpType.Super => "SÜPER", _ => "",
+        PowerUpType.Speed => Loc.T("pwSpeed"), PowerUpType.Magnet => Loc.T("pwMagnet"),
+        PowerUpType.SizeBurst => Loc.T("pwSize"), PowerUpType.Super => Loc.T("pwSuper"), _ => "",
     };
 
     /// <summary>(tür,adet) listesini metin etiketlerine çevirir ("2x Mıknatıs" vb.).</summary>
@@ -63,7 +77,7 @@ public static class StarRewards
     /// <summary>Bir sonraki ödüle kaç yıldız kaldı (UI ipucu için) — en yakın eşik.</summary>
     public static int StarsToNextGift()
     {
-        int total = StarManager.Total(), best = int.MaxValue;
+        int total = PlayerProfile.EarnedStars, best = int.MaxValue;
         foreach (var r in Rules) best = Mathf.Min(best, r.per - (total % r.per));
         return best == int.MaxValue ? 0 : best;
     }
