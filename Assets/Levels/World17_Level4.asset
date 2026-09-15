@@ -16,79 +16,155 @@ MonoBehaviour:
   levelIndex: 3
   levelTime: 100
   spawns:
-  - prefab: {fileID: 2078467885659845860, guid: 0f89409d6712c45a5a0aa528bf21979d, type: 3}
+  - prefabRef:
+      m_AssetGUID: 0f89409d6712c45a5a0aa528bf21979d
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7963649546485444209, guid: ce267e50df1c04221824d0b7586f3a3c, type: 3}
+  - prefabRef:
+      m_AssetGUID: ce267e50df1c04221824d0b7586f3a3c
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4169129911851539161, guid: f4eacab935a56413893710b80a4b3be4, type: 3}
+  - prefabRef:
+      m_AssetGUID: f4eacab935a56413893710b80a4b3be4
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4400220917114473382, guid: 18b4a2f5b7e6e48aab7718a51bb465ad, type: 3}
+  - prefabRef:
+      m_AssetGUID: 18b4a2f5b7e6e48aab7718a51bb465ad
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 950237319401765801, guid: 037f7457a17da412db58e5666cfd847c, type: 3}
+  - prefabRef:
+      m_AssetGUID: 037f7457a17da412db58e5666cfd847c
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3207226305156501914, guid: 412fcd4a7b2a74f529bf614af6b3ccb1, type: 3}
+  - prefabRef:
+      m_AssetGUID: 412fcd4a7b2a74f529bf614af6b3ccb1
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 3466599075526777613, guid: 4b286d128fcbe42be9aedb35f0dfb143, type: 3}
+  - prefabRef:
+      m_AssetGUID: 4b286d128fcbe42be9aedb35f0dfb143
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 5579577507982429625, guid: 7e751145d8bc3459397d9869a73281b5, type: 3}
+  - prefabRef:
+      m_AssetGUID: 7e751145d8bc3459397d9869a73281b5
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 8362344744548916990, guid: f4f081e3c3ece4c7084522e314e33b98, type: 3}
+  - prefabRef:
+      m_AssetGUID: f4f081e3c3ece4c7084522e314e33b98
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2362819155823476628, guid: 53069315a950c4b1c8e75cf1ef5f1494, type: 3}
+  - prefabRef:
+      m_AssetGUID: 53069315a950c4b1c8e75cf1ef5f1494
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2411128460455000361, guid: 01ba5b080b7594288aba0d296958451d, type: 3}
+  - prefabRef:
+      m_AssetGUID: 01ba5b080b7594288aba0d296958451d
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 4038348190033389746, guid: be9451de7dd3e491c836af8923410f81, type: 3}
+  - prefabRef:
+      m_AssetGUID: be9451de7dd3e491c836af8923410f81
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 8159310942183740297, guid: 1d6e7514657b449c5878e53162f6340a, type: 3}
+  - prefabRef:
+      m_AssetGUID: 1d6e7514657b449c5878e53162f6340a
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 1177494495509013420, guid: 4232ea1cf8fe54ed5a530d9e54e0b00d, type: 3}
+  - prefabRef:
+      m_AssetGUID: 4232ea1cf8fe54ed5a530d9e54e0b00d
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 5124921785386770914, guid: 6cd8d6bd8271249f7befcfd82cd62783, type: 3}
+  - prefabRef:
+      m_AssetGUID: 6cd8d6bd8271249f7befcfd82cd62783
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 7828562465193124960, guid: 84f9162033e4745648df428712a29bb2, type: 3}
+  - prefabRef:
+      m_AssetGUID: 84f9162033e4745648df428712a29bb2
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 2026322695157906302, guid: e65f7c082e9a24603b884aeac335303f, type: 3}
+  - prefabRef:
+      m_AssetGUID: e65f7c082e9a24603b884aeac335303f
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
-  - prefab: {fileID: 8519602657171364342, guid: efcd509a368f54e96b4ca71f8c45d698, type: 3}
+  - prefabRef:
+      m_AssetGUID: efcd509a368f54e96b4ca71f8c45d698
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 2
     stack: 1
     scale: 1
-  - prefab: {fileID: 6876818816417564836, guid: 1b3875924abe749a893033c29cb201be, type: 3}
+  - prefabRef:
+      m_AssetGUID: 1b3875924abe749a893033c29cb201be
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
     count: 1
     stack: 1
     scale: 1
