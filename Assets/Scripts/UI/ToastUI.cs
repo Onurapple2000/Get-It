@@ -86,7 +86,22 @@ public static class ToastUI
         Loc.ApplyDir(t);
 
         Canvas.ForceUpdateCanvases();
-        float w = Mathf.Clamp(LayoutUtility.GetPreferredWidth(rrt) + 80f, 320f, 960f);
+        const float maxW = 940f;   // 1080 referansta sağ-sol 70 pay → hiçbir cihazda taşmaz
+        float w = Mathf.Clamp(LayoutUtility.GetPreferredWidth(rrt) + 80f, 320f, maxW);
+        if (LayoutUtility.GetPreferredWidth(rrt) + 80f > maxW)
+        {
+            // Uzun mesaj (ör. "İndirme başarısız — ...") tek satıra sığmıyor → yazıyı sar, kartı satır sayısı kadar büyüt
+            // (kullanıcı 2026-09-16: sağdan soldan taşan kısım görünmüyordu).
+            float textW = maxW - 80f - bsz - hl.spacing;
+            t.enableWordWrapping = true;
+            var tle = t.gameObject.AddComponent<LayoutElement>(); tle.preferredWidth = textW;
+            t.rectTransform.sizeDelta = new Vector2(textW, 0f);
+            t.ForceMeshUpdate();
+            float th = t.GetPreferredValues(msg, textW, 0f).y;
+            row.GetComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            h = Mathf.Max(h, th + 40f);
+            w = maxW;
+        }
         rt.sizeDelta = new Vector2(w, h);
 
         host.StartCoroutine(Run(root, rt, root.GetComponent<CanvasGroup>(), reward));
