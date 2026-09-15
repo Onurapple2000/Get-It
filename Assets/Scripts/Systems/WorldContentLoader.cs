@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID
 using UnityEngine.Android;
 #endif
 
@@ -34,6 +34,8 @@ public static class WorldContentLoader
     static readonly HashSet<string> packsKnownInstalled = new HashSet<string>();
     static readonly HashSet<string> packsDownloading = new HashSet<string>();
     public static string LastError { get; private set; }
+    /// <summary>Asset pack API'si yalnız GERÇEK Android cihazda (editörde Android platformu seçiliyken derlenir ama çağrılmaz).</summary>
+    static bool OnDevice => Application.platform == RuntimePlatform.Android;
 
     /// <summary>LevelData getter'ı için: GUID → yüklü prefab (yoksa null).</summary>
     public static GameObject Resolve(string guid)
@@ -65,7 +67,8 @@ public static class WorldContentLoader
     /// <summary>Sıradaki PrefetchAhead dünyanın paketlerini arka planda indirir (Android dışı: no-op).</summary>
     public static void PrefetchAhead(int world)
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID
+        if (!OnDevice) return;
         var names = new List<string>();
         int w = world;
         for (int k = 0; k < PrefetchAheadCount; k++)
@@ -75,19 +78,33 @@ public static class WorldContentLoader
             foreach (var p in WorldPacks.PacksFor(w)) if (!IsInstalled(p) && !packsDownloading.Contains(p)) names.Add(p);
         }
         if (names.Count == 0) return;
-        foreach (var n in names) packsDownloading.Add(n);
-        Debug.Log("[WorldContent] Ön-indirme: " + string.Join(", ", names));
-        AndroidAssetPacks.DownloadAssetPackAsync(names.ToArray(), info =>
-        {
-            if (info == null) return;
-            if (info.status == AndroidAssetPackStatus.Completed) { packsKnownInstalled.Add(info.name); packsDownloading.Remove(info.name); }
-            else if (info.status == AndroidAssetPackStatus.Failed || info.status == AndroidAssetPackStatus.Canceled) packsDownloading.Remove(info.name);
-            // WaitingForWifi: sessiz ön-indirmede mobil veri SORMAYIZ; oyuncu dünyaya gelince Prepare sorar.
-        });
+        Runner.Instance.StartCoroutine(PrefetchRoutine(names));
 #endif
     }
 
     // ═══════════════ iç akış ═══════════════
+
+#if UNITY_ANDROID
+    static IEnumerator PrefetchRoutine(List<string> names)
+    {
+        List<string> need = null;
+        yield return QueryNeedsDownload(names, r => need = r);
+        if (need == null || need.Count == 0) yield break;
+        foreach (var n in need) packsDownloading.Add(n);
+        Debug.Log("[WorldContent] Ön-indirme: " + string.Join(", ", need));
+        try
+        {
+            AndroidAssetPacks.DownloadAssetPackAsync(need.ToArray(), info =>
+            {
+                if (info == null) return;
+                if (info.status == AndroidAssetPackStatus.Completed) { packsKnownInstalled.Add(info.name); packsDownloading.Remove(info.name); }
+                else if (info.status == AndroidAssetPackStatus.Failed || info.status == AndroidAssetPackStatus.Canceled) packsDownloading.Remove(info.name);
+                // WaitingForWifi: sessiz ön-indirmede mobil veri SORMAYIZ; oyuncu dünyaya gelince Prepare sorar.
+            });
+        }
+        catch (Exception e) { Debug.LogWarning("[WorldContent] Ön-indirme başlatılamadı: " + e.Message); foreach (var n in need) packsDownloading.Remove(n); }
+    }
+#endif
 
     /// <summary>Test/manuel sürüş için açık; normalde Prepare() kullan.</summary>
     public static IEnumerator PrepareRoutine(int world, int index, Action<string, float> progress, Action<bool> onDone)
@@ -101,15 +118,21 @@ public static class WorldContentLoader
             onDone?.Invoke(true); yield break;
         }
 
-        // 1) Gereken paketler (Android)
-#if UNITY_ANDROID && !UNITY_EDITOR
-        var need = new List<string>();
-        foreach (var p in WorldPacks.PacksFor(world)) if (!IsInstalled(p)) need.Add(p);
-        if (need.Count > 0)
+        // 1) Gereken paketler (Android). Durum sorgusu: paket bu build'de YOKSA (APK/USB testi → Unknown/Failed) ya da
+        //    PlayCore yoksa indirme adımı ATLANIR; yükleme Addressables'a bırakılır (StreamingAssets'ten gelir).
+#if UNITY_ANDROID
+        var maybe = new List<string>();
+        if (OnDevice) foreach (var p in WorldPacks.PacksFor(world)) if (!IsInstalled(p)) maybe.Add(p);
+        if (maybe.Count > 0)
         {
-            bool ok = false;
-            yield return DownloadPacks(need, progress, r => ok = r);
-            if (!ok) { onDone?.Invoke(false); yield break; }
+            List<string> need = null;
+            yield return QueryNeedsDownload(maybe, r => need = r);
+            if (need != null && need.Count > 0)
+            {
+                bool ok = false;
+                yield return DownloadPacks(need, progress, r => ok = r);
+                if (!ok) { onDone?.Invoke(false); yield break; }
+            }
         }
 #endif
 
@@ -151,7 +174,7 @@ public static class WorldContentLoader
         onDone?.Invoke(true);
     }
 
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID
     static bool IsInstalled(string pack)
     {
         if (packsKnownInstalled.Contains(pack)) return true;
@@ -159,6 +182,42 @@ public static class WorldContentLoader
         try { path = AndroidAssetPacks.GetAssetPackPath(pack); } catch { }
         if (!string.IsNullOrEmpty(path)) { packsKnownInstalled.Add(pack); return true; }
         return false;
+    }
+
+    /// <summary>
+    /// Paket durumlarını sorgular; yalnız gerçekten İNDİRİLEBİLİR olanları (NotInstalled/Pending/Downloading/WaitingForWifi)
+    /// döndürür. Unknown/Failed (paket bu build'de yok — APK) ve istisna (PlayCore yok) → boş liste (indirme atlanır).
+    /// </summary>
+    static IEnumerator QueryNeedsDownload(List<string> names, Action<List<string>> done)
+    {
+        var res = new List<string>();
+        bool fin = false;
+        try
+        {
+            AndroidAssetPacks.GetAssetPackStateAsync(names.ToArray(), (size, states) =>
+            {
+                if (states != null)
+                    foreach (var st in states)
+                    {
+                        if (st == null) continue;
+                        switch (st.status)
+                        {
+                            case AndroidAssetPackStatus.Completed: packsKnownInstalled.Add(st.name); break;
+                            case AndroidAssetPackStatus.NotInstalled:
+                            case AndroidAssetPackStatus.Pending:
+                            case AndroidAssetPackStatus.Downloading:
+                            case AndroidAssetPackStatus.Transferring:
+                            case AndroidAssetPackStatus.WaitingForWifi: res.Add(st.name); break;
+                            default: Debug.LogWarning($"[WorldContent] Paket '{st.name}' durumu {st.status} — indirme atlandı (APK build?)"); break;
+                        }
+                    }
+                fin = true;
+            });
+        }
+        catch (Exception e) { Debug.LogWarning("[WorldContent] Asset pack API yok (PlayCore?): " + e.Message); fin = true; }
+        float t0 = Time.realtimeSinceStartup;
+        while (!fin && Time.realtimeSinceStartup - t0 < 20f) yield return null;
+        done(res);
     }
 
     static IEnumerator DownloadPacks(List<string> names, Action<string, float> progress, Action<bool> done)
@@ -170,14 +229,15 @@ public static class WorldContentLoader
         foreach (var n in names) { status[n] = AndroidAssetPackStatus.Pending; prog[n] = 0f; packsDownloading.Add(n); }
         Debug.Log("[WorldContent] İndiriliyor: " + string.Join(", ", names));
 
-        AndroidAssetPacks.DownloadAssetPackAsync(names.ToArray(), info =>
+        try { AndroidAssetPacks.DownloadAssetPackAsync(names.ToArray(), info =>
         {
             if (info == null) return;
             status[info.name] = info.status;
             if (info.size > 0) prog[info.name] = Mathf.Clamp01((float)info.bytesDownloaded / info.size);
             if (info.status == AndroidAssetPackStatus.Completed) { prog[info.name] = 1f; packsKnownInstalled.Add(info.name); packsDownloading.Remove(info.name); }
             if (info.status == AndroidAssetPackStatus.Failed || info.status == AndroidAssetPackStatus.Canceled) { failed = true; packsDownloading.Remove(info.name); }
-        });
+        }); }
+        catch (Exception e) { LastError = e.Message; Debug.LogError("[WorldContent] DownloadAssetPackAsync: " + e); done(false); yield break; }
 
         float t0 = Time.realtimeSinceStartup;
         while (true)
