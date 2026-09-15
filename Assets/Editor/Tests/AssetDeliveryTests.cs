@@ -58,4 +58,20 @@ public class AssetDeliveryTests
         }
         Assert.Greater(n, 0);
     }
+
+    [Test]
+    public void PerfTier_gpu_sezgisi_yeni_gpu_lari_zayif_saymaz()
+    {
+        // 2026-09-16 regresyonu: "Mali-G7[0-2]" deseni Mali-G720'yi yakalıyordu → 14T Pro Low'a düştü
+        Assert.IsFalse(PerfTier.IsWeakGpuName("Mali-G720-Immortalis MC12"));
+        Assert.IsFalse(PerfTier.IsWeakGpuName("Mali-G710 MC10"));
+        Assert.IsFalse(PerfTier.IsWeakGpuName("Adreno (TM) 740"));
+        Assert.IsFalse(PerfTier.IsWeakGpuName("Adreno (TM) 650"));
+        Assert.IsTrue(PerfTier.IsWeakGpuName("Adreno (TM) 610"));    // Redmi Note 8
+        Assert.IsTrue(PerfTier.IsWeakGpuName("Adreno (TM) 506"));
+        Assert.IsTrue(PerfTier.IsWeakGpuName("Mali-G72"));
+        Assert.IsTrue(PerfTier.IsWeakGpuName("Mali-G52 MC2"));
+        Assert.IsTrue(PerfTier.IsWeakGpuName("Mali-T830"));
+        Assert.IsTrue(PerfTier.IsWeakGpuName("PowerVR Rogue GE8320"));
+    }
 }

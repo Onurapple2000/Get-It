@@ -727,23 +727,26 @@ public class MainMenuController : MonoBehaviour
         MakeToggle(settingsContent, -520, Loc.T("vibration"), () => AudioManager.HapticOn, v => { AudioManager.HapticOn = v; if (v) AudioManager.Instance?.HapticTest(); });
         // Performans modu (2026-09-16): AÇIK = düşük kademe zorla (gölge/HDR kapalı, 30 fps); KAPALI = otomatik (PerfTier karar verir)
         MakeToggle(settingsContent, -620, Loc.T("perfMode"), () => PerfTier.UserLow, v => PerfTier.UserLow = v);
+        var ph = NewText("PerfHint", settingsContent, 24, FontStyles.Normal, TextAlignmentOptions.Center);   // açıklama (kullanıcı 2026-09-16)
+        ph.color = new Color(1f, 1f, 1f, 0.7f); ph.text = Loc.T("perfHint"); ph.enableWordWrapping = true;
+        Loc.ApplyDir(ph); Top(ph.rectTransform, 0, -690, 760, 60);
 
         var dl = NewText("DL", settingsContent, 34, FontStyles.Bold, TextAlignmentOptions.Center);
-        dl.color = new Color(1f, 1f, 1f, 0.92f); dl.text = Loc.T("difficulty"); Top(dl.rectTransform, 0, -720, 400, 54);
+        dl.color = new Color(1f, 1f, 1f, 0.92f); dl.text = Loc.T("difficulty"); Top(dl.rectTransform, 0, -770, 400, 54);
         var cur = DifficultySettings.Current;
-        DiffButton(settingsContent, -300, -800, Difficulty.Easy, cur);
-        DiffButton(settingsContent, 0, -800, Difficulty.Normal, cur);
-        DiffButton(settingsContent, 300, -800, Difficulty.Hard, cur);
+        DiffButton(settingsContent, -300, -850, Difficulty.Easy, cur);
+        DiffButton(settingsContent, 0, -850, Difficulty.Normal, cur);
+        DiffButton(settingsContent, 300, -850, Difficulty.Hard, cur);
 
         // Dil satırı: etiket + 7 bayrak (tek sıra). Seçili bayrak parlak+büyük.
         var ll = NewText("LL", settingsContent, 34, FontStyles.Bold, TextAlignmentOptions.Center);
-        ll.color = new Color(1f, 1f, 1f, 0.92f); ll.text = Loc.T("language"); Top(ll.rectTransform, 0, -900, 400, 54);
+        ll.color = new Color(1f, 1f, 1f, 0.92f); ll.text = Loc.T("language"); Top(ll.rectTransform, 0, -950, 400, 54);
         for (int i = 0; i < Langs.Length; i++)
-            LangFlag(settingsContent, (i - 3) * 135f, -1000, Langs[i].lang, Langs[i].flag);
+            LangFlag(settingsContent, (i - 3) * 135f, -1050, Langs[i].lang, Langs[i].flag);
 
 #if UNITY_ANDROID
         // Hesap bağlama (Google Play Games) — ilerlemeyi Google hesabına kaydeder (silip-kurunca/cihaz değişince kaybolmaz).
-        MakeAccountRow(settingsContent, -1180, -1260);   // bayrakların altında (performans toggle'ı eklenince 100 aşağı)
+        MakeAccountRow(settingsContent, -1230, -1310);   // bayrakların altında (performans toggle+açıklama eklenince aşağı)
         if (AccountManager.Instance != null)   // bağlama bitince butonu otomatik "✓ Bağlı" yap
         {
             AccountManager.Instance.OnAccountLinked -= RefreshSettings;

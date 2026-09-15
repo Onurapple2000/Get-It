@@ -120,6 +120,7 @@ public static class Loc
         ["music"]       = new[] { "Müzik", "Music", "Música", "Musik", "الموسيقى", "음악", "Музыка" },
         ["vibration"]   = new[] { "Titreşim", "Vibration", "Vibración", "Vibration", "الاهتزاز", "진동", "Вибрация" },
         ["perfMode"]    = new[] { "Performans Modu", "Performance Mode", "Modo rendimiento", "Leistungsmodus", "وضع الأداء", "성능 모드", "Режим производительности" },
+        ["perfHint"]    = new[] { "Eski/yavaş telefonlarda takılmayı azaltır. Zayıf cihazlarda otomatik açılır.", "Reduces stutter on older/slower phones. Turns on automatically on weak devices.", "Reduce los tirones en teléfonos antiguos. Se activa automáticamente en dispositivos débiles.", "Reduziert Ruckeln auf älteren Handys. Auf schwachen Geräten automatisch aktiv.", "يقلل التقطيع على الهواتف القديمة. يُفعَّل تلقائيًا على الأجهزة الضعيفة.", "오래된 기기의 끊김을 줄입니다. 느린 기기에서는 자동으로 켜집니다.", "Уменьшает подтормаживания на старых телефонах. На слабых устройствах включается автоматически." },
         ["difficulty"]  = new[] { "Zorluk", "Difficulty", "Dificultad", "Schwierigkeit", "الصعوبة", "난이도", "Сложность" },
         ["on"]          = new[] { "Açık", "On", "Sí", "An", "تشغيل", "켬", "Вкл" },
         ["off"]         = new[] { "Kapalı", "Off", "No", "Aus", "إيقاف", "끔", "Выкл" },
