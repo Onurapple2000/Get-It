@@ -119,6 +119,7 @@ public static class Loc
         ["sfx"]         = new[] { "Ses Efektleri", "Sound Effects", "Efectos", "Soundeffekte", "المؤثرات الصوتية", "효과음", "Звуки" },
         ["music"]       = new[] { "Müzik", "Music", "Música", "Musik", "الموسيقى", "음악", "Музыка" },
         ["vibration"]   = new[] { "Titreşim", "Vibration", "Vibración", "Vibration", "الاهتزاز", "진동", "Вибрация" },
+        ["perfMode"]    = new[] { "Performans Modu", "Performance Mode", "Modo rendimiento", "Leistungsmodus", "وضع الأداء", "성능 모드", "Режим производительности" },
         ["difficulty"]  = new[] { "Zorluk", "Difficulty", "Dificultad", "Schwierigkeit", "الصعوبة", "난이도", "Сложность" },
         ["on"]          = new[] { "Açık", "On", "Sí", "An", "تشغيل", "켬", "Вкл" },
         ["off"]         = new[] { "Kapalı", "Off", "No", "Aus", "إيقاف", "끔", "Выкл" },
