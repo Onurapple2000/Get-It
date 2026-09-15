@@ -140,30 +140,53 @@ public static class WorldContentLoader
         var guids = new List<string>();
         foreach (var s in ld.spawns) if (s.HasRef && !guids.Contains(s.PrefabGuid)) guids.Add(s.PrefabGuid);
 
+        // ⚠️ BUG FIX (2026-09-16): önceki bir Prepare yarıda başarısız olunca (paket hatası) aynı anda yüklenmekte olan
+        // handle'lar (ör. Core PowerUp'lar) `handles`'ta kalıyor ama `resolved`'a hiç yazılmıyordu; sonraki dünyada "zaten
+        // var" diye atlanıp NULL kalıyordu (Binalar L1 "YÜKLÜ DEĞİL"). Artık mevcut handle'ın sonucu alınır / beklenir.
         var pending = new List<(string guid, AsyncOperationHandle<GameObject> h)>();
         foreach (var g in guids)
         {
-            if (handles.ContainsKey(g)) continue;
+            if (resolved.TryGetValue(g, out var have) && have != null) continue;   // gerçekten hazır
+            if (handles.TryGetValue(g, out var old))
+            {
+                if (old.IsValid() && (!old.IsDone || old.Status == AsyncOperationStatus.Succeeded)) { pending.Add((g, old)); continue; }
+                if (old.IsValid()) Addressables.Release(old);   // başarısız/geçersiz kalıntı → temizle ve yeniden yükle
+                handles.Remove(g);
+            }
             AsyncOperationHandle<GameObject> h;
             try { h = Addressables.LoadAssetAsync<GameObject>(g); }
             catch (Exception e) { LastError = e.Message; Debug.LogError("[WorldContent] LoadAssetAsync hata: " + e); onDone?.Invoke(false); yield break; }
             handles[g] = h; pending.Add((g, h));
         }
         string lbl = Loc.T("loading");
+        bool anyFail = false; string failMsg = null;
         for (int i = 0; i < pending.Count; i++)
         {
             var (g, h) = pending[i];
-            while (!h.IsDone) { progress?.Invoke(lbl, (i + h.PercentComplete) / Mathf.Max(1, pending.Count)); yield return null; }
-            if (h.Status != AsyncOperationStatus.Succeeded || h.Result == null)
+            while (h.IsValid() && !h.IsDone) { progress?.Invoke(lbl, (i + h.PercentComplete) / Mathf.Max(1, pending.Count)); yield return null; }
+            if (!h.IsValid() || h.Status != AsyncOperationStatus.Succeeded || h.Result == null)
             {
-                LastError = "load:" + g;
-                Debug.LogError($"[WorldContent] Prefab yüklenemedi guid={g} (dünya {world} L{index + 1}): {h.OperationException}");
-                Addressables.Release(h); handles.Remove(g);
-                onDone?.Invoke(false); yield break;
+                if (!anyFail) { anyFail = true; failMsg = h.IsValid() ? h.OperationException?.Message : "invalid handle"; }
+                if (h.IsValid()) Addressables.Release(h);
+                handles.Remove(g); resolved.Remove(g);
+                continue;   // diğerlerini de bekle → temiz durum bırak, sonraki denemede yalnız eksikler yüklenir
             }
             resolved[g] = h.Result;
         }
+        if (anyFail)
+        {
+            LastError = "load";
+            Debug.LogError($"[WorldContent] Prefab yüklenemedi (dünya {world} L{index + 1}): {failMsg}");
+            onDone?.Invoke(false); yield break;
+        }
         foreach (var s in ld.spawns) if (s.HasRef && resolved.TryGetValue(s.PrefabGuid, out var go)) s.SetResolved(go);
+        if (!IsReady(ld))
+        {
+            LastError = "notready";
+            Debug.LogError($"[WorldContent] Hazırlık bitti ama level hazır değil (dünya {world} L{index + 1}) — eksik ref var.");
+            onDone?.Invoke(false); yield break;
+        }
+        Debug.Log($"[WorldContent] Hazır: dünya {world} L{index + 1}, {guids.Count} prefab ({pending.Count} yeni yüklendi)");
 
         // 3) Artık gerekmeyenleri bırak (aynı level'ı tekrar → hepsi gerekli, hiçbiri bırakılmaz)
         var drop = new List<string>();
@@ -179,7 +202,8 @@ public static class WorldContentLoader
     {
         if (packsKnownInstalled.Contains(pack)) return true;
         string path = null;
-        try { path = AndroidAssetPacks.GetAssetPackPath(pack); } catch { }
+        try { path = AndroidAssetPacks.GetAssetPackPath(pack); } catch (Exception e) { Debug.LogWarning("[WorldContent] GetAssetPackPath: " + e.Message); }
+        Debug.Log($"[WorldContent] Paket {pack}: yol='{path}'");
         if (!string.IsNullOrEmpty(path)) { packsKnownInstalled.Add(pack); return true; }
         return false;
     }
@@ -200,6 +224,7 @@ public static class WorldContentLoader
                     foreach (var st in states)
                     {
                         if (st == null) continue;
+                        Debug.Log($"[WorldContent] Paket {st.name} durumu: {st.status} (hata: {st.error})");
                         switch (st.status)
                         {
                             case AndroidAssetPackStatus.Completed: packsKnownInstalled.Add(st.name); break;
