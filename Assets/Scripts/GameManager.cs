@@ -1086,7 +1086,24 @@ public class GameManager : MonoBehaviour
         if (sceneLoadStarted) return;
         sceneLoadStarted = true;
         Time.timeScale = 1f;   // güvenlik: herhangi bir overlay donuk bıraktıysa yeni sahne donuk açılmasın
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        ReloadGameSceneWhenReady();
+    }
+
+    /// <summary>
+    /// ASSET DELIVERY FAZ 2: GameScene'i yeniden yüklemeden ÖNCE hedef level'ın prefab'larını belleğe al
+    /// (aynı dünya → paket zaten inik, ~anlık). Hata (çok nadir) → toast + ana menü (boş level açılmasın).
+    /// Kalıcı koşucuda çalışır → bu nesnenin StopAllCoroutines'i kesmez.
+    /// </summary>
+    static void ReloadGameSceneWhenReady()
+    {
+        int scene = SceneManager.GetActiveScene().buildIndex;
+        WorldContentLoader.Prepare(LevelManager.CurrentWorld, LevelManager.CurrentIndex, null, ok =>
+        {
+            if (ok) { SceneManager.LoadScene(scene); return; }
+            ToastUI.Show(Loc.T("downloadFail"), null, ToastUI.Style.Error);
+            var gm = Instance;
+            if (gm != null) gm.ExitToMainMenu(); else SceneManager.LoadScene("MainMenu");
+        });
     }
 
     /// <summary>
@@ -1334,7 +1351,7 @@ public class GameManager : MonoBehaviour
     {
         var lm = LivesManager.Instance;
         if (lm != null && !lm.HasLife) { RefreshFailLives(false); return; }   // can yok → tekrar yok (geri sayım göster)
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        ReloadGameSceneWhenReady();
     }
 
     [Header("Ana Sayfa")]

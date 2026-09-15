@@ -51,6 +51,8 @@ public class LevelData : ScriptableObject
             get
             {
                 if (_prefab != null) return _prefab;
+                _prefab = WorldContentLoader.Resolve(PrefabGuid);   // runtime: yüklenmiş global cache (aynı GUID, başka instance)
+                if (_prefab != null) return _prefab;
 #if UNITY_EDITOR
                 if (prefabRef != null && !string.IsNullOrEmpty(prefabRef.AssetGUID))
                     _prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<GameObject>(UnityEditor.AssetDatabase.GUIDToAssetPath(prefabRef.AssetGUID));

@@ -10,19 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: World2-Cars
+  m_Name: World3_Buildings
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: World2-Cars
-  m_GUID: 292dbb7cda76f4762b8b9ec38ca29347
+  m_GroupName: World3_Buildings
+  m_GUID: 9a1d2bb33c5fb46b7a9198627731c3a8
   m_SerializeEntries:
-  - m_GUID: 00d72e3fe003440cabe06f46f3b1e954
-    m_Address: Assets/Prefabs/Cars
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - on-demand
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ba915e90fc49a4535a6e72003b2a206a
-    m_Address: Assets/Art/worlds/cars
+  - m_GUID: 1d7e3c16c28cd4015a043ad6bc54607e
+    m_Address: Assets/Prefabs/Buildings
     m_ReadOnly: 0
     m_SerializedLabels:
     - on-demand
@@ -31,5 +25,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 8ccf7771aac9d43c2a1b271f195606bf, type: 2}
-    - {fileID: 11400000, guid: 44b7473451aa1455abe60e0a7bba1765, type: 2}
+    - {fileID: 11400000, guid: b9aa5a70276964f839679dea43982160, type: 2}
+    - {fileID: 11400000, guid: aa471a01eb6974d2293c29c40bb126a0, type: 2}

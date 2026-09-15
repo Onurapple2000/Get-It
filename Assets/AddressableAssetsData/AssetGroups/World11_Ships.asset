@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: World0-Park
+  m_Name: World11_Ships
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: World0-Park
-  m_GUID: 0c54d9330da6047af8d3b6370d28ab5a
+  m_GroupName: World11_Ships
+  m_GUID: 775b1be4e3f944a62a4d326f6249223b
   m_SerializeEntries:
-  - m_GUID: 274d644d5f2dc49638847c540d7e6f66
-    m_Address: Assets/Prefabs/DecoObjects
+  - m_GUID: ab55be11f91204300a4a07e4d6219972
+    m_Address: Assets/Prefabs/Ships
     m_ReadOnly: 0
     m_SerializedLabels:
     - on-demand
@@ -25,5 +25,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 2f473d7989534457db1da9463fc405bb, type: 2}
-    - {fileID: 11400000, guid: 6eefa9f0f249d4bb7a6acb3adffb987b, type: 2}
+    - {fileID: 11400000, guid: 4f3c9ba91c9614954a586c106e8896af, type: 2}
+    - {fileID: 11400000, guid: 91fa52637d5804d6ebf406595463f230, type: 2}

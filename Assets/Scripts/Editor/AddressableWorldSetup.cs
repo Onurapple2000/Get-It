@@ -30,48 +30,44 @@ public static class AddressableWorldSetup
         settings.AddLabel("install-time");
         settings.AddLabel("on-demand");
 
-        // ⚠️ FAZ 1: Addressables SADECE organizasyon iskeleti. Player build'de Addressables İÇERİĞİ DERLENMESİN
-        // (yoksa her build ~1GB modeli LZ sıkıştırır → çok yavaş "archive/compress bundle" adımı + çöp-dosyada
-        // patlama). Oyun şu an DOĞRUDAN referansla yükleniyor → build'e assetler zaten girer, oyun çalışır.
-        // FAZ 2'de (Sprint 9, yükleme refactor) bu BuildWithPlayer'a çevrilecek.
-        settings.BuildAddressablesWithPlayerBuild = AddressableAssetSettings.PlayerBuildOption.DoNotBuildWithPlayer;
+        // FAZ 2 (2026-09-15): içerik ARTIK Addressables'tan yükleniyor (LevelData → AssetReference, WorldContentLoader)
+        // → Addressables içeriği player build ile birlikte derlenir (PAD paketi bunu asset pack'lere böler).
+        settings.BuildAddressablesWithPlayerBuild = AddressableAssetSettings.PlayerBuildOption.BuildWithPlayer;
 
-        // Çekirdek / paylaşılan → install-time (ilk indirme)
-        AssignFolder(settings, "Core", "install-time", "Assets/Prefabs/PowerUps");
-        AssignAsset (settings, "Core", "install-time", "Assets/Prefabs/Bomb.prefab");
+        // Eski tireli grup adları (World1-Foods) Google asset pack kuralına uymaz (harf/rakam/alt çizgi) → yeniden adlandır.
+        foreach (var t in WorldPacks.Table)
+        {
+            var old = settings.FindGroup(t.pack.Replace('_', '-'));
+            if (old != null && old.Name != t.pack) { old.Name = t.pack; Debug.Log($"[Addressables] Grup adı düzeltildi: {old.Name}"); }
+        }
 
-        // Dünyalar → on-demand (her biri ayrı paket). Prefab klasörü + modelleri (bağımlılık olarak) taşınır.
-        AssignFolder(settings, "World0-Park",  "on-demand", "Assets/Prefabs/DecoObjects");
-        AssignFolder(settings, "World1-Foods", "on-demand", "Assets/Prefabs/Foods");
-        AssignFolder(settings, "World1-Foods", "on-demand", "Assets/Art/worlds/foods");
-        AssignFolder(settings, "World2-Cars",  "on-demand", "Assets/Prefabs/Cars");
-        AssignFolder(settings, "World2-Cars",  "on-demand", "Assets/Art/worlds/cars");
-        AssignFolder(settings, "World3-Buildings", "on-demand", "Assets/Prefabs/Buildings");
-        AssignFolder(settings, "World3-Buildings", "on-demand", "Assets/Art/worlds/buildings");
-        AssignFolder(settings, "World4-Sweets", "on-demand", "Assets/Prefabs/Sweets");
-        AssignFolder(settings, "World4-Sweets", "on-demand", "Assets/Art/worlds/sweets");
-        AssignFolder(settings, "World5-Drinks", "on-demand", "Assets/Prefabs/Drinks");
-        AssignFolder(settings, "World5-Drinks", "on-demand", "Assets/Art/worlds/drinks");
-        AssignFolder(settings, "World6-Gifts", "on-demand", "Assets/Prefabs/Gifts");
-        AssignFolder(settings, "World6-Gifts", "on-demand", "Assets/Art/worlds/gifts");
-        AssignFolder(settings, "World7-Books", "on-demand", "Assets/Prefabs/Books");
-        AssignFolder(settings, "World7-Books", "on-demand", "Assets/Art/worlds/books");
-        AssignFolder(settings, "World9-Cats", "on-demand", "Assets/Prefabs/Cats");
-        AssignFolder(settings, "World9-Cats", "on-demand", "Assets/Art/worlds/cats");
-        AssignFolder(settings, "World10-Dogs", "on-demand", "Assets/Prefabs/Dogs");
-        AssignFolder(settings, "World10-Dogs", "on-demand", "Assets/Art/worlds/dogs");
-        AssignFolder(settings, "World11-Ships", "on-demand", "Assets/Prefabs/Ships");
-        AssignFolder(settings, "World11-Ships", "on-demand", "Assets/Art/worlds/ships");
-        AssignFolder(settings, "World12-Planes", "on-demand", "Assets/Prefabs/Planes");
-        AssignFolder(settings, "World12-Planes", "on-demand", "Assets/Art/worlds/planes");
-        AssignFolder(settings, "World13-Treasure", "on-demand", "Assets/Prefabs/Money");
-        AssignFolder(settings, "World13-Treasure", "on-demand", "Assets/Art/worlds/moneys");
-        AssignFolder(settings, "World15-Jewelry", "on-demand", "Assets/Prefabs/Jewelry");
-        AssignFolder(settings, "World15-Jewelry", "on-demand", "Assets/Art/worlds/jevelary");
+        // Core (install-time): PowerUp prefab'ları — sahnede DEĞİL, yalnız LevelData spawn listelerinde → Addressables'tan
+        // yüklenmek ZORUNDA. Bomb.prefab BURADA YOK: LevelData.bombPrefab doğrudan ref → zaten base'de (çift kopya olmasın).
+        AssignFolder(settings, WorldPacks.Core, "install-time", "Assets/Prefabs/PowerUps");
+        var coreG = settings.FindGroup(WorldPacks.Core);
+        if (coreG != null)
+        {
+            var bombGuid = AssetDatabase.AssetPathToGUID("Assets/Prefabs/Bomb.prefab");
+            if (!string.IsNullOrEmpty(bombGuid) && coreG.GetAssetEntry(bombGuid) != null) settings.RemoveAssetEntry(bombGuid, false);
+        }
+
+        // Dünyalar: YALNIZ prefab klasörü girdi olur; modeller/dokular prefab bağımlılığı olarak AYNI bundle'a girer.
+        // (Art klasörünü de girdi yapmak, kullanılmayan GLB/doku'ları da pakete sokup şişirir.)
+        foreach (var t in WorldPacks.Table)
+            AssignFolder(settings, t.pack, WorldPacks.IsInstallTime(t.world) ? "install-time" : "on-demand", t.prefabFolder);
+
+        // Eski Art klasörü girdilerini kaldır (varsa)
+        foreach (var t in WorldPacks.Table)
+        {
+            var g = settings.FindGroup(t.pack);
+            if (g == null) continue;
+            var toRemove = new System.Collections.Generic.List<AddressableAssetEntry>();
+            foreach (var e in g.entries) if (e.AssetPath.StartsWith("Assets/Art/")) toRemove.Add(e);
+            foreach (var e in toRemove) settings.RemoveAssetEntry(e.guid, false);
+        }
 
         AssetDatabase.SaveAssets();
-        Debug.Log("[Addressables] Grup iskeleti kuruldu: Core(install-time) + World0/1/2(on-demand). " +
-                  "Not: gerçek on-demand boyut kazancı Sprint 9 yükleme refactor'ü ile gelir.");
+        Debug.Log($"[Addressables] Gruplar kuruldu: Core + {WorldPacks.Table.Length} dünya (install-time: ilk dünya; gerisi on-demand). BuildWithPlayer açık.");
     }
 
     static AddressableAssetGroup GetOrCreateGroup(AddressableAssetSettings s, string name)

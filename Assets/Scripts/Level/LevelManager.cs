@@ -89,6 +89,11 @@ public partial class LevelManager : MonoBehaviour   // partial: LandmarkBuilder.
         }
         Active = lv[Mathf.Clamp(CurrentIndex, 0, lv.Length - 1)];
 
+        // ASSET DELIVERY FAZ 2 güvenlik: prefab'lar WorldContentLoader.Prepare ile sahneden ÖNCE yüklenmiş olmalı.
+        // (Editörde AssetDatabase fallback var → her zaman hazır.) Değilse boş level açılır → yüksek sesle logla.
+        if (!WorldContentLoader.IsReady(Active))
+            Debug.LogError($"[LevelManager] Dünya {CurrentWorld} L{CurrentIndex + 1} prefab'ları YÜKLÜ DEĞİL — sahne WorldContentLoader.Prepare olmadan açıldı!");
+
         SetupArena();   // şekilli arena (world-5+): boyut + dışlama kutuları — ResetHole/SpawnObjects'ten ÖNCE
         ResetHole();
         SpawnObjects();

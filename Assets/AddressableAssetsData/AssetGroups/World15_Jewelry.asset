@@ -10,19 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: World3-Buildings
+  m_Name: World15_Jewelry
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: World3-Buildings
-  m_GUID: 9a1d2bb33c5fb46b7a9198627731c3a8
+  m_GroupName: World15_Jewelry
+  m_GUID: 38b19f8c47ddc4a85a91a2cd8201a7cb
   m_SerializeEntries:
-  - m_GUID: 1c37afa5791394778a485c1471db6381
-    m_Address: Assets/Art/worlds/buildings
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - on-demand
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 1d7e3c16c28cd4015a043ad6bc54607e
-    m_Address: Assets/Prefabs/Buildings
+  - m_GUID: fab3c1de6e3434b0c9395694feb616cf
+    m_Address: Assets/Prefabs/Jewelry
     m_ReadOnly: 0
     m_SerializedLabels:
     - on-demand
@@ -31,5 +25,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: b9aa5a70276964f839679dea43982160, type: 2}
-    - {fileID: 11400000, guid: aa471a01eb6974d2293c29c40bb126a0, type: 2}
+    - {fileID: 11400000, guid: a6e2c9b947e7e47be9c05b085071cf33, type: 2}
+    - {fileID: 11400000, guid: 3b830b8ff612c45d8923cb80d8d1c789, type: 2}

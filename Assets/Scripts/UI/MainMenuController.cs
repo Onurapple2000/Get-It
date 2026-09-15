@@ -296,6 +296,7 @@ public class MainMenuController : MonoBehaviour
         LevelManager.CurrentIndex = level;
 
         // Basılan durağı "seçili" renge boya (yeşil) + üstüne "Yükleniyor..." yaz + diğer butonları kilitle (kullanıcı 2026-08-17)
+        Color stopOrig = stopImg != null ? stopImg.color : Color.white;
         if (stopImg != null) stopImg.color = new Color(0.30f, 0.80f, 0.38f);
         var lbl = NewText("LoadingLbl", stopRT.parent, 34, FontStyles.Bold, TextAlignmentOptions.Center);
         lbl.isRightToLeftText = false;                                   // akan nokta efekti hep soldan-sağa
@@ -311,14 +312,35 @@ public class MainMenuController : MonoBehaviour
         var brt = (RectTransform)blk.transform; brt.SetParent(levelPanel.transform, false); Stretch(brt);
         var bi = blk.GetComponent<Image>(); bi.color = new Color(0, 0, 0, 0f); bi.raycastTarget = true;
 
-        StartCoroutine(LoadRoutine(lbl));
+        StartCoroutine(LoadRoutine(lbl, blk, stopImg, stopOrig));
     }
 
-    IEnumerator LoadRoutine(TMP_Text lbl)
+    IEnumerator LoadRoutine(TMP_Text lbl, GameObject blocker, Image stopImg, Color stopOrig)
     {
         string baseText = Loc.T("loading");
         // Görsel geri bildirimin render olması için birkaç kare bekle (yoksa yükleme donması önce olur)
         for (int i = 0; i < 2; i++) { LoadTick(lbl, baseText); yield return null; }
+
+        // ASSET DELIVERY FAZ 2: sahne AÇILMADAN ÖNCE dünya paketi (gerekirse indir) + prefab'lar belleğe.
+        // İndirme sürerken "Dünya indiriliyor %xx"; hata → kırmızı toast, buton eski hâline, oyuncu tekrar deneyebilir.
+        bool done = false, ok = false; string plbl = baseText; float pct = 0f;
+        WorldContentLoader.Prepare(LevelManager.CurrentWorld, LevelManager.CurrentIndex,
+            (l, p) => { plbl = l; pct = p; }, r => { ok = r; done = true; });
+        while (!done)
+        {
+            if (lbl != null) lbl.text = (pct > 0f && pct < 1f) ? $"{plbl} %{Mathf.RoundToInt(pct * 100f)}" : plbl + new string('.', (int)((Time.realtimeSinceStartup * 3f) % 4f));
+            yield return null;
+        }
+        if (!ok)
+        {
+            ToastUI.Show(Loc.T("downloadFail"), null, ToastUI.Style.Error);
+            if (lbl != null) Destroy(lbl.gameObject);
+            if (blocker != null) Destroy(blocker);
+            if (stopImg != null) stopImg.color = stopOrig;
+            loadingLevel = false;
+            yield break;
+        }
+        WorldContentLoader.PrefetchAhead(LevelManager.CurrentWorld);   // sıradaki dünyalar arka planda insin
 
         var op = SceneManager.LoadSceneAsync(gameScene);
         op.allowSceneActivation = true;

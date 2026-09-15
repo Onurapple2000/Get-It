@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Core
+  m_Name: World4_Sweets
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Core
-  m_GUID: c59034a8324cb46b2876e8020f047a1c
+  m_GroupName: World4_Sweets
+  m_GUID: 17828e01d2a3c4e0780480020bd88a2e
   m_SerializeEntries:
-  - m_GUID: 61ce90378be8f4db097c88c1120610a5
-    m_Address: Assets/Prefabs/PowerUps
+  - m_GUID: 18fa7de9bd1cf45de907ebb4193354bf
+    m_Address: Assets/Prefabs/Sweets
     m_ReadOnly: 0
     m_SerializedLabels:
-    - install-time
+    - on-demand
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: a53077aa0581741eea53869957ce142a, type: 2}
-    - {fileID: 11400000, guid: 213ed070e0a8c4859a816220f1c126c6, type: 2}
+    - {fileID: 11400000, guid: 4cf496dd5278b4cd9a8990caf25a556e, type: 2}
+    - {fileID: 11400000, guid: 1352211d9516d4f4abb6a64830f56484, type: 2}

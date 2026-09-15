@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Core
+  m_Name: World10_Dogs
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Core
-  m_GUID: c59034a8324cb46b2876e8020f047a1c
+  m_GroupName: World10_Dogs
+  m_GUID: 9c32d2d154c984669a2eee87f87482d7
   m_SerializeEntries:
-  - m_GUID: 61ce90378be8f4db097c88c1120610a5
-    m_Address: Assets/Prefabs/PowerUps
+  - m_GUID: a7f58d669b3384059a619d8c60c8df5c
+    m_Address: Assets/Prefabs/Dogs
     m_ReadOnly: 0
     m_SerializedLabels:
-    - install-time
+    - on-demand
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: a53077aa0581741eea53869957ce142a, type: 2}
-    - {fileID: 11400000, guid: 213ed070e0a8c4859a816220f1c126c6, type: 2}
+    - {fileID: 11400000, guid: 17fee30b2e1b24197be4bf2b667e8eac, type: 2}
+    - {fileID: 11400000, guid: dd075849bcf1a4b77bf118c6c89a9707, type: 2}

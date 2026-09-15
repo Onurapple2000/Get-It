@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: Core
+  m_Name: World0_Park
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
-  m_GroupName: Core
-  m_GUID: c59034a8324cb46b2876e8020f047a1c
+  m_GroupName: World0_Park
+  m_GUID: 0c54d9330da6047af8d3b6370d28ab5a
   m_SerializeEntries:
-  - m_GUID: 61ce90378be8f4db097c88c1120610a5
-    m_Address: Assets/Prefabs/PowerUps
+  - m_GUID: 274d644d5f2dc49638847c540d7e6f66
+    m_Address: Assets/Prefabs/DecoObjects
     m_ReadOnly: 0
     m_SerializedLabels:
-    - install-time
+    - on-demand
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: a53077aa0581741eea53869957ce142a, type: 2}
-    - {fileID: 11400000, guid: 213ed070e0a8c4859a816220f1c126c6, type: 2}
+    - {fileID: 11400000, guid: 2f473d7989534457db1da9463fc405bb, type: 2}
+    - {fileID: 11400000, guid: 6eefa9f0f249d4bb7a6acb3adffb987b, type: 2}
