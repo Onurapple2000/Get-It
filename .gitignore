@@ -65,3 +65,7 @@ keystore/
 
 # Unity IL2CPP/Gradle temp build dir
 .utmp/
+
+# Play Asset Delivery build output (Addressables for Android writes bundles here at build time)
+/Assets/PlayAssetDelivery/Build/
+/Assets/PlayAssetDelivery/Build.meta

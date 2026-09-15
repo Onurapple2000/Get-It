@@ -34,6 +34,16 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.addressables.android": {
+      "version": "1.0.6",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.addressables": "2.3.16",
+        "com.unity.modules.androidjni": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.13",
       "depth": 0,

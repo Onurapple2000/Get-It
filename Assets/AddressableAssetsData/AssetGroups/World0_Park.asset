@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: World0_Park
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: World0_Park
+  m_GUID: 0c54d9330da6047af8d3b6370d28ab5a
+  m_SerializeEntries:
+  - m_GUID: 274d644d5f2dc49638847c540d7e6f66
+    m_Address: Assets/Prefabs/DecoObjects
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - on-demand
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 2f473d7989534457db1da9463fc405bb, type: 2}
+    - {fileID: 11400000, guid: 6eefa9f0f249d4bb7a6acb3adffb987b, type: 2}
+    - {fileID: 11400000, guid: cca5a5cd57375418c88b25e4549f0f9f, type: 2}

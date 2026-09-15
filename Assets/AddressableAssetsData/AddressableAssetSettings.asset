@@ -60,15 +60,25 @@ MonoBehaviour:
   m_ContentStateBuildPathProfileVariableName: 
   m_CustomContentStateBuildPath: 
   m_ContentStateBuildPath: 
-  m_BuildAddressablesWithPlayerBuild: 2
+  m_BuildAddressablesWithPlayerBuild: 1
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
   - {fileID: 11400000, guid: 76821ceb1c57b47409d00178426d4979, type: 2}
+  - {fileID: 11400000, guid: 1643cdd42d0004cceadcac269467b47a, type: 2}
+  - {fileID: 11400000, guid: f0f09f4813048443989ea55df74bee53, type: 2}
   - {fileID: 11400000, guid: 91c6f326bcf7a4738b187af7a7e911c7, type: 2}
+  - {fileID: 11400000, guid: 720d76de9d6f64ecc8b60f77107c4993, type: 2}
+  - {fileID: 11400000, guid: ce3f8be1a27d4434cb37cf5caf230dee, type: 2}
+  - {fileID: 11400000, guid: 4f4f33b2b9d894456a225f2649d96a7f, type: 2}
+  - {fileID: 11400000, guid: 22571da6ca55f4a7090ba0fcc8821532, type: 2}
+  - {fileID: 11400000, guid: 6a94cc639037a43ccb3df27160d2e6b7, type: 2}
+  - {fileID: 11400000, guid: 9498f4c43782c44fbbbf7bc543ba0985, type: 2}
   - {fileID: 11400000, guid: b9aad07f2499f4eae8b970e3617a6d7a, type: 2}
-  - {fileID: 11400000, guid: 389bf0fdf2e7d4f4ca4679d33e2d5003, type: 2}
+  - {fileID: 11400000, guid: f0d84b76fc786476e9c006d9504c971e, type: 2}
   - {fileID: 11400000, guid: 5437eb6bf082044c68b6373ee5f802ea, type: 2}
+  - {fileID: 11400000, guid: 389bf0fdf2e7d4f4ca4679d33e2d5003, type: 2}
   - {fileID: 11400000, guid: 5f5db14832e9f4ae9a886b49824cdb09, type: 2}
+  - {fileID: 11400000, guid: ab223fb9674364e41a319da87b4709c4, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
     m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles
@@ -113,7 +123,9 @@ MonoBehaviour:
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 02ce36ab9f3a04a2a8563658b9d735b2, type: 2}
-  m_InitializationObjects: []
+  - {fileID: 11400000, guid: fe601511d43f34d9bbc21c17fcdb9025, type: 2}
+  m_InitializationObjects:
+  - {fileID: 11400000, guid: ddea5af28e1704a1e85f825ba987dcd0, type: 2}
   m_CertificateHandlerType:
     m_AssemblyName: 
     m_ClassName: 
@@ -122,4 +134,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fa10c03c195894c4e9195b571f4f407c, type: 2}
   - {fileID: 11400000, guid: 2195f3fa848f44ce2874efa385991f07, type: 2}
   - {fileID: 11400000, guid: da31cec687fe34ef0ada0eabfe3b03e1, type: 2}
+  - {fileID: 11400000, guid: 72f270e5a55d34d829f718d7f228577f, type: 2}
   m_ActiveProfileId: 2dc3d276b4d5d4a6b960d67981f4afeb

@@ -13,14 +13,8 @@ MonoBehaviour:
   m_Name: Core
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Core
-  m_GUID: af3df7320375f454595d167807e8d4d4
+  m_GUID: c59034a8324cb46b2876e8020f047a1c
   m_SerializeEntries:
-  - m_GUID: 0965dcdfc9721469dab701aa1a17ec68
-    m_Address: Assets/Prefabs/Bomb.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - install-time
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 61ce90378be8f4db097c88c1120610a5
     m_Address: Assets/Prefabs/PowerUps
     m_ReadOnly: 0
@@ -33,3 +27,4 @@ MonoBehaviour:
     m_Schemas:
     - {fileID: 11400000, guid: a53077aa0581741eea53869957ce142a, type: 2}
     - {fileID: 11400000, guid: 213ed070e0a8c4859a816220f1c126c6, type: 2}
+    - {fileID: 11400000, guid: 4e1001d59c16e42808516fccc7043de1, type: 2}

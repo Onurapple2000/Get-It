@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: World4_Sweets
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: World4_Sweets
+  m_GUID: 17828e01d2a3c4e0780480020bd88a2e
+  m_SerializeEntries:
+  - m_GUID: 18fa7de9bd1cf45de907ebb4193354bf
+    m_Address: Assets/Prefabs/Sweets
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - on-demand
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4cf496dd5278b4cd9a8990caf25a556e, type: 2}
+    - {fileID: 11400000, guid: 1352211d9516d4f4abb6a64830f56484, type: 2}
+    - {fileID: 11400000, guid: d0243f7d126794326be0fd563d70cc2c, type: 2}

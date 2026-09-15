@@ -198,7 +198,14 @@ public class PauseMenu : MonoBehaviour
 
     void OpenX() { Time.timeScale = 0f; xOverlay.transform.SetAsLastSibling(); xOverlay.SetActive(true); OverlayOpen = true; }
     void CloseX() { Time.timeScale = 1f; xOverlay.SetActive(false); OverlayOpen = false; }
-    void Retry() { OverlayOpen = false; Time.timeScale = 1f; SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); }
+    void Retry()
+    {
+        OverlayOpen = false; Time.timeScale = 1f;
+        int scene = SceneManager.GetActiveScene().buildIndex;
+        // FAZ 2: aynı level → prefab'lar cache'te, anında; yine de tek kapıdan geç (güvenlik)
+        WorldContentLoader.Prepare(LevelManager.CurrentWorld, LevelManager.CurrentIndex, null,
+            ok => { if (ok) SceneManager.LoadScene(scene); else { ToastUI.Show(Loc.T("downloadFail"), null, ToastUI.Style.Error); SceneManager.LoadScene(mainMenuScene); } });
+    }
     void Quit() { AudioManager.Instance?.PlayExit(); Time.timeScale = 1f; SceneManager.LoadScene(mainMenuScene); }
 
     // ── YARDIMCI ───────────────────────────────────────────────────────────────

@@ -70,6 +70,8 @@ public static class Loc
         ["hello"]       = new[] { "Merhaba,", "Hi,", "Hola,", "Hallo,", "مرحبا،", "안녕,", "Привет," },
         ["defaultPlayer"] = new[] { "Oyuncu", "Player", "Jugador", "Spieler", "لاعب", "플레이어", "Игрок" },
         ["loading"]     = new[] { "Yükleniyor", "Loading", "Cargando", "Laden", "جارٍ التحميل", "로딩 중", "Загрузка" },
+        ["downloading"] = new[] { "Dünya indiriliyor", "Downloading world", "Descargando mundo", "Welt wird geladen", "جارٍ تنزيل العالم", "월드 다운로드 중", "Загрузка мира" },
+        ["downloadFail"] = new[] { "İndirme başarısız — internet bağlantını kontrol edip tekrar dene", "Download failed — check your connection and try again", "Descarga fallida — comprueba tu conexión e inténtalo de nuevo", "Download fehlgeschlagen — Verbindung prüfen und erneut versuchen", "فشل التنزيل — تحقق من الاتصال وحاول مجددًا", "다운로드 실패 — 연결을 확인하고 다시 시도하세요", "Ошибка загрузки — проверьте соединение и повторите" },
         ["score"]       = new[] { "Skor:", "Score:", "Puntos:", "Punkte:", "النقاط:", "점수:", "Счёт:" },
         ["ok"]          = new[] { "Tamam", "OK", "OK", "OK", "حسنا", "확인", "ОК" },
         ["name"]        = new[] { "İsim", "Name", "Nombre", "Name", "الاسم", "이름", "Имя" },

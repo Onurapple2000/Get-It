@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: World11_Ships
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: World11_Ships
+  m_GUID: 775b1be4e3f944a62a4d326f6249223b
+  m_SerializeEntries:
+  - m_GUID: ab55be11f91204300a4a07e4d6219972
+    m_Address: Assets/Prefabs/Ships
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - on-demand
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 4f3c9ba91c9614954a586c106e8896af, type: 2}
+    - {fileID: 11400000, guid: 91fa52637d5804d6ebf406595463f230, type: 2}
+    - {fileID: 11400000, guid: 231ccc88772e94dec8dbb6c8780a8d9a, type: 2}

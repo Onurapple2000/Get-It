@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: World5_Drinks
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: World5_Drinks
+  m_GUID: 5650651cda8b04aa49bac6a89a53fd1a
+  m_SerializeEntries:
+  - m_GUID: 246e77687b6684e6aa004b2f3d2e1b7a
+    m_Address: Assets/Prefabs/Drinks
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - on-demand
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 019dccc86279743eeb759f2a1477cc79, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 456097ffaabbb465a849d31f828c1e06, type: 2}
+    - {fileID: 11400000, guid: c57f1e5d6942a426c9c77bfd9ad1af5c, type: 2}
+    - {fileID: 11400000, guid: 8ceb79e39f3874c3c8a5bff43734cb0e, type: 2}
